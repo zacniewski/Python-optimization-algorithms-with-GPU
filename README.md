@@ -63,7 +63,11 @@ f([0.00223194 0.00258853]) = 0.009978341126799961
 f([ 1.16431936e-04 -3.31358206e-06]) = 0.0003298138596576905
 ```
 
-### III. Bibliography
+### 3. Working with matrices
+> Coming soon ...
+
+
+### Bibliography
 1. "Optimization for Machine Learning", J. Brownlee, 2023.
 2. "Hill-Climb-Assembler Encoding: Evolution of Small/Mid-Scale Artificial Neural Networks for Classification and
 Control Problems", T. Praczyk, 2022.
