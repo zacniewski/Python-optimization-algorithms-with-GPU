@@ -1,7 +1,6 @@
 import numpy as np
 
 # In all documentation comments, after the colon a name of the variable from original paper is given.
-# Probably indexing of operation_parameters should be zero-based
 
 # Scaling parameters, what values should it have?
 M = 0.5
@@ -52,7 +51,9 @@ def oper1(operation_parameters, data_sequence: np.ndarray, ndm) -> np.ndarray:
         for j in range(number_of_rows):
             ann_inputs[0] = row[j]
             ann_inputs[1] = column[i]
+
             # ann_oper.run() - running the ANN
+
             if ann_outputs[1] < ann_outputs[2]:
                 if ann_outputs[3] < ann_outputs[4]:
                     ndm[j, i] = M * ann_outputs[5]
@@ -72,6 +73,9 @@ def getANN(operation_parameters: np.ndarray) -> np.ndarray:
 
     :param operation_parameters: 'p'
     :return: ANN-operation (encoded in the NDM)
+
+    Probably indexing of operation_parameters should be zero-based, but it can be easily corrected.
+
     """
 
     # it's a bad shape. It is used only temporarily!
