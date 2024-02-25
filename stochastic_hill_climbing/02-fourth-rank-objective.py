@@ -2,19 +2,20 @@ import matplotlib.pyplot as plt
 from numpy import asarray, arange
 from numpy.random import seed
 
-from utils import hill_climbing
+from hill_climbing_standard_utils.utils import hill_climbing
 
 
 # objective function
+# visualization of plots: https://www.wolframalpha.com/input?i=plot+2x%5E4-6x%5E3%2B4x%5E2+%2Bx-4
 def objective(x):
-    return x[0] ** 2.0 + x[0] - 4
+    return 2 * x[0] ** 4.0 - 6 * x[0] ** 3.0 + 4 * x[0] ** 2.0 + x[0] - 4
 
 
 # seed the pseudorandom number generator to get the same results at every run
 seed(5)
 
 # define range for input
-bounds = asarray([[-5.0, 5.0]])
+bounds = asarray([[-1.0, 3.0]])
 
 # define the total iterations number
 n_iterations = 1000
@@ -43,7 +44,7 @@ plt.ylabel("Solution evaluation f(x)")
 plt.axvline(x=best_point, ls="--", color="red")
 
 # save the figure
-plt.savefig("figures/01-parabola-objective.png")
+plt.savefig("figures/02-polynomial-objective.png")
 
 # plot the sample as black circles
 plt.plot(solutions, [objective(x) for x in solutions], "o", color="black")
@@ -53,7 +54,9 @@ plt.figure(2)
 plt.plot(scores, ".-")
 plt.xlabel("Improvement number")
 plt.ylabel("Solution evaluation f(x)")
-plt.savefig("figures/01-parabola-improvement-number.png")
+
+# save the figure
+plt.savefig("figures/02-polynomial-improvement-number.png")
 
 # show the plot
 plt.show()

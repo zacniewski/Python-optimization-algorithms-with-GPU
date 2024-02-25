@@ -1,8 +1,9 @@
-# iterated local search of the ackley objective function
-from numpy import asarray, cos, e, exp, pi, sqrt
-from numpy.random import rand, randn, seed
+# hill climbing search with random restarts of the ackley objective function
+from numpy import asarray, cos, e, exp, sqrt, pi
+from numpy.random import rand
+from numpy.random import seed
 
-from utils import hill_climbing_with_starting_point, in_bounds
+from hill_climbing_standard_utils.utils import hill_climbing_with_starting_point, in_bounds
 
 
 # objective function
@@ -16,28 +17,19 @@ def objective(v):
     )
 
 
-# iterated local search algorithm
-def iterated_local_search(objective, bounds, n_iter, step_size, n_restarts, p_size):
-    # define starting point
-    best = None
-    while best is None or not in_bounds(best, bounds):
-        best = bounds[:, 0] + rand(len(bounds)) * (bounds[:, 1] - bounds[:, 0])
-
-    # evaluate current best point
-    best_eval = objective(best)
-
+# hill climbing with random restarts algorithm
+def random_restarts(objective, bounds, n_iter, step_size, n_restarts):
+    best, best_eval = None, 1e10
     # enumerate restarts
     for n in range(n_restarts):
-        # generate an initial point as a perturbed version of the last best
+        # generate a random initial point for the search
         start_pt = None
         while start_pt is None or not in_bounds(start_pt, bounds):
-            start_pt = best + randn(len(bounds)) * p_size
-
+            start_pt = bounds[:, 0] + rand(len(bounds)) * (bounds[:, 1] - bounds[:, 0])
         # perform a stochastic hill climbing search
         solution, solution_eval = hill_climbing_with_starting_point(
             objective, bounds, n_iter, step_size, start_pt
         )
-
         # check for new best
         if solution_eval < best_eval:
             best, best_eval = solution, solution_eval
@@ -47,7 +39,6 @@ def iterated_local_search(objective, bounds, n_iter, step_size, n_restarts, p_si
 
 # seed the pseudorandom number generator
 seed(1)
-
 # define range for input
 bounds = asarray([[-5.0, 5.0], [-5.0, 5.0]])
 
@@ -55,17 +46,12 @@ bounds = asarray([[-5.0, 5.0], [-5.0, 5.0]])
 n_iter = 1000
 
 # define the maximum step size
-s_size = 0.05
+step_size = 0.05
 
 # total number of random restarts
 n_restarts = 30
 
-# perturbation step size
-p_size = 1.0
-
 # perform the hill climbing search
-best, score = iterated_local_search(
-    objective, bounds, n_iter, s_size, n_restarts, p_size
-)
+best, score = random_restarts(objective, bounds, n_iter, step_size, n_restarts)
 print("Done!")
 print(f"f({best}) = {score}")

@@ -2,7 +2,7 @@
 from numpy import asarray, cos, e, exp, pi, sqrt
 from numpy.random import seed
 
-from utils import hill_climbing_with_bounds
+from hill_climbing_standard_utils.utils import hill_climbing_with_bounds
 
 
 # objective function
