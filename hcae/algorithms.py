@@ -2,10 +2,6 @@ import numpy as np
 
 # In all documentation comments, after the colon a name of the variable from original paper is given.
 
-# Scaling parameters, what values should it have?
-M = 0.5
-N = 0.5
-
 
 def oper1(operation_parameters, data_sequence: np.ndarray, ndm) -> np.ndarray:
     """
@@ -189,4 +185,9 @@ def hcae_evolution():
 
 
 if __name__ == "__main__":
-    pass
+    # Parameters
+    M = 0.5
+    N = 0.5
+    population_size = 100
+    operations_parameters_size = 6
+    data_sequence_size = 50
