@@ -15,3 +15,10 @@ def linear(z):
 
 def tanh(z):
     return np.tanh(z)
+
+
+def activation_type(z, type_of_neuron_value):
+    if abs(type_of_neuron_value) <= 0.5:
+        return sigmoid(z)
+    else:
+        return linear(z)
