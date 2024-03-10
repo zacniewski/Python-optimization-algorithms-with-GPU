@@ -18,14 +18,13 @@
 #### 4. Hill [Climbing](https://github.com/zacniewski/Python-optimization-algorithms-with-GPU/tree/main/hcae) with Assembler Encoding,  
 
 ---
-#### 5. CUDA [Hill utilities](https://github.com/zacniewski/Python-optimization-algorithms-with-GPU/tree/main/cuda_utils) algorithm,  
+#### 5. CUDA [utilities](https://github.com/zacniewski/Python-optimization-algorithms-with-GPU/tree/main/cuda_utils) algorithm,  
 
 ---
 #### 6. Genetic [algorithms](https://github.com/zacniewski/Python-optimization-algorithms-with-GPU/tree/main/genetic_algorithms) use cases,  
 
 ---
 #### 7. NumPy's [utilities](https://github.com/zacniewski/Python-optimization-algorithms-with-GPU/tree/main/numpy_utils).  
-
 
 
 
