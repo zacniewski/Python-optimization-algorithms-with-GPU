@@ -65,10 +65,13 @@ if __name__ == '__main__':
     input_neurons = np.array([0, 1])
     output_neurons = np.array([3])
 
-    # random input values
+    # random input values in the range (-1; 1)
     input_neuron_values = 2 * np.random.rand(input_neurons.shape[0], input_neurons.shape[1]) - 1
 
     # storage for sigma values, first pair is for the '0' neuron
+    # the column with index '-2' is a bias column
+    # the column with index '-1' stores the type of activation function for the given neuron,
+    # e.g. 'linear' or 'sigmoid'
     z_for_neuron_zero = input_neuron_values[0] + ndm[0][-2]
     sigma = {0: activation_type(z_for_neuron_zero, ndm[0][-1])}
 
