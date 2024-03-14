@@ -17,8 +17,8 @@ def tanh(z):
     return np.tanh(z)
 
 
-def activation_type(z, type_of_neuron_value):
+def activation_function(input_value, type_of_neuron_value):
     if abs(type_of_neuron_value) <= 0.5:
-        return sigmoid(z)
+        return sigmoid(input_value)
     else:
-        return linear(z)
+        return linear(input_value)

@@ -121,4 +121,15 @@ Total CPU Page faults: 12
 ```
 
 3. Comparison of times execution with different configurations of CUDA blocks and threads for `RTX4060` GPU (laptop).  
+When trying to run `nvprof ./add_with_one_thread.out`, it started with warning:  
+```bash
+======== Warning: nvprof is not supported on devices with compute capability 8.0 and higher.
+                  Use NVIDIA Nsight Systems for GPU tracing and CPU sampling and NVIDIA Nsight Compute for GPU profiling.
+                  Refer https://developer.nvidia.com/tools-overview for more details.
 
+```
+After `ncu-ui` the problem appeared:  
+```bash
+Cannot mix incompatible Qt library (5.15.3) with this library (5.15.2)
+```
+Solution was found [here](https://stackoverflow.com/questions/75792998/incompatible-qt-libraries-and-the-cuda-toolkit).

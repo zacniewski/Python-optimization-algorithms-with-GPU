@@ -1,7 +1,7 @@
 import numpy as np
 
 from constants import *
-from activation_functions import activation_type, linear, sigmoid
+from activation_functions import activation_function, linear, sigmoid
 
 
 def objective(x):
@@ -49,10 +49,10 @@ def crossover(parent1, parent2, r_cross=CROSSOVER_RATE):
     return [child1, child2]
 
 
-def mutation(bitstring, prob_of_mutation):
+def mutation(bitstring, mutation_rate=MUTATION_RATE):
     for i in range(len(bitstring)):
         # check for a mutation
-        if np.random.rand() < prob_of_mutation:
+        if np.random.rand() < mutation_rate:
             # flip the bit
             bitstring[i] = 1 - bitstring[i]
 
@@ -62,31 +62,31 @@ if __name__ == '__main__':
     ndm = 2 * np.random.rand(NDM_ROWS, NDM_COLUMNS) - 1
 
     # indexes of input and output neurons
-    input_neurons = np.array([0, 1])
+    input_neurons = np.array([[0, 1]])
+    print(input_neurons.shape)
     output_neurons = np.array([3])
 
     # random input values in the range (-1; 1)
     input_neuron_values = 2 * np.random.rand(input_neurons.shape[0], input_neurons.shape[1]) - 1
+    print(f"{input_neuron_values=}")
+
+    # the column with index '-2' of 'ndm' is a bias column
+    # the column with index '-1' of 'ndm' stores the type of activation function for the given neuron,
+    # e.g. 'linear' or 'sigmoid'
+    z_for_first_neuron = input_neuron_values[0][0] * 1 + ndm[0][-2]
 
     # storage for sigma values, first pair is for the '0' neuron
-    # the column with index '-2' is a bias column
-    # the column with index '-1' stores the type of activation function for the given neuron,
-    # e.g. 'linear' or 'sigmoid'
-    z_for_neuron_zero = input_neuron_values[0] + ndm[0][-2]
-    sigma = {0: activation_type(z_for_neuron_zero, ndm[0][-1])}
+    sigma = {0: activation_function(input_value=z_for_first_neuron, type_of_neuron_value=ndm[0][-1])}
 
     # calculating output values of neurons and storing them in 'sigma' dictionary
     z = 0
-    for j in range(NDM_COLUMNS - 2):
+    for j in range(1, NDM_COLUMNS - 2):
         for i in range(j):
-            z = z + ndm[j][i]
-        z = z + ndm[j][-2]
+            z = z + ndm[j][i] * sigma[i]
+        z = z + ndm[j][-2]  # adding bias
 
         # determine the activation function of 'z' basing on the value of 'type of neuron' cell
-        sigma[j] = activation_type(z, abs(ndm[j][-1]))
-        if abs(ndm[j][-1]) <= 0.5:
-            sigma[j] = sigmoid(z)
-        else:
-            sigma[j] = linear(z)
+        sigma[j] = activation_function(input_value=z, type_of_neuron_value=abs(ndm[j][-1]))
 
     print(f"{ndm=}")
+    print(f"{sigma=}")
