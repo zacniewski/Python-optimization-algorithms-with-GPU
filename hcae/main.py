@@ -109,8 +109,17 @@ if __name__ == '__main__':
         sigma[j] = activation_function(input_value=z, type_of_neuron_value=abs(ndm[j][-1]))
         z = 0
 
-    output_value = sigma[output_neurons[0]]
     print("\nOutputs of activation functions:")
     for key, value in sigma.items():
         print(f"{key}: {value}")
+
+    # Value of the objective function
+    objective_value = objective(input_neuron_values[0][0], input_neuron_values[0][1])
+    print(f"\nObjective value: {objective_value}")
+
+    # Output value from FFN
+    output_value = sigma[output_neurons[0]]
     print(f"\nOutput value: {output_value}")
+
+    # Error value
+    print(f"\nError: {np.abs(output_value - objective_value)}")
