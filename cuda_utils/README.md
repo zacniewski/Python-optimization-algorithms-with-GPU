@@ -12,6 +12,9 @@
 
 2. Comparison of times execution with different configurations of CUDA blocks and threads for `Titan XP` GPU.  
   - with one thread (file `add_with_one_thread.cu`):  
+
+After running `nvprof ./name_of_the_executable` we can get profiling information:  
+
 ```bash
 ==28297== Profiling application: ./add_with_one_thread.out
 ==28297== Profiling result:
@@ -133,3 +136,9 @@ After `ncu-ui` the problem appeared:
 Cannot mix incompatible Qt library (5.15.3) with this library (5.15.2)
 ```
 Solution was found [here](https://stackoverflow.com/questions/75792998/incompatible-qt-libraries-and-the-cuda-toolkit).
+After installation of NVIDIA Nsight Systems we can run the command `nsys profile name_of_the_executable` and then the profiling report is generated to the file `report1.nsys-rep`.
+To see this report we have to run `nsys-ui report1.nsys.rep`:  
+![nsys-report](../figures/nsys-report.png)  
+
+After clicking right mouse button on `CUDA API` and choosing "Show the Events View" we can get timing information:  
+![EventsView](../figures/EventsView.png) 
