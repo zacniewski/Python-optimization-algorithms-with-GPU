@@ -4,8 +4,8 @@ from constants import *
 from activation_functions import activation_function, linear, sigmoid
 
 
-def objective(x):
-    return sum(x)
+def objective(x, y):
+    return np.sin(x*y)
 
 
 def tournament_selection(population, scores, k=TOURNAMENT_CANDIDATES):
@@ -61,14 +61,27 @@ if __name__ == '__main__':
     # random values from range (-1; 1)
     ndm = 2 * np.random.rand(NDM_ROWS, NDM_COLUMNS) - 1
 
+    # NDM from the article "Neural collision ..." by Tomek
+    """
+    hardcoded_ndm = np.array([
+        [0, 0.2, 0.3, 0, -0.7, 0.1],
+        [-0.9, 0, 1, -0.5, -1, 0.9],
+        [0.5, 0, 0, -0.5, 0.3, 0.2],
+        [0, 0.3, 0, 0.6, 0.1, 0.5]
+    ])
+
+    # ndm = hardcoded_ndm
+    """
+
     # indexes of input and output neurons
     input_neurons = np.array([[0, 1]])
-    print(input_neurons.shape)
     output_neurons = np.array([3])
 
     # random input values in the range (-1; 1)
     input_neuron_values = 2 * np.random.rand(input_neurons.shape[0], input_neurons.shape[1]) - 1
-    print(f"{input_neuron_values=}")
+    # input_neuron_values = np.array([[1, 1]])
+
+    print(f"Values of input neurons: {input_neuron_values}")
 
     # the column with index '-2' of 'ndm' is a bias column
     # the column with index '-1' of 'ndm' stores the type of activation function for the given neuron,
@@ -76,17 +89,28 @@ if __name__ == '__main__':
     z_for_first_neuron = input_neuron_values[0][0] * 1 + ndm[0][-2]
 
     # storage for sigma values, first pair is for the '0' neuron
+    # (first neuron, with '1' index on the figures and with '0' index in the NDM)
     sigma = {0: activation_function(input_value=z_for_first_neuron, type_of_neuron_value=ndm[0][-1])}
 
-    # calculating output values of neurons and storing them in 'sigma' dictionary
+    # calculating output values of neurons and storing them in the 'sigma' dictionary
     z = 0
     for j in range(1, NDM_COLUMNS - 2):
         for i in range(j):
-            z = z + ndm[j][i] * sigma[i]
-        z = z + ndm[j][-2]  # adding bias
+            z = z + ndm[i][j] * sigma[i]
 
-        # determine the activation function of 'z' basing on the value of 'type of neuron' cell
+        # adding bias
+        z = z + ndm[j][-2]
+
+        # adding input value (if exists) multiplied by its weight (so far it's 1 by default)
+        if j in input_neurons:
+            z = z + input_neuron_values[0][j] * 1
+
+        # determine the activation function of 'z' basing on the values of input and 'type of neuron' cell
         sigma[j] = activation_function(input_value=z, type_of_neuron_value=abs(ndm[j][-1]))
+        z = 0
 
-    print(f"{ndm=}")
-    print(f"{sigma=}")
+    output_value = sigma[output_neurons[0]]
+    print("\nOutputs of activation functions:")
+    for key, value in sigma.items():
+        print(f"{key}: {value}")
+    print(f"\nOutput value: {output_value}")
