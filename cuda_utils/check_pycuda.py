@@ -21,6 +21,6 @@ b = numpy.random.randn(400).astype(numpy.float32)
 dest = numpy.zeros_like(a)
 multiply_them(
         drv.Out(dest), drv.In(a), drv.In(b),
-        block=(400,1,1))
+        block=(400, 1, 1))
 
 print(dest-a*b)
