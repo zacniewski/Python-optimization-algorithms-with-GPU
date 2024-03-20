@@ -2,7 +2,7 @@ import numpy as np
 
 # In all documentation comments, after the colon a name of the variable from original paper is given.
 
-
+# not used so far!!!
 def oper1(operation_parameters, data_sequence: np.ndarray, ndm) -> np.ndarray:
     """
      This function is an adaptation of a solution applied in AEEO.
@@ -36,7 +36,7 @@ def oper1(operation_parameters, data_sequence: np.ndarray, ndm) -> np.ndarray:
         column[i] = data_sequence[(i + number_of_rows) % len(data_sequence)]
 
     # Q: how is the architecture of ANN operation created from the operation parameters?
-    ann_oper = getANN(operation_parameters)
+    ann_oper = get_ann(operation_parameters)
 
     # ann_inputs and ann_outputs are created only for the discussion purposes!
     # These inputs and outputs will be replaced by the ANN created from the operation parameters 'p'!
@@ -58,8 +58,8 @@ def oper1(operation_parameters, data_sequence: np.ndarray, ndm) -> np.ndarray:
 
     return ndm
 
-
-def getANN(operation_parameters: np.ndarray) -> np.ndarray:
+# not used so far!!!
+def get_ann(operation_parameters: np.ndarray) -> np.ndarray:
     """
     This function generates the NDM operation and consequently, an ANN operation
     Like resultant ANNs, ANN operations are also represented in the form of NDMs,
@@ -117,8 +117,8 @@ def oper2(operation_parameters, data_sequence: np.ndarray, ndm) -> np.ndarray:
 
     :param operation_parameters: 'p'
     :param data_sequence: 'd'
-    :param ndm: 'NDM'
-    :return: 'NDM'
+    :param ndm: input 'NDM'
+    :return: updated 'NDM'
     """
 
     filled = 0
@@ -183,11 +183,3 @@ def fill(
 def hcae_evolution():
     pass
 
-
-if __name__ == "__main__":
-    # Parameters
-    M = 0.5
-    N = 0.5
-    population_size = 100
-    operations_parameters_size = 6
-    data_sequence_size = 50

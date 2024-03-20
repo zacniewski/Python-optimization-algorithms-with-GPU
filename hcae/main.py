@@ -98,17 +98,6 @@ if __name__ == '__main__':
     # initialization - random values from range (-1; 1)
     ndm = 2 * np.random.rand(NDM_ROWS, NDM_COLUMNS) - 1
 
-    # NDM from the article "Neural collision ..." by Tomek
-    """hardcoded_ndm = np.array([
-        [0, 0.2, 0.3, 0, -0.7, 0.1],
-        [-0.9, 0, 1, -0.5, -1, 0.9],
-        [0.5, 0, 0, -0.5, 0.3, 0.2],
-        [0, 0.3, 0, 0.6, 0.1, 0.5]
-    ])
-
-    ndm = hardcoded_ndm
-    input_neuron_values = np.array([[1, 1]])"""
-
     # indexes of input and output neurons
     input_neurons = np.array([[0, 1]])
     output_neurons = np.array([3])

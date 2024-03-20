@@ -110,6 +110,7 @@ def genetic_algorithm(objective, bounds, n_bits, n_iter, n_pop, r_cross, r_mut):
 if __name__ == "__main__":
 	# define range for input
 	bounds = [[-5.0, 5.0], [-5.0, 5.0]]
+	print(len(bounds))
 
 	# define the total iterations
 	n_iter = 100
