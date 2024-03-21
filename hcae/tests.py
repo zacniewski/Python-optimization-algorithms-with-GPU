@@ -1,8 +1,8 @@
 import numpy as np
-from numpy import asarray
+from numpy import asarray, ogrid
 from numpy.random import randint, rand
 
-from constants import PARAMETERS_SIZE, MUTATION_RATE
+from constants import DATA_SEQUENCE_SIZE, PARAMETERS_SIZE, MUTATION_RATE
 from hcae_operations import fill, oper2
 
 # NumPy's randint: https://numpy.org/doc/stable/reference/random/generated/numpy.random.randint.html
@@ -33,14 +33,37 @@ solution = bounds[:, 0] + rand(len(bounds)) * (bounds[:, 1] - bounds[:, 0])
 print(f"{solution=}")
 
 
-def mutation_of_parameters(parameters, mutation_rate=MUTATION_RATE):
-    random_index = randint(len(parameters))
+def mutation_of_parameters(params, mutation_rate=MUTATION_RATE):
+    random_index = randint(len(params))
     if np.random.rand() < mutation_rate:
-        # change the value at rando index
+        # change the value at random index
         print("Mutation!")
-        parameters[random_index] = randint(PARAMETERS_SIZE)
-    return parameters
+        params[random_index] = randint(PARAMETERS_SIZE)
+    return params
+
+
+def mutation_of_data_sequence(data_seq, mutation_rate=MUTATION_RATE):
+    random_index = randint(len(data_seq[0]))
+    print(f"{len(data_seq[0])=}")
+    if np.random.rand() < mutation_rate:
+        # change the value at random index
+        print("Mutation!")
+        data_seq[0][random_index] = randint(DATA_SEQUENCE_SIZE)
+    return data_seq
 
 
 print(f"{hardcoded_operation_parameters=}")
 print(f"Mutated parameters: {mutation_of_parameters(hardcoded_operation_parameters, mutation_rate=MUTATION_RATE)}")
+
+testing_data_sequence = 2 * np.random.rand(1, DATA_SEQUENCE_SIZE) - 1
+
+print(f"Testing data sequence: {testing_data_sequence}")
+
+print(f"Mutated (or not) data sequence: {mutation_of_data_sequence(testing_data_sequence)}")
+
+X, Y = np.mgrid[-1:1:5j, -1:1:5j]
+print(f"{X.ravel()=}")
+print(f"{Y=}")
+
+positions = np.column_stack([X.ravel(), Y.ravel()])
+print(positions.shape)
