@@ -9,3 +9,7 @@ TOURNAMENT_CANDIDATES = 3
 # rates
 CROSSOVER_RATE = 0.8
 MUTATION_RATE = 0.2
+
+# Coefficients
+M = 0.5
+N = 0.5

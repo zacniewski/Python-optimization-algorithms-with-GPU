@@ -1,5 +1,8 @@
 import numpy as np
 
+from constants import M, N
+
+
 # In all documentation comments, after the colon a name of the variable from original paper is given.
 
 # not used so far!!!
@@ -58,6 +61,7 @@ def oper1(operation_parameters, data_sequence: np.ndarray, ndm) -> np.ndarray:
 
     return ndm
 
+
 # not used so far!!!
 def get_ann(operation_parameters: np.ndarray) -> np.ndarray:
     """
@@ -86,7 +90,7 @@ def get_ann(operation_parameters: np.ndarray) -> np.ndarray:
     for i in range(number_of_columns):
         for j in range(number_of_rows):
             ndm_operation[j, i] = (
-                operation_parameters[number_of_item % len(operation_parameters)] / N
+                    operation_parameters[number_of_item % len(operation_parameters)] / N
             )
             number_of_item += 1
 
@@ -144,13 +148,13 @@ def oper2(operation_parameters, data_sequence: np.ndarray, ndm) -> np.ndarray:
 
 
 def fill(
-    number_of_column: int,
-    number_of_row: int,
-    operation_parameters: np.ndarray,
-    data_sequence: np.ndarray,
-    number_of_updated_items: int,
-    starting_position_in_data: int,
-    number_of_holes: int,
+        number_of_column: int,
+        number_of_row: int,
+        operation_parameters: np.ndarray,
+        data_sequence: np.ndarray,
+        number_of_updated_items: int,
+        starting_position_in_data: int,
+        number_of_holes: int,
 ) -> int:
     """
     This function is used in the 'oper2' function to update the given cell of the NDM matrix.
@@ -166,9 +170,9 @@ def fill(
     """
 
     if (
-        number_of_updated_items < operation_parameters[5]
-        and number_of_column > operation_parameters[4]
-        and number_of_row > operation_parameters[3]
+            number_of_updated_items < operation_parameters[5]
+            and number_of_column > operation_parameters[4]
+            and number_of_row > operation_parameters[3]
     ):
         number_of_updated_items += 1
         if number_of_holes == operation_parameters[2]:
@@ -182,4 +186,3 @@ def fill(
 
 def hcae_evolution():
     pass
-
