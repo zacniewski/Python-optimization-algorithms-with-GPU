@@ -37,7 +37,7 @@ def mutation_of_parameters(params, mutation_rate=MUTATION_RATE):
     random_index = randint(len(params))
     if np.random.rand() < mutation_rate:
         # change the value at random index
-        print("Mutation!")
+        print("Mutation of parameters!")
         params[random_index] = randint(PARAMETERS_SIZE)
     return params
 
@@ -47,13 +47,13 @@ def mutation_of_data_sequence(data_seq, mutation_rate=MUTATION_RATE):
     print(f"{len(data_seq[0])=}")
     if np.random.rand() < mutation_rate:
         # change the value at random index
-        print("Mutation!")
+        print("Mutation of data sequence!")
         data_seq[0][random_index] = randint(DATA_SEQUENCE_SIZE)
     return data_seq
 
 
 print(f"{hardcoded_operation_parameters=}")
-print(f"Mutated parameters: {mutation_of_parameters(hardcoded_operation_parameters, mutation_rate=MUTATION_RATE)}")
+print(f"Mutated (or not) parameters: {mutation_of_parameters(hardcoded_operation_parameters, mutation_rate=MUTATION_RATE)}")
 
 testing_data_sequence = 2 * np.random.rand(1, DATA_SEQUENCE_SIZE) - 1
 
@@ -61,6 +61,6 @@ print(f"Testing data sequence: {testing_data_sequence}")
 
 print(f"Mutated (or not) data sequence: {mutation_of_data_sequence(testing_data_sequence)}")
 
-X, Y = np.mgrid[-1:1:5j, -1:1:5j]
+X, Y = np.mgrid[-2:2:41j, -2:2:41j]
 samples = np.column_stack([X.ravel(), Y.ravel()])
-print(samples.shape)
+print(samples)

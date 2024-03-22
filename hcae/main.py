@@ -4,8 +4,9 @@ from constants import CROSSOVER_RATE, MUTATION_RATE, NDM_COLUMNS, NDM_ROWS, TOUR
 from activation_functions import activation_function, linear, sigmoid
 
 
-def objective(x, y):
-    return np.sin(x*y)
+def objective(v):
+    x, y = v
+    return np.sin(v)
 
 
 def tournament_selection(population, scores, k=TOURNAMENT_CANDIDATES):
@@ -106,6 +107,12 @@ if __name__ == '__main__':
     input_neuron_values = 2 * np.random.rand(input_neurons.shape[0], input_neurons.shape[1]) - 1
     print(f"Values of input neurons: {input_neuron_values}")
 
+    # Input samples
+    # X in <-2; 2> and Y in <-2; 2>
+    X, Y = np.mgrid[-2:2:41j, -2:2:41j]
+    samples = np.column_stack([X.ravel(), Y.ravel()])
+    print(f"Samples: {samples.shape=}")
+
     output_value = calculate_output_from_ndm(
         ndm,
         in_neurons=input_neurons,
@@ -113,9 +120,14 @@ if __name__ == '__main__':
         in_neurons_value=input_neuron_values
     )
 
-    # Value of the objective function
-    objective_value = objective(input_neuron_values[0][0], input_neuron_values[0][1])
+    # Single value of the objective function
+    objective_value = objective(input_neuron_values[0])
     print(f"\nObjective value: {objective_value}")
+
+    # Values of the objective function for all samples
+    iterable = (objective(s) for s in samples)
+    objective_values_for_samples = np.fromiter(iterable, dtype=np.dtype(list))
+    print(objective_values_for_samples.shape)
 
     # Error value
     print(f"\nError: {np.abs(output_value - objective_value)}")
