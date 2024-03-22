@@ -62,8 +62,5 @@ print(f"Testing data sequence: {testing_data_sequence}")
 print(f"Mutated (or not) data sequence: {mutation_of_data_sequence(testing_data_sequence)}")
 
 X, Y = np.mgrid[-1:1:5j, -1:1:5j]
-print(f"{X.ravel()=}")
-print(f"{Y=}")
-
-positions = np.column_stack([X.ravel(), Y.ravel()])
-print(positions.shape)
+samples = np.column_stack([X.ravel(), Y.ravel()])
+print(samples.shape)
