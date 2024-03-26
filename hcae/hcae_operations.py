@@ -126,12 +126,12 @@ def oper2(operation_parameters, data_sequence: np.ndarray, ndm) -> np.ndarray:
     """
 
     filled = 0
-    where = operation_parameters[6]
+    where = operation_parameters[5]
     holes = 0
     num_of_ndm_rows, num_of_ndm_columns = ndm.shape
 
     # check direction of filling
-    if operation_parameters[1] % 2 == 0:
+    if operation_parameters[0] % 2 == 0:
         for k in range(num_of_ndm_columns):
             for j in range(num_of_ndm_rows):
                 ndm[j][k] = fill(
@@ -170,12 +170,12 @@ def fill(
     """
 
     if (
-            number_of_updated_items < operation_parameters[5]
-            and number_of_column > operation_parameters[4]
-            and number_of_row > operation_parameters[3]
+            number_of_updated_items < operation_parameters[4]
+            and number_of_column > operation_parameters[3]
+            and number_of_row > operation_parameters[2]
     ):
         number_of_updated_items += 1
-        if number_of_holes == operation_parameters[2]:
+        if number_of_holes == operation_parameters[1]:
             number_of_holes = 0
             starting_position_in_data += 1
             return data_sequence[starting_position_in_data % len(data_sequence)]
