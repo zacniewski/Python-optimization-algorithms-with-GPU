@@ -23,7 +23,8 @@ hardcoded_operation_parameters = np.array([1, 2, 3, 1, 2, 3])
 print(f"{hardcoded_operation_parameters.shape=}")
 
 # random input values in the range (-1; 1)
-input_neuron_values = 2 * np.random.rand(hardcoded_input_neuron_values.shape[0], hardcoded_input_neuron_values.shape[1]) - 1
+input_neuron_values = 2 * np.random.rand(
+    hardcoded_input_neuron_values.shape[0], hardcoded_input_neuron_values.shape[1]) - 1
 print(f"Values of input neurons: {input_neuron_values=}")
 
 random_operation_parameters = randint(hardcoded_ndm.shape[0], size=PARAMETERS_SIZE)
@@ -92,3 +93,8 @@ objective_value = objective(samples[0])
 print(f"Objective value: {objective_value}")
 
 # oper2 i fill!!!
+ndm_after_oper2 = oper2(
+    hardcoded_operation_parameters,
+    testing_data_sequence,
+    hardcoded_ndm
+)

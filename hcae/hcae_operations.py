@@ -104,19 +104,19 @@ def oper2(operation_parameters, data_sequence: np.ndarray, ndm) -> np.ndarray:
         - where NDM (Network Definition Matrix) is updated,
         - and which and how many data items are used.
 
-    The first parameter (index 1) indicates the direction according to which NDM is modified,
+    The first parameter (index 0) indicates the direction according to which NDM is modified,
     that is, whether it is changed along columns or rows.
 
-    The second parameter (index 2) determines the size of holes between NDM updates, that is,
+    The second parameter (index 1) determines the size of holes between NDM updates, that is,
     the number of zeros that separate consecutive updates.
 
-    The next two parameters (indexes 3 and 4) point out the location in NDM where the operation starts to work, i.e.,
+    The next two parameters (indexes 2 and 3) point out the location in NDM where the operation starts to work, i.e.,
     they indicate the starting row and column.
 
-    The fifth parameter (index 5) determines the size of the altered NDM area, in other words,
+    The fifth parameter (index 4) determines the size of the altered NDM area, in other words,
     it indicates how many NDM items are updated.
 
-    The last, sixth parameter (index 6) points out location in the sequence of data
+    The last, sixth parameter (index 5) points out location in the sequence of data
     from where the operation starts to take data items and put them into the NDM.
 
     :param operation_parameters: 'p'
@@ -162,7 +162,7 @@ def fill(
     :param number_of_row: 'r'
     :param operation_parameters: 'p'
     :param data_sequence: 'd'
-    :param number_of_updated_items: 'f'
+    :param number_of_updated_items: 'f' or 'filled'
     :param starting_position_in_data: 'w'
     :param number_of_holes: 'h'
 
