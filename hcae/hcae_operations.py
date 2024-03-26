@@ -155,7 +155,7 @@ def fill(
         number_of_updated_items: int,
         starting_position_in_data: int,
         number_of_holes: int,
-) -> int:
+) -> float:
     """
     This function is used in the 'oper2' function to update the given cell of the NDM matrix.
     :param number_of_column: 'c'
@@ -181,7 +181,7 @@ def fill(
             return data_sequence[starting_position_in_data % len(data_sequence)]
         else:
             number_of_holes += 1
-            return 0
+            return 0.0
 
 
 def hcae_evolution():
