@@ -8,7 +8,7 @@ from activation_functions import activation_function, linear, sigmoid
 # the second will be the Ackley's function
 def objective(v):
     x, y = v
-    return np.sin(x*y)
+    return np.sin(x * y)
 
 
 def tournament_selection(population, scores, k=TOURNAMENT_CANDIDATES):
@@ -52,15 +52,12 @@ def crossover(parent1, parent2, r_cross=CROSSOVER_RATE):
     return [child1, child2]
 
 
-def mutation(bitstring, mutation_rate=MUTATION_RATE):
-    for i in range(len(bitstring)):
-        # check for a mutation
-        if np.random.rand() < mutation_rate:
-            # flip the bit
-            bitstring[i] = 1 - bitstring[i]
-
-
-def calculate_output_from_ndm(in_ndm: np.array, in_neurons, out_neurons, in_neurons_value) -> float:
+def calculate_output_from_ndm(
+        in_ndm: np.array,
+        in_neurons: np.array,
+        out_neurons: np.array,
+        in_neurons_value: np.array
+) -> float:
     """
     :param in_ndm: input NDM matrix
     :param in_neurons: numbers of input neurons (starting from zero, first neuron has '0' index, etc., like in the 0-indexed array)
@@ -78,7 +75,7 @@ def calculate_output_from_ndm(in_ndm: np.array, in_neurons, out_neurons, in_neur
 
     # calculating output values of neurons and storing them in the 'sigma' dictionary
     z = 0
-    for j in range(1, NDM_COLUMNS - 2):
+    for j in range(1, in_ndm.shape[1] - 2):
         for i in range(j):
             z = z + in_ndm[i][j] * sigma[i]
 
@@ -93,39 +90,29 @@ def calculate_output_from_ndm(in_ndm: np.array, in_neurons, out_neurons, in_neur
         sigma[j] = activation_function(input_value=z, type_of_neuron_value=abs(in_ndm[j][-1]))
         z = 0
 
+    # uncomment to check the outputs value of all neurons (after activation function)
     # for key, value in sigma.items():
-    #     print(f"{key}: {value}")
+    # print(f"{key}: {value}")
 
-    # Output value from FFN
-    out_value = sigma[out_neurons[0]]
+    # output value from FFN
+    out_value = sigma[out_neurons[0][0]]
     return out_value
 
 
 if __name__ == '__main__':
-    # initialization of NDM - random values from range (-1; 1)
+    # initialization of the NDM - random values from range (-1.0; 1.0)
     ndm = 2 * np.random.rand(NDM_ROWS, NDM_COLUMNS) - 1
+    print(f"{ndm.shape=}")
 
     # indexes of input and output neurons (depends on the task, that author had in mind)
     input_neurons = np.array([[0, 1]])
-    output_neurons = np.array([3])
+    output_neurons = np.array([[3]])
 
-    # random input values in the range (-1; 1)
-    input_neuron_values = 2 * np.random.rand(input_neurons.shape[0], input_neurons.shape[1]) - 1
-    print(f"Values of input neurons: {input_neuron_values=}")
-
-    # we'd rather create samples of input variables
+    # create samples of input variables
     # X in <-2; 2> and Y in <-2; 2>
     X, Y = np.mgrid[-2:2:41j, -2:2:41j]
     samples = np.column_stack([X.ravel(), Y.ravel()])
-    print(f"Samples: {samples.shape=}")
-
-    # single output value
-    output_value = calculate_output_from_ndm(
-        ndm,
-        in_neurons=input_neurons,
-        out_neurons=output_neurons,
-        in_neurons_value=samples[0]
-    )
+    print(f"{samples.shape=}")
 
     # Output values for all input samples
     iterable1 = (
@@ -133,10 +120,7 @@ if __name__ == '__main__':
         for s in samples
     )
     output_values_for_samples = np.fromiter(iterable1, dtype=np.dtype(list))
-    print(f"\nOutput values: {output_values_for_samples.shape=}")
-
-    # Single value of the objective function
-    objective_value = objective(input_neuron_values[0])
+    print(f"\n{output_values_for_samples.shape=}")
 
     # Values of the objective function for all samples
     iterable2 = (objective(s) for s in samples)
@@ -145,3 +129,5 @@ if __name__ == '__main__':
 
     # Error value
     print(f"\nError: {np.sum(np.abs(output_values_for_samples - objective_values_for_samples))}")
+
+
