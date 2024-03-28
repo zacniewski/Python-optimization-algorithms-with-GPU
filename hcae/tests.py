@@ -97,7 +97,7 @@ print(f"Objective value: {objective_value}")
 
 # oper2 i fill!!!
 ndm_after_oper2 = oper2(
-    hardcoded_operation_parameters,
+    random_operation_parameters,
     testing_data_sequence,
     hardcoded_ndm
 )
