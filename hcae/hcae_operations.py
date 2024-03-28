@@ -168,12 +168,16 @@ def fill(
 
     :return: new value for NDM item
     """
+    print(f"{operation_parameters=}")
+    print(f"{number_of_column=}")
+    print(f"{number_of_row=}")
 
     if (
             number_of_updated_items < operation_parameters[4]
             and number_of_column > operation_parameters[3]
             and number_of_row > operation_parameters[2]
     ):
+        print("I'm in if")
         number_of_updated_items += 1
         if number_of_holes == operation_parameters[1]:
             number_of_holes = 0
@@ -182,6 +186,8 @@ def fill(
         else:
             number_of_holes += 1
             return 0.0
+    else:
+        print("I'm outside")
 
 
 def hcae_evolution():

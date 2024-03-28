@@ -16,28 +16,29 @@ hardcoded_ndm = np.array([
     [0, 0.3, 0, 0.6, 0.1, 0.5]
 ])
 
+print(f"{hardcoded_ndm=}")
+
+
 # input values
 hardcoded_input_neuron_values = np.array([[1, 1]])
-
-hardcoded_operation_parameters = np.array([1, 2, 3, 1, 2, 3])
-print(f"{hardcoded_operation_parameters.shape=}")
-
 # random input values in the range (-1; 1)
 input_neuron_values = 2 * np.random.rand(
     hardcoded_input_neuron_values.shape[0], hardcoded_input_neuron_values.shape[1]) - 1
-print(f"Values of input neurons: {input_neuron_values=}")
+print(f"{hardcoded_input_neuron_values=}")
+
+# parameters
+hardcoded_operation_parameters = np.array([1, 2, 3, 1, 2, 3])
+print(f"{hardcoded_operation_parameters=}")
 
 random_operation_parameters = randint(hardcoded_ndm.shape[0], size=PARAMETERS_SIZE)
 print(f"{random_operation_parameters=}")
 
 # checking bounds calculations
 bounds = asarray([[-3.0, 3.0], [-5.0, 5.0]])
-print(f"{bounds[0]=}")
-print(f"{bounds[1]=}")
-print(f"{bounds[:, 0]=}")
-print(f"{bounds[:, 1]=}")
+# print(f"\n{bounds[0]=} and {bounds[1]=}")
+# print(f"{bounds[:, 0]=} and {bounds[:, 1]=}")
 solution = bounds[:, 0] + rand(len(bounds)) * (bounds[:, 1] - bounds[:, 0])
-print(f"{solution=}")
+# print(f"{solution=}")
 
 
 def mutation_of_parameters(params, mutation_rate=MUTATION_RATE):
@@ -68,7 +69,6 @@ def mutation_of_bitstring(
             bitstring[i] = 1 - bitstring[i]
 
 
-print(f"{hardcoded_operation_parameters=}")
 print(
     f"Mutated (or not) parameters: {mutation_of_parameters(hardcoded_operation_parameters, mutation_rate=MUTATION_RATE)}")
 
@@ -88,6 +88,9 @@ ndm_out = calculate_output_from_ndm(
     in_neurons_value=samples[0]
 )
 
+# single output from the NDM for the samples[0]
+print(f"{ndm_out=}")
+
 # Single value of the objective function
 objective_value = objective(samples[0])
 print(f"Objective value: {objective_value}")
@@ -98,3 +101,5 @@ ndm_after_oper2 = oper2(
     testing_data_sequence,
     hardcoded_ndm
 )
+
+print(f"{ndm_after_oper2=}")
