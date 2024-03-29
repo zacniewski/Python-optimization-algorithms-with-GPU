@@ -144,6 +144,9 @@ def oper2(operation_parameters, data_sequence: np.ndarray, ndm) -> np.ndarray:
                 )
                 if tmp != -1.0:
                     ndm[j][k] = tmp
+                else:
+                    print("-1 upper")
+
     else:
         print("I'm in else of oper2")
 
@@ -154,6 +157,9 @@ def oper2(operation_parameters, data_sequence: np.ndarray, ndm) -> np.ndarray:
                 )
                 if tmp != -1.0:
                     ndm[k][j] = tmp
+                    print("Not -1")
+                else:
+                    print("-1 lower")
 
     return ndm
 
