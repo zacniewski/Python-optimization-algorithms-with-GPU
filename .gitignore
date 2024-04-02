@@ -128,6 +128,8 @@ ENV/
 env.bak/
 venv.bak/
 my_env/
+.torch_env/
+.cupy_env/
 
 # Spyder project settings
 .spyderproject
