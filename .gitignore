@@ -130,6 +130,8 @@ venv.bak/
 my_env/
 .torch_env/
 .cupy_env/
+.numba_env/
+.pycuda_env/
 
 # Spyder project settings
 .spyderproject

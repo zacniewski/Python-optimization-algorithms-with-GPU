@@ -12,6 +12,18 @@ sudo cp /var/cuda-repo-ubuntu2204-12-4-local/cuda-*-keyring.gpg /usr/share/keyri
 sudo apt-get -y install cuda-toolkit-12-4 
 ```
 
+Add these two lines at the end of the `~/.bashrc` file:  
+```bash
+export PATH=/usr/local/cuda/bin${PATH:+:${PATH}}
+export LD_LIBRARY_PATH=/usr/local/cuda-12.4/lib64\
+                         ${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
+```
+
+and source it:  
+```bash
+source ~/.bashrc
+```
+
 1. Links
   - CUDA [cheat sheet](https://kdm.icm.edu.pl/Tutorials/GPU-intro/introduction.en/) from ICM UW :muscle:,
   - [Educator Programs](https://www.nvidia.com/en-us/training/educator-programs/) from NVIDIA,

@@ -1,17 +1,19 @@
 import numpy as np
 import numba as nb
 
-# NumPy code
-a_np = np.random.rand(1000, 1000)
-b_np = np.random.rand(1000, 1000)
-result_np = np.matmul(a_np, b_np)
+@nb.njit(fastmath=True)
+def nb_dot(mat, q):
+  return np.dot(mat, q)
 
-# Numba code
-@nb.njit(parallel=True)
-def matrix_multiply(a, b):
-    return np.matmul(a, b)
+@nb.njit(fastmath=True)
+def nb_op(mat, q):
+  return mat @ q
 
-result_nb = matrix_multiply(a_np, b_np)
+mat = np.array([[  2.44 ,  -0.01 , -74.526],
+                [  0.578,   0.873, -86.261],
+                [  0.003,  -0.   ,   1.   ]])
+q = np.array([100., 200, 1])
 
-print("NumPy result:", result_np)
-print("Numba result:", result_nb)
+print("NumPy result:", np.matmul(mat, q))
+print("Numba result (ver. 1):", nb_dot(mat, q))
+print("Numba result (ver. 2):", nb_op(mat, q))
