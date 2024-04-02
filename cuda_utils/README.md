@@ -24,6 +24,18 @@ and source it:
 source ~/.bashrc
 ```
 
+To install cuDNN, go to the [Downloads](https://developer.nvidia.com/cudnn-downloads) page.
+In April 2024 the 9.0.0 version was suggested by Nvidia:  
+
+```bash
+wget https://developer.download.nvidia.com/compute/cudnn/9.0.0/local_installers/cudnn-local-repo-ubuntu2204-9.0.0_1.0-1_amd64.deb
+sudo dpkg -i cudnn-local-repo-ubuntu2204-9.0.0_1.0-1_amd64.deb
+sudo cp /var/cudnn-local-repo-ubuntu2204-9.0.0/cudnn-*-keyring.gpg /usr/share/keyrings/
+sudo apt-get update
+sudo apt-get -y install cudnn
+```
+
+
 1. Links
   - CUDA [cheat sheet](https://kdm.icm.edu.pl/Tutorials/GPU-intro/introduction.en/) from ICM UW :muscle:,
   - [Educator Programs](https://www.nvidia.com/en-us/training/educator-programs/) from NVIDIA,
@@ -33,6 +45,11 @@ source ~/.bashrc
   - CUDA [Pro Tip](https://developer.nvidia.com/blog/cuda-pro-tip-write-flexible-kernels-grid-stride-loops/): Write Flexible Kernels with Grid-Stride Loops,
   - CUDA [refresher](https://developer.nvidia.com/blog/cuda-refresher-cuda-programming-model/)
   - [PyCUDA](https://documen.tician.de/pycuda/index.html) documentation,
+  - Install CUDA on [Ubuntu 22.04](https://www.cherryservers.com/blog/install-cuda-ubuntu),  
+  - NVIDIA [NSight](https://developer.nvidia.com/nsight-systems) Systems,  
+  - Lesson of [GPU programming](https://carpentries-incubator.github.io/lesson-gpu-programming/) with different Python libraries, 
+  - GPU [Compute Capability](https://developer.nvidia.com/cuda-gpus),  
+  - How to [CUDA Pyton]
 
 2. Comparison of times execution with different configurations of CUDA blocks and threads for `Titan XP` GPU.  
   - with one thread (file `add_with_one_thread.cu`):  

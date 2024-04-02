@@ -132,6 +132,9 @@ my_env/
 .cupy_env/
 .numba_env/
 .pycuda_env/
+.jax_env/
+.common_env/
+.cuda_python_env/
 
 # Spyder project settings
 .spyderproject
