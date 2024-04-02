@@ -30,7 +30,7 @@
 
 ### II. Running the code
 - create virtual environment with `pip` or `conda` and activate it,
-- install dependencies from the `requirements.txt` file, for example `pip install -r requirements.txt`, 
+- install dependencies from the chosen `*_requirements.txt` file, for example `pip install -r numba_env_requirements.txt`, 
 - run the given script with `python name_of_the_file.py`,
 - enjoy the results :smiley:
 
