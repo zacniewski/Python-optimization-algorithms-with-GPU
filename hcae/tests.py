@@ -73,7 +73,7 @@ print(
     f"Mutated (or not) parameters: {mutation_of_parameters(hardcoded_operation_parameters, mutation_rate=MUTATION_RATE)}")
 
 testing_data_sequence = 2 * np.random.rand(1, DATA_SEQUENCE_SIZE) - 1
-# print(f"Testing data sequence: {testing_data_sequence}")
+print(f"Testing data sequence: {testing_data_sequence}")
 # print(f"Mutated (or not) data sequence: {mutation_of_data_sequence(testing_data_sequence)}")
 
 X, Y = np.mgrid[-2:2:41j, -2:2:41j]

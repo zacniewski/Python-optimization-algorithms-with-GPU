@@ -114,20 +114,21 @@ if __name__ == '__main__':
     samples = np.column_stack([X.ravel(), Y.ravel()])
     print(f"{samples.shape=}")
 
-    # Output values for all input samples
+    # output values for all input samples
     iterable1 = (
         calculate_output_from_ndm(ndm, in_neurons=input_neurons, out_neurons=output_neurons, in_neurons_value=s)
         for s in samples
     )
-    output_values_for_samples = np.fromiter(iterable1, dtype=np.dtype(list))
+    output_values_for_samples = np.fromiter(iterable1, dtype=np.dtype(np.array))
     print(f"\n{output_values_for_samples.shape=}")
 
-    # Values of the objective function for all samples
+    # values of the objective function for all samples
     iterable2 = (objective(s) for s in samples)
-    objective_values_for_samples = np.fromiter(iterable2, dtype=np.dtype(list))
+    objective_values_for_samples = np.fromiter(iterable2, dtype=np.dtype(np.array))
     print(f"{objective_values_for_samples.shape=}")
 
-    # Error value
+    # error value
     print(f"\nError: {np.sum(np.abs(output_values_for_samples - objective_values_for_samples))}")
 
+    # starting populations - two for operations and one for data sequence
 
