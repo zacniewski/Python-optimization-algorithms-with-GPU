@@ -185,7 +185,7 @@ def fill(
 
     :return: new value for NDM item
     """
-    print(f"{operation_parameters=}")
+    print(f"\n{operation_parameters=}")
     print(f"{number_of_column=}")
     print(f"{number_of_row=}")
     # here data_sequence[0] is a single value like e.g. 0.02430645

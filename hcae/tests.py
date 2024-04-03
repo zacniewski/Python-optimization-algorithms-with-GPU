@@ -89,11 +89,11 @@ ndm_out = calculate_output_from_ndm(
 )
 
 # single output from the NDM for the samples[0]
-print(f"{ndm_out=}")
+print(f"Single {ndm_out=}")
 
 # Single value of the objective function
 objective_value = objective(samples[0])
-print(f"Objective value: {objective_value}")
+print(f"Single objective value: {objective_value}")
 
 # oper2 i fill!!!
 ndm_after_oper2 = oper2(
