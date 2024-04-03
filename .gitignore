@@ -134,6 +134,7 @@ my_env/
 .pycuda_env/
 .jax_env/
 .common_env/
+.common_venv/
 .cuda_python_env/
 
 # Spyder project settings
