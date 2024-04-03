@@ -86,6 +86,9 @@ To check if everything is OK, after running the `check_jax.py` script we shouldn
 2. Comparison of times execution with different configurations of CUDA blocks and threads for `Titan XP` GPU.  
   - with one thread (file `add_with_one_thread.cu`):  
 
+To run standard C++ file (without CUDA code):  `g++ add.cpp -o add.out`,  
+To run `.cu` file (C++ with CUDA code): `nvcc add_with_one_thread.cu -o add_with_one_thread.out`
+
 After running `nvprof ./name_of_the_executable` we can get profiling information:  
 
 ```bash
@@ -208,9 +211,15 @@ After `ncu-ui` the problem appeared:
 ```bash
 Cannot mix incompatible Qt library (5.15.3) with this library (5.15.2)
 ```
-Solution was found [here](https://stackoverflow.com/questions/75792998/incompatible-qt-libraries-and-the-cuda-toolkit).
-After installation of NVIDIA Nsight Systems we can run the command `nsys profile name_of_the_executable` and then the profiling report is generated to the file `report1.nsys-rep`.
-To see this report we have to run `nsys-ui report1.nsys.rep`:  
+Solution was found [here](https://stackoverflow.com/questions/75792998/incompatible-qt-libraries-and-the-cuda-toolkit).  
+We can't run `nvcc` command on GPUs with Compute Capability > 8.0, but we can run `nsys` command (after installation of NVIDIA Nsight Systems).  
+When we run the command `nsys profile name_of_the_executable` (for example `nsys profile add_with_one_thread.out`), 
+then the profiling report is generated to the file `report1.nsys-rep`.
+To see this report we have to run `nsys-ui report1.nsys.rep`.  
+
+We have to configure the project, at the beginning we have to give the name of txe executable and full path to project:  
+![nsys-configuration](../figures/nsight_project_configuration.png)  
+Then we can view the visual representation of what happens during the CUDA program execution:  
 ![nsys-report](../figures/nsys-report.png)  
 
 After clicking right mouse button on `CUDA API` and choosing "Show the Events View" we can get timing information:  
