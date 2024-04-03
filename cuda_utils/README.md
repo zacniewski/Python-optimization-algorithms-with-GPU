@@ -81,7 +81,12 @@ To check if everything is OK, after running the `check_jax.py` script we shouldn
   - NVIDIA [NSight](https://developer.nvidia.com/nsight-systems) Systems,  
   - Lesson of [GPU programming](https://carpentries-incubator.github.io/lesson-gpu-programming/) with different Python libraries, 
   - GPU [Compute Capability](https://developer.nvidia.com/cuda-gpus),  
-  - How to [CUDA Pyton](https://developer.nvidia.com/how-to-cuda-python).  
+  - How to [CUDA Pyton](https://developer.nvidia.com/how-to-cuda-python),  
+  - [Numba](https://numba.readthedocs.io/en/stable/index.html) documentation,  
+  - [CuPy](https://cupy.dev/) documentation,  
+  - [PyCUDA](https://documen.tician.de/pycuda/) documentation,  
+  - [JAX](https://jax.readthedocs.io/en/latest/index.html) documentation,  
+  - [WebGPU Shading Language](https://www.w3.org/TR/WGSL/) working draft.  
 
 2. Comparison of times execution with different configurations of CUDA blocks and threads for `Titan XP` GPU.  
   - with one thread (file `add_with_one_thread.cu`):  
