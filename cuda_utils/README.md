@@ -35,6 +35,11 @@ sudo apt-get update
 sudo apt-get -y install cudnn
 ```
 
+For [JAX installation](https://jax.readthedocs.io/en/latest/installation.html):    
+If JAX detects the wrong version of the CUDA libraries, there are several things to check:  
+    - make sure that LD_LIBRARY_PATH is not set, since LD_LIBRARY_PATH can override the CUDA libraries.  
+    - make sure that the CUDA libraries installed are those requested by JAX. Rerunning the installation command above should work.
+
 
 1. Links
   - CUDA [cheat sheet](https://kdm.icm.edu.pl/Tutorials/GPU-intro/introduction.en/) from ICM UW :muscle:,
@@ -49,7 +54,7 @@ sudo apt-get -y install cudnn
   - NVIDIA [NSight](https://developer.nvidia.com/nsight-systems) Systems,  
   - Lesson of [GPU programming](https://carpentries-incubator.github.io/lesson-gpu-programming/) with different Python libraries, 
   - GPU [Compute Capability](https://developer.nvidia.com/cuda-gpus),  
-  - How to [CUDA Pyton]
+  - How to [CUDA Pyton](https://developer.nvidia.com/how-to-cuda-python).  
 
 2. Comparison of times execution with different configurations of CUDA blocks and threads for `Titan XP` GPU.  
   - with one thread (file `add_with_one_thread.cu`):  
