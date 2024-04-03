@@ -35,10 +35,37 @@ sudo apt-get update
 sudo apt-get -y install cudnn
 ```
 
+But to work with JAX (state on April, 2024) we have to:  
+  - install cuDNN 8.9 from [archive](https://developer.nvidia.com/rdp/cudnn-archive) page.
+  - install `libcudnn` package for our version of cuDNN.  
+
+To check available packages:  
+```bash
+sudo apt list -a libcudnn8-dev
+Listing... Done
+libcudnn8-dev/unknown 8.9.7.29-1+cuda12.2 amd64
+
+sudo apt-get install libcudnn8=8.9.7.29-1+cuda12.2
+```
+
+For newer version of CUDA I had to upgrade the [driver's version](https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/#cuda-major-component-versions__table-cuda-toolkit-driver-versions
+) of graphic card.
+
+From `nvidia-smi`:  
+```bash
+Driver Version: 550.54.14      CUDA Version: 12.4
+```
+
 For [JAX installation](https://jax.readthedocs.io/en/latest/installation.html):    
 If JAX detects the wrong version of the CUDA libraries, there are several things to check:  
     - make sure that LD_LIBRARY_PATH is not set, since LD_LIBRARY_PATH can override the CUDA libraries.  
     - make sure that the CUDA libraries installed are those requested by JAX. Rerunning the installation command above should work.
+
+Having CUDA and cuDNN installed locally, we can install JAX with:  
+```bash
+pip install --upgrade "jax[cuda12_local]" -f https://storage.googleapis.com/jax-releases/jax_cuda_releases.html
+```
+To check if everything is OK, after running the `check_jax.py` script we shouldn't see any errors.  
 
 
 1. Links
