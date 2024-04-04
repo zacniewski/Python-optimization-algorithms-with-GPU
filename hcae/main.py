@@ -1,7 +1,14 @@
 import numpy as np
 
-from constants import CROSSOVER_RATE, MUTATION_RATE, NDM_COLUMNS, NDM_ROWS, TOURNAMENT_CANDIDATES
 from activation_functions import activation_function, linear, sigmoid
+from constants import (CROSSOVER_RATE,
+                       DATA_SEQUENCE_SIZE,
+                       MUTATION_RATE,
+                       NDM_COLUMNS,
+                       NDM_ROWS,
+                       PARAMETERS_SIZE,
+                       TOURNAMENT_CANDIDATES
+                       )
 
 
 # first objective is a simple trigonometric function
@@ -102,7 +109,11 @@ def calculate_output_from_ndm(
 if __name__ == '__main__':
     # initialization of the NDM - random values from range (-1.0; 1.0)
     ndm = 2 * np.random.rand(NDM_ROWS, NDM_COLUMNS) - 1
-    print(f"{ndm.shape=}")
+
+    # zero the values under the 1st diagonale
+    # https: // numpy.org / doc / stable / reference / generated / numpy.triu.html
+    ndm = np.triu(ndm, k=1)
+    print(f"{ndm=}")
 
     # indexes of input and output neurons (depends on the task, that author had in mind)
     input_neurons = np.array([[0, 1]])
@@ -114,21 +125,27 @@ if __name__ == '__main__':
     samples = np.column_stack([X.ravel(), Y.ravel()])
     print(f"{samples.shape=}")
 
-    # output values for all input samples
+    # output values from NDM for all input samples
     iterable1 = (
         calculate_output_from_ndm(ndm, in_neurons=input_neurons, out_neurons=output_neurons, in_neurons_value=s)
         for s in samples
     )
-    output_values_for_samples = np.fromiter(iterable1, dtype=np.dtype(np.array))
+    output_values_for_samples = np.fromiter(iterable1, dtype=np.dtype(list))
     print(f"\n{output_values_for_samples.shape=}")
 
     # values of the objective function for all samples
     iterable2 = (objective(s) for s in samples)
-    objective_values_for_samples = np.fromiter(iterable2, dtype=np.dtype(np.array))
+    objective_values_for_samples = np.fromiter(iterable2, dtype=np.dtype(list))
     print(f"{objective_values_for_samples.shape=}")
 
     # error value
     print(f"\nError: {np.sum(np.abs(output_values_for_samples - objective_values_for_samples))}")
 
-    # starting populations - two for operations and one for data sequence
+    # initial populations - two for operations and one for data sequence
 
+    initial_operation_parameters_1 = np.random.randint(ndm.shape[0], size=PARAMETERS_SIZE)
+    initial_operation_parameters_2 = np.random.randint(ndm.shape[0], size=PARAMETERS_SIZE)
+    initial_data_sequence = 2 * np.random.rand(1, DATA_SEQUENCE_SIZE) - 1
+
+    print(f"{initial_operation_parameters_1=}")
+    print(f"{initial_operation_parameters_2=}")

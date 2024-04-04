@@ -16,7 +16,8 @@ hardcoded_ndm = np.array([
     [0, 0.3, 0, 0.6, 0.1, 0.5]
 ])
 
-print(f"{hardcoded_ndm=}")
+triu = np.triu(hardcoded_ndm, k=1)
+print(f"{triu=}")
 
 
 # input values
