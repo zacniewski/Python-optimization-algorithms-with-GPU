@@ -1,15 +1,16 @@
 import numpy as np
 
 from activation_functions import activation_function
-from constants import (CROSSOVER_RATE,
-                       DATA_SEQUENCE_SIZE,
-                       MUTATION_RATE,
-                       NDM_COLUMNS,
-                       NDM_ROWS,
-                       NUMBER_OF_ITERATIONS,
-                       PARAMETERS_SIZE,
-                       TOURNAMENT_CANDIDATES
-                       )
+from constants import (
+    CROSSOVER_RATE,
+    DATA_SEQUENCE_SIZE,
+    MUTATION_RATE,
+    NDM_COLUMNS,
+    NDM_ROWS,
+    NUMBER_OF_ITERATIONS,
+    PARAMETERS_SIZE,
+    TOURNAMENT_CANDIDATES,
+)
 
 
 # first objective is a simple trigonometric function
@@ -64,7 +65,7 @@ def calculate_output_from_ndm(
         in_ndm: np.array,
         in_neurons: np.array,
         out_neurons: np.array,
-        in_neurons_value: np.array
+        in_neurons_value: np.array,
 ) -> float:
     """
     :param in_ndm: input NDM matrix
@@ -79,7 +80,11 @@ def calculate_output_from_ndm(
 
     # storage for sigma values, first pair is for the '0' neuron
     # (first neuron, with '1' index on the figures and with '0' index in the NDM)
-    sigma = {0: activation_function(input_value=z_for_first_neuron, type_of_neuron_value=in_ndm[0][-1])}
+    sigma = {
+        0: activation_function(
+            input_value=z_for_first_neuron, type_of_neuron_value=in_ndm[0][-1]
+        )
+    }
 
     # calculating output values of neurons and storing them in the 'sigma' dictionary
     z = 0
@@ -95,7 +100,9 @@ def calculate_output_from_ndm(
             z = z + in_neurons_value[j] * 1
 
         # determine the activation function of 'z' basing on the values of input and 'type of neuron' cell
-        sigma[j] = activation_function(input_value=z, type_of_neuron_value=abs(in_ndm[j][-1]))
+        sigma[j] = activation_function(
+            input_value=z, type_of_neuron_value=abs(in_ndm[j][-1])
+        )
         z = 0
 
     # uncomment to check the outputs value of all neurons (after activation function)
@@ -107,49 +114,72 @@ def calculate_output_from_ndm(
     return out_value
 
 
-if __name__ == '__main__':
+def initialize_all() -> tuple:
     # initialization of the NDM - random values from range (-1.0; 1.0)
-    ndm = 2 * np.random.rand(NDM_ROWS, NDM_COLUMNS) - 1
+    init_ndm = 2 * np.random.rand(NDM_ROWS, NDM_COLUMNS) - 1
 
     # zero the values under the 1st diagonale
     # https: // numpy.org / doc / stable / reference / generated / numpy.triu.html
-    ndm = np.triu(ndm, k=1)
-    print(f"{ndm.shape=}")
+    init_ndm = np.triu(init_ndm, k=1)
 
-    # indexes of input and output neurons (depends on the task, that author had in mind)
-    input_neurons = np.array([[0, 1]])
-    output_neurons = np.array([[3]])
+    # initialization of the operations_parameters - random int values from range <0; NDM_ROWS)
+    init_oper_params_1 = np.random.randint(init_ndm.shape[0], size=PARAMETERS_SIZE)
+    init_oper_params_2 = np.random.randint(init_ndm.shape[0], size=PARAMETERS_SIZE)
+
+    # initialization of the data_sequence - random values from range (-1.0; 1.0)
+    init_data_seq = (2 * np.random.rand(1, DATA_SEQUENCE_SIZE) - 1)[0]
+    return init_ndm, init_oper_params_1, init_oper_params_2, init_data_seq
+
+
+def calculate_error(current_ndm, samples_values, in_neurons, out_neurons):
+    # output values from NDM for all input samples
+    iterable1 = (
+        calculate_output_from_ndm(
+            current_ndm,
+            in_neurons,
+            out_neurons,
+            in_neurons_value=s,
+        )
+        for s in samples_values
+    )
+    output_values_for_samples = np.fromiter(iterable1, dtype=np.dtype(list))
+    # print(f"\n{output_values_for_samples[0:10]=}")
+
+    # values of the objective function for all samples
+    iterable2 = (objective(s) for s in samples_values)
+    objective_values_for_samples = np.fromiter(iterable2, dtype=np.dtype(list))
+    # print(f"{objective_values_for_samples[0: 10]=}")
+
+    # error value
+    return np.sum(np.abs(output_values_for_samples[0:10] - objective_values_for_samples[0:10]))
+
+
+if __name__ == "__main__":
+    (
+        initial_ndm,
+        initial_operation_parameters_1,
+        initial_operation_parameters_2,
+        initial_data_sequence,
+    ) = initialize_all()
+
+    # initial populations - two for operations and one for data sequence
+    # print(f"{initial_operation_parameters_1=}")
+    # print(f"{initial_operation_parameters_2=}")
+    # print(f"{initial_data_sequence[-9:]=}")
 
     # create samples of input variables
     # X in <-2; 2> and Y in <-2; 2>
     X, Y = np.mgrid[-2:2:41j, -2:2:41j]
     samples = np.column_stack([X.ravel(), Y.ravel()])
-    print(f"{samples.shape=}")
+    # print(f"{samples.shape=}")
 
-    # output values from NDM for all input samples
-    iterable1 = (
-        calculate_output_from_ndm(ndm, in_neurons=input_neurons, out_neurons=output_neurons, in_neurons_value=s)
-        for s in samples
-    )
-    output_values_for_samples = np.fromiter(iterable1, dtype=np.dtype(list))
-    print(f"\n{output_values_for_samples.shape=}")
+    # indexes of input and output neurons (depends on the task, that author had in mind)
+    input_neurons = np.array([[0, 1]])
+    output_neurons = np.array([[3]])
 
-    # values of the objective function for all samples
-    iterable2 = (objective(s) for s in samples)
-    objective_values_for_samples = np.fromiter(iterable2, dtype=np.dtype(list))
-    print(f"{objective_values_for_samples.shape=}")
-
-    # error value
-    print(f"\nError: {np.sum(np.abs(output_values_for_samples - objective_values_for_samples))}")
-
-    # initial populations - two for operations and one for data sequence
-
-    initial_operation_parameters_1 = np.random.randint(ndm.shape[0], size=PARAMETERS_SIZE)
-    initial_operation_parameters_2 = np.random.randint(ndm.shape[0], size=PARAMETERS_SIZE)
-    initial_data_sequence = 2 * np.random.rand(1, DATA_SEQUENCE_SIZE) - 1
-
-    print(f"{initial_operation_parameters_1=}")
-    print(f"{initial_operation_parameters_2=}")
+    error = calculate_error(initial_ndm, samples, in_neurons=input_neurons, out_neurons=output_neurons)
+    print(f"Error = {error}")
 
     for gen in range(NUMBER_OF_ITERATIONS):
+        # the first step in the algorithm iteration is to evaluate all candidate solutions
         print(f"--- Iteration {gen} ---")

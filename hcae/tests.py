@@ -103,4 +103,8 @@ ndm_after_oper2 = oper2(
     hardcoded_ndm
 )
 
-print(f"{ndm_after_oper2=}")
+print(f"{ndm_after_oper2.shape=}")
+
+iterable3 = (np.random.randint(hardcoded_ndm.shape[0], size=PARAMETERS_SIZE) for _ in range(10))
+pop_params = np.fromiter(iterable3, dtype=np.dtype(list))
+print(f"{pop_params[7]=}")
