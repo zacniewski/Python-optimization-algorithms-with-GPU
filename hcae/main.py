@@ -1,11 +1,12 @@
 import numpy as np
 
-from activation_functions import activation_function, linear, sigmoid
+from activation_functions import activation_function
 from constants import (CROSSOVER_RATE,
                        DATA_SEQUENCE_SIZE,
                        MUTATION_RATE,
                        NDM_COLUMNS,
                        NDM_ROWS,
+                       NUMBER_OF_ITERATIONS,
                        PARAMETERS_SIZE,
                        TOURNAMENT_CANDIDATES
                        )
@@ -113,7 +114,7 @@ if __name__ == '__main__':
     # zero the values under the 1st diagonale
     # https: // numpy.org / doc / stable / reference / generated / numpy.triu.html
     ndm = np.triu(ndm, k=1)
-    print(f"{ndm=}")
+    print(f"{ndm.shape=}")
 
     # indexes of input and output neurons (depends on the task, that author had in mind)
     input_neurons = np.array([[0, 1]])
@@ -149,3 +150,6 @@ if __name__ == '__main__':
 
     print(f"{initial_operation_parameters_1=}")
     print(f"{initial_operation_parameters_2=}")
+
+    for gen in range(NUMBER_OF_ITERATIONS):
+        print(f"--- Iteration {gen} ---")
