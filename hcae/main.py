@@ -177,8 +177,14 @@ if __name__ == "__main__":
     input_neurons = np.array([[0, 1]])
     output_neurons = np.array([[3]])
 
-    error = calculate_error(initial_ndm, samples, in_neurons=input_neurons, out_neurons=output_neurons)
-    print(f"Error = {error}")
+    # calculate initial error
+    # the algorithm's task is to minimalize it
+    best_ndm, minimal_error = initial_ndm, calculate_error(
+        initial_ndm,
+        samples,
+        in_neurons=input_neurons,
+        out_neurons=output_neurons)
+    print(f"Initial error = {minimal_error}")
 
     for gen in range(NUMBER_OF_ITERATIONS):
         # the first step in the algorithm iteration is to evaluate all candidate solutions
