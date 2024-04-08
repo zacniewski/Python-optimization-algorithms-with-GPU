@@ -186,6 +186,12 @@ if __name__ == "__main__":
         out_neurons=output_neurons)
     print(f"Initial error = {minimal_error}")
 
+    # to modify NDM one need to invoke the 'oper2' function
+    # its arguments are: parameters, data sequence and "current" NDM
+    # when storing temporarily best NDM, we need to store also data sequence and parameters related to this NDM
+    # cause for example when we'd like to select the best parameters candidate(s),
+    # we need to have the data sequence unchanged in this process
+
     for gen in range(NUMBER_OF_ITERATIONS):
         # the first step in the algorithm iteration is to evaluate all candidate solutions
         print(f"--- Iteration {gen} ---")
