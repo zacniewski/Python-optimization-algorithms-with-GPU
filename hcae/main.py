@@ -11,6 +11,7 @@ from constants import (
     PARAMETERS_SIZE,
     TOURNAMENT_CANDIDATES, POPULATION_SIZE,
 )
+from hcae.hcae_operations import oper2
 
 
 # first objective is a simple trigonometric function
@@ -214,5 +215,10 @@ if __name__ == "__main__":
     for gen in range(NUMBER_OF_ITERATIONS):
         # the first step in the algorithm iteration is to evaluate all candidate solutions
         print(f"--- Iteration {gen} ---")
+        ndm_after_oper2 = oper2(
+            random_operation_parameters,
+            testing_data_sequence,
+            hardcoded_ndm
+        )
 
 
