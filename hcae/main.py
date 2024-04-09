@@ -9,7 +9,7 @@ from constants import (
     NDM_ROWS,
     NUMBER_OF_ITERATIONS,
     PARAMETERS_SIZE,
-    TOURNAMENT_CANDIDATES,
+    TOURNAMENT_CANDIDATES, POPULATION_SIZE,
 )
 
 
@@ -128,6 +128,8 @@ def initialize_all() -> tuple:
 
     # initialization of the data_sequence - random values from range (-1.0; 1.0)
     init_data_seq = (2 * np.random.rand(1, DATA_SEQUENCE_SIZE) - 1)[0]
+    print(f"{init_data_seq=}")
+
     return init_ndm, init_oper_params_1, init_oper_params_2, init_data_seq
 
 
@@ -162,7 +164,7 @@ if __name__ == "__main__":
         initial_data_sequence,
     ) = initialize_all()
 
-    # initial populations - two for operations and one for data sequence
+    # initial candidates - two for operations and one for data sequence
     # print(f"{initial_operation_parameters_1=}")
     # print(f"{initial_operation_parameters_2=}")
     # print(f"{initial_data_sequence[-9:]=}")
@@ -184,6 +186,9 @@ if __name__ == "__main__":
         samples,
         in_neurons=input_neurons,
         out_neurons=output_neurons)
+    best_op_params_1, best_op_params_2, best_data_seq = (initial_operation_parameters_1,
+                                                         initial_operation_parameters_2,
+                                                         initial_data_sequence)
     print(f"Initial error = {minimal_error}")
 
     # to modify NDM one need to invoke the 'oper2' function
@@ -192,6 +197,22 @@ if __name__ == "__main__":
     # cause for example when we'd like to select the best parameters candidate(s),
     # we need to have the data sequence unchanged in this process
 
+    iterable_params_1 = (np.random.randint(best_ndm.shape[0], size=PARAMETERS_SIZE) for _ in
+                         range(POPULATION_SIZE))
+    population_params_1 = np.fromiter(iterable_params_1, dtype=np.dtype(list))
+    print(f"{population_params_1.shape=}")
+
+    iterable_params_2 = (np.random.randint(best_ndm.shape[0], size=PARAMETERS_SIZE) for _ in
+                         range(POPULATION_SIZE))
+    population_params_2 = np.fromiter(iterable_params_2, dtype=np.dtype(list))
+    print(f"{population_params_2.shape=}")
+
+    iterable_data_seq = ((2 * np.random.rand(1, DATA_SEQUENCE_SIZE) - 1)[0] for _ in range(3))
+    population_data_seq = np.fromiter(iterable_data_seq, dtype=np.dtype(list))
+    print(f"{population_data_seq[0].shape=}")
+
     for gen in range(NUMBER_OF_ITERATIONS):
         # the first step in the algorithm iteration is to evaluate all candidate solutions
         print(f"--- Iteration {gen} ---")
+
+

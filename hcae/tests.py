@@ -2,7 +2,7 @@ import numpy as np
 from numpy import asarray, ogrid
 from numpy.random import randint, rand
 
-from constants import DATA_SEQUENCE_SIZE, PARAMETERS_SIZE, MUTATION_RATE
+from constants import DATA_SEQUENCE_SIZE, PARAMETERS_SIZE, MUTATION_RATE, POPULATION_SIZE
 from hcae_operations import fill, oper2
 from main import calculate_output_from_ndm, objective
 
@@ -105,6 +105,10 @@ ndm_after_oper2 = oper2(
 
 print(f"{ndm_after_oper2.shape=}")
 
-iterable3 = (np.random.randint(hardcoded_ndm.shape[0], size=PARAMETERS_SIZE) for _ in range(10))
-pop_params = np.fromiter(iterable3, dtype=np.dtype(list))
-print(f"{pop_params[7]=}")
+iterable_params_1 = (np.random.randint(hardcoded_ndm.shape[0], size=PARAMETERS_SIZE) for _ in range(POPULATION_SIZE))
+population_params = np.fromiter(iterable_params_1, dtype=np.dtype(list))
+print(f"{population_params.shape=}")
+
+iterable_data_seq = ((2 * np.random.rand(1, DATA_SEQUENCE_SIZE) - 1)[0] for _ in range(3))
+population_data_seq = np.fromiter(iterable_data_seq, dtype=np.dtype(list))
+print(f"{population_data_seq[0]=}")
