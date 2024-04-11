@@ -111,4 +111,4 @@ print(f"{population_params.shape=}")
 
 iterable_data_seq = ((2 * np.random.rand(1, DATA_SEQUENCE_SIZE) - 1)[0] for _ in range(3))
 population_data_seq = np.fromiter(iterable_data_seq, dtype=np.dtype(list))
-print(f"{population_data_seq[0]=}")
+print(f"{population_data_seq[0].size=}")

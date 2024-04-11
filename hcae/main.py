@@ -11,7 +11,7 @@ from constants import (
     PARAMETERS_SIZE,
     TOURNAMENT_CANDIDATES, POPULATION_SIZE,
 )
-from hcae.hcae_operations import oper2
+from hcae_operations import oper2
 
 
 # first objective is a simple trigonometric function
@@ -119,7 +119,7 @@ def initialize_all() -> tuple:
     # initialization of the NDM - random values from range (-1.0; 1.0)
     init_ndm = 2 * np.random.rand(NDM_ROWS, NDM_COLUMNS) - 1
 
-    # zero the values under the 1st diagonale
+    # zero the values under the 1st diagonal
     # https: // numpy.org / doc / stable / reference / generated / numpy.triu.html
     init_ndm = np.triu(init_ndm, k=1)
 
@@ -129,7 +129,7 @@ def initialize_all() -> tuple:
 
     # initialization of the data_sequence - random values from range (-1.0; 1.0)
     init_data_seq = (2 * np.random.rand(1, DATA_SEQUENCE_SIZE) - 1)[0]
-    print(f"{init_data_seq=}")
+    print(f"{init_data_seq.shape=}")
 
     return init_ndm, init_oper_params_1, init_oper_params_2, init_data_seq
 
@@ -154,10 +154,11 @@ def calculate_error(current_ndm, samples_values, in_neurons, out_neurons):
     # print(f"{objective_values_for_samples[0: 10]=}")
 
     # error value
-    return np.sum(np.abs(output_values_for_samples[0:10] - objective_values_for_samples[0:10]))
+    return np.sum(np.abs(output_values_for_samples - objective_values_for_samples))
 
 
 if __name__ == "__main__":
+    # NDM, parameters and data sequence initialization
     (
         initial_ndm,
         initial_operation_parameters_1,
@@ -195,30 +196,65 @@ if __name__ == "__main__":
     # to modify NDM one need to invoke the 'oper2' function
     # its arguments are: parameters, data sequence and "current" NDM
     # when storing temporarily best NDM, we need to store also data sequence and parameters related to this NDM
-    # cause for example when we'd like to select the best parameters candidate(s),
-    # we need to have the data sequence unchanged in this process
+    # cause for example when we'd like to select the best parameters_1 candidates,
+    # we need to have the data sequence and best parameters_2 unchanged in this process
 
+    # params_1 population
     iterable_params_1 = (np.random.randint(best_ndm.shape[0], size=PARAMETERS_SIZE) for _ in
                          range(POPULATION_SIZE))
     population_params_1 = np.fromiter(iterable_params_1, dtype=np.dtype(list))
     print(f"{population_params_1.shape=}")
 
+    # params_2 population
     iterable_params_2 = (np.random.randint(best_ndm.shape[0], size=PARAMETERS_SIZE) for _ in
                          range(POPULATION_SIZE))
     population_params_2 = np.fromiter(iterable_params_2, dtype=np.dtype(list))
     print(f"{population_params_2.shape=}")
 
+    # data_seq population
     iterable_data_seq = ((2 * np.random.rand(1, DATA_SEQUENCE_SIZE) - 1)[0] for _ in range(3))
     population_data_seq = np.fromiter(iterable_data_seq, dtype=np.dtype(list))
     print(f"{population_data_seq[0].shape=}")
 
-    for gen in range(NUMBER_OF_ITERATIONS):
-        # the first step in the algorithm iteration is to evaluate all candidate solutions
+    for gen in range(1):
         print(f"--- Iteration {gen} ---")
-        ndm_after_oper2 = oper2(
-            random_operation_parameters,
-            testing_data_sequence,
-            hardcoded_ndm
+
+        # the first step in the algorithm iteration is to evaluate all candidates in the population
+        # we need to invoke calculate_error() for every NDM
+        # every NDM is changed by given argument only, i.e. params_1 or params_2 or data_sequence
+        # every population has size POPULATION_SIZE :)
+
+        # evaluate all candidates in the population (params_1)
+        iter_evaluate_error_from_params_1 = (
+            calculate_error(
+                oper2(pop_par_1, best_data_seq, best_ndm),  # updated NDM after changing operation parameters_1
+                samples,
+                in_neurons=input_neurons,
+                out_neurons=output_neurons)
+            for pop_par_1 in population_params_1
         )
+        evaluated_params_1 = np.fromiter(iter_evaluate_error_from_params_1, dtype=np.dtype(list))
+        print(evaluated_params_1[0])
+        # selecting the best params_1 candidates
+        for i in range(POPULATION_SIZE):
+            if evaluated_params_1[i] < minimal_error:
+                minimal_error = evaluated_params_1[i]
+                best_ndm = oper2(population_params_1[i], best_data_seq, best_ndm)
+                print(f"New {minimal_error=}")
+
+        print(f"{np.min(evaluated_params_1)=}")
+
+        # select parents
+
+        # create the next generation
+
+
+
+
+
+
+        # evaluate all candidates in the population (params_2)
+
+        # evaluate all candidates in the population (data_sequence)
 
 

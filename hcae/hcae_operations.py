@@ -129,37 +129,37 @@ def oper2(operation_parameters, data_sequence: np.ndarray, ndm) -> np.ndarray:
     where = operation_parameters[5]
     holes = 0
     num_of_ndm_rows, num_of_ndm_columns = ndm.shape
-    print(f"{ndm[0]=}")
+    # print(f"{ndm[0]=}")
 
     # here data_sequence[0] is an array like e.g. [ 0.02430645, -0.85104383,  0.51005848, ...]
 
     # check direction of filling
     if operation_parameters[0] % 2 == 0:
-        print("I'm in else of oper2")
+        # print("I'm in else of oper2")
 
         for k in range(num_of_ndm_columns):
             for j in range(num_of_ndm_rows):
                 tmp = fill(
-                    k, j, operation_parameters, data_sequence[0], filled, where, holes
+                    k, j, operation_parameters, data_sequence, filled, where, holes
                 )
                 if tmp != -1.0:
                     ndm[j][k] = tmp
-                else:
-                    print("-1 upper")
+                # else:
+                    # print("-1 upper")
 
     else:
-        print("I'm in else of oper2")
+        # print("I'm in else of oper2")
 
         for k in range(num_of_ndm_rows):
             for j in range(num_of_ndm_columns):
                 tmp = fill(
-                    j, k, operation_parameters, data_sequence[0], filled, where, holes
+                    j, k, operation_parameters, data_sequence, filled, where, holes
                 )
                 if tmp != -1.0:
                     ndm[k][j] = tmp
-                    print("Not -1")
-                else:
-                    print("-1 lower")
+                    # print("Not -1")
+                # else:
+                    # print("-1 lower")
 
     return ndm
 
@@ -185,32 +185,34 @@ def fill(
 
     :return: new value for NDM item
     """
-    print(f"\n{operation_parameters=}")
-    print(f"{number_of_column=}")
-    print(f"{number_of_row=}")
+    # print(f"\n{operation_parameters=}")
+    # print(f"{number_of_column=}")
+    # print(f"{number_of_row=}")
     # here data_sequence[0] is a single value like e.g. 0.02430645
 
-    print(f"{number_of_updated_items=}")
-    print(f"{starting_position_in_data=}")
-    print(f"{number_of_holes=}")
+    # print(f"{number_of_updated_items=}")
+    # print(f"{starting_position_in_data=}")
+    # print(f"{number_of_holes=}")
 
     if (
             number_of_updated_items < operation_parameters[4]
             and number_of_column > operation_parameters[3]
             and number_of_row > operation_parameters[2]
     ):
-        print("I'm in if of fill")
+        # print("I'm in if of fill")
         number_of_updated_items += 1
         if number_of_holes == operation_parameters[1]:
             number_of_holes = 0
             starting_position_in_data += 1
-            print(f"{data_sequence[starting_position_in_data % len(data_sequence)]=}")
-            return data_sequence[starting_position_in_data % len(data_sequence)]
+            # print(f"{starting_position_in_data=}")
+            # print(f"{data_sequence=}")
+            # print(f"{data_sequence[starting_position_in_data % data_sequence.size]=}")
+            return data_sequence[starting_position_in_data % data_sequence.size]
         else:
             number_of_holes += 1
             return 0.0
     else:
-        print("I'm in else of fill")
+        # print("I'm in else of fill")
         return -1.0
 
 
