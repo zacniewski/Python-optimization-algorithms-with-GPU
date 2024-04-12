@@ -203,7 +203,7 @@ if __name__ == "__main__":
     iterable_params_1 = (np.random.randint(best_ndm.shape[0], size=PARAMETERS_SIZE) for _ in
                          range(POPULATION_SIZE))
     population_params_1 = np.fromiter(iterable_params_1, dtype=np.dtype(list))
-    print(f"{population_params_1.shape=}")
+    print(f"{population_params_1=}")
 
     # params_2 population
     iterable_params_2 = (np.random.randint(best_ndm.shape[0], size=PARAMETERS_SIZE) for _ in
@@ -225,6 +225,7 @@ if __name__ == "__main__":
         # every population has size POPULATION_SIZE :)
 
         # evaluate all candidates in the population (params_1)
+        # best_data_seq and best_ndm are constant during evaluating candidates for params_1 population!
         iter_evaluate_error_from_params_1 = (
             calculate_error(
                 oper2(pop_par_1, best_data_seq, best_ndm),  # updated NDM after changing operation parameters_1
@@ -233,16 +234,24 @@ if __name__ == "__main__":
                 out_neurons=output_neurons)
             for pop_par_1 in population_params_1
         )
-        evaluated_params_1 = np.fromiter(iter_evaluate_error_from_params_1, dtype=np.dtype(list))
-        print(evaluated_params_1[0])
+        scores_for_params_1 = np.fromiter(iter_evaluate_error_from_params_1, dtype=np.dtype(list))
+        # print(f"{scores_for_params_1=}")
+
         # selecting the best params_1 candidates
         for i in range(POPULATION_SIZE):
-            if evaluated_params_1[i] < minimal_error:
-                minimal_error = evaluated_params_1[i]
-                best_ndm = oper2(population_params_1[i], best_data_seq, best_ndm)
-                print(f"New {minimal_error=}")
+            if scores_for_params_1[i] < minimal_error:
+                minimal_error = scores_for_params_1[i]
+                best_ndm = oper2(population_params_1[i], best_data_seq, best_ndm)  # new best NDM
+                best_op_params_1 = population_params_1[i]  # new best params_1
+                print(f"New {minimal_error=} (for params_1)")
+                print(f"New {best_op_params_1=} (for params_1)")
 
-        print(f"{np.min(evaluated_params_1)=}")
+        # evaluate all candidates in the population (data_sequence)
+        # best_op_params_1 and best_ndm are constant during evaluating candidates for data_seq population!
+
+
+        # evaluate all candidates in the population (params_2)
+        # best_data_seq and best_ndm are constant during evaluating candidates for params_2 population!
 
         # select parents
 
@@ -256,5 +265,7 @@ if __name__ == "__main__":
         # evaluate all candidates in the population (params_2)
 
         # evaluate all candidates in the population (data_sequence)
+
+        # replace population
 
 
