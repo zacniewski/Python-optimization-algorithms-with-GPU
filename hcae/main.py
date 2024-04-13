@@ -1,4 +1,6 @@
 import numpy as np
+from tqdm import tqdm
+
 
 from activation_functions import activation_function
 from constants import (
@@ -129,7 +131,7 @@ def initialize_all() -> tuple:
 
     # initialization of the data_sequence - random values from range (-1.0; 1.0)
     init_data_seq = (2 * np.random.rand(1, DATA_SEQUENCE_SIZE) - 1)[0]
-    print(f"{init_data_seq.shape=}")
+    # print(f"{init_data_seq.shape=}")
 
     return init_ndm, init_oper_params_1, init_oper_params_2, init_data_seq
 
@@ -203,36 +205,37 @@ if __name__ == "__main__":
     iterable_params_1 = (np.random.randint(best_ndm.shape[0], size=PARAMETERS_SIZE) for _ in
                          range(POPULATION_SIZE))
     population_params_1 = np.fromiter(iterable_params_1, dtype=np.dtype(list))
-    print(f"{population_params_1=}")
 
     # params_2 population
     iterable_params_2 = (np.random.randint(best_ndm.shape[0], size=PARAMETERS_SIZE) for _ in
                          range(POPULATION_SIZE))
     population_params_2 = np.fromiter(iterable_params_2, dtype=np.dtype(list))
-    print(f"{population_params_2.shape=}")
+    # print(f"{population_params_2.shape=}")
 
     # data_seq population
-    iterable_data_seq = ((2 * np.random.rand(1, DATA_SEQUENCE_SIZE) - 1)[0] for _ in range(3))
+    iterable_data_seq = ((2 * np.random.rand(1, DATA_SEQUENCE_SIZE) - 1)[0] for _ in range(POPULATION_SIZE))
     population_data_seq = np.fromiter(iterable_data_seq, dtype=np.dtype(list))
-    print(f"{population_data_seq[0].shape=}")
 
     for gen in range(1):
-        print(f"--- Iteration {gen} ---")
+        print(f"\n --- Iteration {gen} ---")
 
         # the first step in the algorithm iteration is to evaluate all candidates in the population
         # we need to invoke calculate_error() for every NDM
         # every NDM is changed by given argument only, i.e. params_1 or params_2 or data_sequence
         # every population has size POPULATION_SIZE :)
 
+        # ---- FIRST COMPONENT -----
         # evaluate all candidates in the population (params_1)
         # best_data_seq and best_ndm are constant during evaluating candidates for params_1 population!
+
+        print("\n Evaluating parameters #1 ...")
         iter_evaluate_error_from_params_1 = (
             calculate_error(
                 oper2(pop_par_1, best_data_seq, best_ndm),  # updated NDM after changing operation parameters_1
                 samples,
                 in_neurons=input_neurons,
                 out_neurons=output_neurons)
-            for pop_par_1 in population_params_1
+            for pop_par_1 in tqdm(population_params_1)
         )
         scores_for_params_1 = np.fromiter(iter_evaluate_error_from_params_1, dtype=np.dtype(list))
         # print(f"{scores_for_params_1=}")
@@ -244,27 +247,72 @@ if __name__ == "__main__":
                 best_ndm = oper2(population_params_1[i], best_data_seq, best_ndm)  # new best NDM
                 best_op_params_1 = population_params_1[i]  # new best params_1
                 print(f"New {minimal_error=} (for params_1)")
-                print(f"New {best_op_params_1=} (for params_1)")
 
+        # ---- SECOND COMPONENT -----
         # evaluate all candidates in the population (data_sequence)
         # best_op_params_1 and best_ndm are constant during evaluating candidates for data_seq population!
 
+        print("\n Evaluating data sequence ...")
+        iter_evaluate_error_from_data_seq = (
+            calculate_error(
+                oper2(best_op_params_1, pop_data_seq, best_ndm),  # updated NDM after changing operation parameters_1
+                samples,
+                in_neurons=input_neurons,
+                out_neurons=output_neurons)
+            for pop_data_seq in tqdm(population_data_seq)
+        )
+        scores_for_data_seq = np.fromiter(iter_evaluate_error_from_data_seq, dtype=np.dtype(list))
 
+        # selecting the best data_seq candidates
+        for i in range(POPULATION_SIZE):
+
+            if scores_for_data_seq[i] < minimal_error:
+                minimal_error = scores_for_data_seq[i]
+                best_ndm = oper2(best_op_params_1, population_data_seq[i], best_ndm)  # new best NDM
+                best_data_seq = population_data_seq[i]  # new best data_seq
+                print(f"New {minimal_error=} (for data_seq)")
+
+        # ---- THIRD COMPONENT -----
         # evaluate all candidates in the population (params_2)
         # best_data_seq and best_ndm are constant during evaluating candidates for params_2 population!
 
+        print("\n Evaluating parameters #2 ...")
+        iter_evaluate_error_from_params_2 = (
+            calculate_error(
+                oper2(pop_par_2, best_data_seq, best_ndm),  # updated NDM after changing operation parameters_1
+                samples,
+                in_neurons=input_neurons,
+                out_neurons=output_neurons)
+            for pop_par_2 in tqdm(population_params_2)
+        )
+        scores_for_params_2 = np.fromiter(iter_evaluate_error_from_params_2, dtype=np.dtype(list))
+
+        # selecting the best params_2 candidates
+        for i in range(POPULATION_SIZE):
+            if scores_for_params_2[i] < minimal_error:
+                minimal_error = scores_for_params_2[i]
+                best_ndm = oper2(population_params_2[i], best_data_seq, best_ndm)  # new best NDM
+                best_op_params_2 = population_params_2[i]  # new best params_1
+                print(f"New {minimal_error=} (for params_2)")
+
+        print(f"\n New {minimal_error=} (after evaluations)")
+
         # select parents
+        print("\n Selecting parents from parameters #1 ...")
+        iter_selected_params_1 = (tournament_selection(population_params_1, scores_for_params_1) for _ in tqdm(range(POPULATION_SIZE)))
+        selected_params_1 = np.fromiter(iter_selected_params_1, dtype=np.dtype(list))
+
+        print("\n Selecting parents from data sequence ...")
+        iter_selected_data_seq = (tournament_selection(population_data_seq, scores_for_data_seq) for _ in
+                                  tqdm(range(POPULATION_SIZE)))
+        selected_data_seq = np.fromiter(iter_selected_data_seq, dtype=np.dtype(list))
+
+        print("\n Selecting parents from parameters #2 ...")
+        iter_selected_params_2 = (tournament_selection(population_params_2, scores_for_params_2) for _ in
+                                  tqdm(range(POPULATION_SIZE)))
+        selected_params_2 = np.fromiter(iter_selected_params_2, dtype=np.dtype(list))
 
         # create the next generation
-
-
-
-
-
-
-        # evaluate all candidates in the population (params_2)
-
-        # evaluate all candidates in the population (data_sequence)
 
         # replace population
 
