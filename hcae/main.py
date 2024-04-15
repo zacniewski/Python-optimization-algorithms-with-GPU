@@ -330,7 +330,7 @@ if __name__ == "__main__":
             parent_1, parent_2 = selected_params_1[i], selected_params_1[i + 1]
 
             # crossover and mutation
-            for c in crossover(parent_1, parent_2, CROSSOVER_RATE):
+            for index, c in enumerate(crossover(parent_1, parent_2, CROSSOVER_RATE)):
                 # mutation
                 mutation_of_parameters(c, MUTATION_RATE)
                 print(f"{i=}")
@@ -338,7 +338,7 @@ if __name__ == "__main__":
                 print(f"{c=}")
 
                 # store for next generation
-                children[i] = c
+                children[i+index] = c
 
         # replace population
         print(f"{children=}")
