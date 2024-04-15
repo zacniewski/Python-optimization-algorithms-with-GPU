@@ -61,8 +61,16 @@ def crossover(parent1, parent2, r_cross=CROSSOVER_RATE):
         # perform crossover
         child1 = np.concatenate((parent1[:pt], parent2[pt:]), axis=0)
         child2 = np.concatenate((parent2[:pt], parent1[pt:]), axis=0)
-    return [child1, child2]
+    return np.array([child1, child2])
 
+
+def mutation_of_parameters(params, mutation_rate=MUTATION_RATE):
+    random_index = np.random.randint(params.size)
+    if np.random.rand() < mutation_rate:
+        # change the value at random index
+        print("Mutation of parameters!")
+        params[random_index] = np.random.randint(PARAMETERS_SIZE)
+    # return params
 
 def calculate_output_from_ndm(
         in_ndm: np.array,
@@ -215,6 +223,7 @@ if __name__ == "__main__":
     # data_seq population
     iterable_data_seq = ((2 * np.random.rand(1, DATA_SEQUENCE_SIZE) - 1)[0] for _ in range(POPULATION_SIZE))
     population_data_seq = np.fromiter(iterable_data_seq, dtype=np.dtype(list))
+    print(f"{population_data_seq.shape=}")
 
     for gen in range(1):
         print(f"\n --- Iteration {gen} ---")
@@ -313,7 +322,24 @@ if __name__ == "__main__":
         selected_params_2 = np.fromiter(iter_selected_params_2, dtype=np.dtype(list))
 
         # create the next generation
+        children = np.zeros((POPULATION_SIZE, PARAMETERS_SIZE))
+        print(f"{children=}")
+
+        for i in range(0, POPULATION_SIZE, 2):
+            # get selected parents in pairs
+            parent_1, parent_2 = selected_params_1[i], selected_params_1[i + 1]
+
+            # crossover and mutation
+            for c in crossover(parent_1, parent_2, CROSSOVER_RATE):
+                # mutation
+                mutation_of_parameters(c, MUTATION_RATE)
+                print(f"{i=}")
+
+                print(f"{c=}")
+
+                # store for next generation
+                children[i] = c
 
         # replace population
-
+        print(f"{children=}")
 
