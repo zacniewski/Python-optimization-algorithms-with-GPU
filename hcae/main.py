@@ -1,7 +1,6 @@
 import numpy as np
 from tqdm import tqdm
 
-
 from activation_functions import activation_function
 from constants import (
     CROSSOVER_RATE,
@@ -68,9 +67,19 @@ def mutation_of_parameters(params, mutation_rate=MUTATION_RATE):
     random_index = np.random.randint(params.size)
     if np.random.rand() < mutation_rate:
         # change the value at random index
-        print("Mutation of parameters!")
+        # print("Mutation of parameters!")
         params[random_index] = np.random.randint(PARAMETERS_SIZE)
     # return params
+
+
+def mutation_of_data_sequence(d_s, mutation_rate=MUTATION_RATE):
+    random_index = np.random.randint(d_s.size)
+    if np.random.rand() < mutation_rate:
+        # change the value at random index
+        # print("Mutation of data sequence!")
+        d_s[random_index] = np.random.randint(DATA_SEQUENCE_SIZE)
+    # return params
+
 
 def calculate_output_from_ndm(
         in_ndm: np.array,
@@ -223,9 +232,8 @@ if __name__ == "__main__":
     # data_seq population
     iterable_data_seq = ((2 * np.random.rand(1, DATA_SEQUENCE_SIZE) - 1)[0] for _ in range(POPULATION_SIZE))
     population_data_seq = np.fromiter(iterable_data_seq, dtype=np.dtype(list))
-    print(f"{population_data_seq.shape=}")
 
-    for gen in range(1):
+    for gen in range(1, NUMBER_OF_ITERATIONS + 1):
         print(f"\n --- Iteration {gen} ---")
 
         # the first step in the algorithm iteration is to evaluate all candidates in the population
@@ -237,7 +245,7 @@ if __name__ == "__main__":
         # evaluate all candidates in the population (params_1)
         # best_data_seq and best_ndm are constant during evaluating candidates for params_1 population!
 
-        print("\n Evaluating parameters #1 ...")
+        print(f"\n Evaluating parameters_1 in iteration #{gen} ...")
         iter_evaluate_error_from_params_1 = (
             calculate_error(
                 oper2(pop_par_1, best_data_seq, best_ndm),  # updated NDM after changing operation parameters_1
@@ -261,7 +269,7 @@ if __name__ == "__main__":
         # evaluate all candidates in the population (data_sequence)
         # best_op_params_1 and best_ndm are constant during evaluating candidates for data_seq population!
 
-        print("\n Evaluating data sequence ...")
+        print(f"\n Evaluating data sequence in iteration #{gen} ...")
         iter_evaluate_error_from_data_seq = (
             calculate_error(
                 oper2(best_op_params_1, pop_data_seq, best_ndm),  # updated NDM after changing operation parameters_1
@@ -285,7 +293,7 @@ if __name__ == "__main__":
         # evaluate all candidates in the population (params_2)
         # best_data_seq and best_ndm are constant during evaluating candidates for params_2 population!
 
-        print("\n Evaluating parameters #2 ...")
+        print(f"\n Evaluating parameters_2 in iteration #{gen} ...")
         iter_evaluate_error_from_params_2 = (
             calculate_error(
                 oper2(pop_par_2, best_data_seq, best_ndm),  # updated NDM after changing operation parameters_1
@@ -307,8 +315,9 @@ if __name__ == "__main__":
         print(f"\n New {minimal_error=} (after evaluations)")
 
         # select parents
-        print("\n Selecting parents from parameters #1 ...")
-        iter_selected_params_1 = (tournament_selection(population_params_1, scores_for_params_1) for _ in tqdm(range(POPULATION_SIZE)))
+        print("\n Selecting parents from parameters_1 ...")
+        iter_selected_params_1 = (tournament_selection(population_params_1, scores_for_params_1) for _ in
+                                  tqdm(range(POPULATION_SIZE)))
         selected_params_1 = np.fromiter(iter_selected_params_1, dtype=np.dtype(list))
 
         print("\n Selecting parents from data sequence ...")
@@ -316,30 +325,50 @@ if __name__ == "__main__":
                                   tqdm(range(POPULATION_SIZE)))
         selected_data_seq = np.fromiter(iter_selected_data_seq, dtype=np.dtype(list))
 
-        print("\n Selecting parents from parameters #2 ...")
+        print("\n Selecting parents from parameters_2 ...")
         iter_selected_params_2 = (tournament_selection(population_params_2, scores_for_params_2) for _ in
                                   tqdm(range(POPULATION_SIZE)))
         selected_params_2 = np.fromiter(iter_selected_params_2, dtype=np.dtype(list))
 
         # create the next generation
-        children = np.zeros((POPULATION_SIZE, PARAMETERS_SIZE))
-        print(f"{children=}")
+        children_of_params_1 = np.zeros((POPULATION_SIZE, PARAMETERS_SIZE), dtype=int)
+        children_of_data_seq = np.zeros((POPULATION_SIZE, DATA_SEQUENCE_SIZE))
+        children_of_params_2 = np.zeros((POPULATION_SIZE, PARAMETERS_SIZE), dtype=int)
 
         for i in range(0, POPULATION_SIZE, 2):
             # get selected parents in pairs
             parent_1, parent_2 = selected_params_1[i], selected_params_1[i + 1]
+            parent_3, parent_4 = selected_data_seq[i], selected_data_seq[i + 1]
+            parent_5, parent_6 = selected_params_2[i], selected_params_2[i + 1]
 
-            # crossover and mutation
+            # crossover and mutation for params_1
             for index, c in enumerate(crossover(parent_1, parent_2, CROSSOVER_RATE)):
                 # mutation
                 mutation_of_parameters(c, MUTATION_RATE)
-                print(f"{i=}")
-
-                print(f"{c=}")
 
                 # store for next generation
-                children[i+index] = c
+                children_of_params_1[i + index] = c
 
-        # replace population
-        print(f"{children=}")
+            # crossover and mutation for data_seq
+            for index, d in enumerate(crossover(parent_3, parent_4, CROSSOVER_RATE)):
+                # mutation
+                mutation_of_data_sequence(d, MUTATION_RATE)
 
+                # store for next generation
+                children_of_data_seq[i + index] = d
+
+            # crossover and mutation for params_2
+            for index, e in enumerate(crossover(parent_5, parent_6, CROSSOVER_RATE)):
+                # mutation
+                mutation_of_parameters(e, MUTATION_RATE)
+
+                # store for next generation
+                children_of_params_2[i + index] = e
+
+        # replace populations
+        population_params_1 = children_of_params_1
+        population_data_seq = children_of_data_seq
+        population_params_2 = children_of_params_2
+
+    print(f"{best_ndm.shape=}")
+    print(f"{minimal_error=}")
