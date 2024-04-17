@@ -233,8 +233,9 @@ if __name__ == "__main__":
     iterable_data_seq = ((2 * np.random.rand(1, DATA_SEQUENCE_SIZE) - 1)[0] for _ in range(POPULATION_SIZE))
     population_data_seq = np.fromiter(iterable_data_seq, dtype=np.dtype(list))
 
-    for gen in range(1, NUMBER_OF_ITERATIONS + 1):
+    for gen in range(1, NUMBER_OF_ITERATIONS):
         print(f"\n --- Iteration {gen} ---")
+        print(f"{population_params_1[:3]=} from iteration #{gen}")
 
         # the first step in the algorithm iteration is to evaluate all candidates in the population
         # we need to invoke calculate_error() for every NDM
@@ -370,5 +371,4 @@ if __name__ == "__main__":
         population_data_seq = children_of_data_seq
         population_params_2 = children_of_params_2
 
-    print(f"{best_ndm.shape=}")
-    print(f"{minimal_error=}")
+    print(f"Finished, {minimal_error=}")
