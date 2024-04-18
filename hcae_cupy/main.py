@@ -1,3 +1,4 @@
+import cupy as cp
 import numpy as np
 import time
 
@@ -21,7 +22,7 @@ from hcae_operations import oper2
 # the second will be the Ackley's function
 def objective(v):
     x, y = v
-    return np.sin(x * y)
+    return cp.sin(x * y)
 
 
 def tournament_selection(population, scores, k=TOURNAMENT_CANDIDATES):
@@ -33,10 +34,10 @@ def tournament_selection(population, scores, k=TOURNAMENT_CANDIDATES):
     """
 
     # first random selected index
-    selection_index = np.random.randint(len(population))
+    selection_index = cp.random.randint(len(population))
 
     # checking another (k-1) candidates
-    for ix in np.random.randint(0, len(population), k - 1):
+    for ix in cp.random.randint(0, len(population), k - 1):
         # check if better (perform a tournament)
         if scores[ix] < scores[selection_index]:
             selection_index = ix
@@ -55,39 +56,39 @@ def crossover(parent1, parent2, r_cross=CROSSOVER_RATE):
     child1, child2 = parent1.copy(), parent2.copy()
 
     # check for recombination
-    if np.random.rand() < r_cross:
+    if cp.random.rand() < r_cross:
         # select crossover point that is not on the end of the chromosome
-        pt = np.random.randint(1, len(parent1) - 2)
+        pt = cp.random.randint(1, len(parent1) - 2)
 
         # perform crossover
-        child1 = np.concatenate((parent1[:pt], parent2[pt:]), axis=0)
-        child2 = np.concatenate((parent2[:pt], parent1[pt:]), axis=0)
-    return np.array([child1, child2])
+        child1 = cp.concatenate((parent1[:pt], parent2[pt:]), axis=0)
+        child2 = cp.concatenate((parent2[:pt], parent1[pt:]), axis=0)
+    return cp.array([child1, child2])
 
 
 def mutation_of_parameters(params, mutation_rate=MUTATION_RATE):
-    random_index = np.random.randint(params.size)
-    if np.random.rand() < mutation_rate:
+    random_index = cp.random.randint(params.size)
+    if cp.random.rand() < mutation_rate:
         # change the value at random index
         # print("Mutation of parameters!")
-        params[random_index] = np.random.randint(PARAMETERS_SIZE)
+        params[random_index] = cp.random.randint(PARAMETERS_SIZE)
     # return params
 
 
 def mutation_of_data_sequence(d_s, mutation_rate=MUTATION_RATE):
-    random_index = np.random.randint(d_s.size)
-    if np.random.rand() < mutation_rate:
+    random_index = cp.random.randint(d_s.size)
+    if cp.random.rand() < mutation_rate:
         # change the value at random index
         # print("Mutation of data sequence!")
-        d_s[random_index] = np.random.randint(DATA_SEQUENCE_SIZE)
+        d_s[random_index] = cp.random.randint(DATA_SEQUENCE_SIZE)
     # return params
 
 
 def calculate_output_from_ndm(
-        in_ndm: np.array,
-        in_neurons: np.array,
-        out_neurons: np.array,
-        in_neurons_value: np.array,
+        in_ndm: cp.array,
+        in_neurons: cp.array,
+        out_neurons: cp.array,
+        in_neurons_value: cp.array,
 ) -> float:
     """
     :param in_ndm: input NDM matrix
@@ -138,18 +139,18 @@ def calculate_output_from_ndm(
 
 def initialize_all() -> tuple:
     # initialization of the NDM - random values from range (-1.0; 1.0)
-    init_ndm = 2 * np.random.rand(NDM_ROWS, NDM_COLUMNS) - 1
+    init_ndm = 2 * cp.random.rand(NDM_ROWS, NDM_COLUMNS) - 1
 
     # zero the values under the 1st diagonal
     # https: // numpy.org / doc / stable / reference / generated / numpy.triu.html
-    init_ndm = np.triu(init_ndm, k=1)
+    init_ndm = cp.triu(init_ndm, k=1)
 
     # initialization of the operations_parameters - random int values from range <0; NDM_ROWS)
-    init_oper_params_1 = np.random.randint(init_ndm.shape[0], size=PARAMETERS_SIZE)
-    init_oper_params_2 = np.random.randint(init_ndm.shape[0], size=PARAMETERS_SIZE)
+    init_oper_params_1 = cp.random.randint(init_ndm.shape[0], size=PARAMETERS_SIZE)
+    init_oper_params_2 = cp.random.randint(init_ndm.shape[0], size=PARAMETERS_SIZE)
 
     # initialization of the data_sequence - random values from range (-1.0; 1.0)
-    init_data_seq = (2 * np.random.rand(1, DATA_SEQUENCE_SIZE) - 1)[0]
+    init_data_seq = (2 * cp.random.rand(1, DATA_SEQUENCE_SIZE) - 1)[0]
     # print(f"{init_data_seq.shape=}")
 
     return init_ndm, init_oper_params_1, init_oper_params_2, init_data_seq
@@ -166,19 +167,24 @@ def calculate_error(current_ndm, samples_values, in_neurons, out_neurons):
         )
         for s in samples_values
     )
-    output_values_for_samples = np.fromiter(iterable1, dtype=np.dtype(list))
+    output_values_for_samples = cp.fromiter(iterable1, dtype=cp.dtype(list))
     # print(f"\n{output_values_for_samples[0:10]=}")
 
     # values of the objective function for all samples
     iterable2 = (objective(s) for s in samples_values)
-    objective_values_for_samples = np.fromiter(iterable2, dtype=np.dtype(list))
+    objective_values_for_samples = cp.fromiter(iterable2, dtype=cp.dtype(list))
     # print(f"{objective_values_for_samples[0: 10]=}")
 
     # error value
-    return np.sum(np.abs(output_values_for_samples - objective_values_for_samples))
+    return cp.sum(cp.abs(output_values_for_samples - objective_values_for_samples))
 
 
 if __name__ == "__main__":
+    # start GPU measurement
+    start_gpu = cp.cuda.Event()
+    end_gpu = cp.cuda.Event()
+    start_gpu.record()
+
     # start CPU measurement
     start_cpu = time.perf_counter()
 
@@ -197,13 +203,13 @@ if __name__ == "__main__":
 
     # create samples of input variables
     # X in <-2; 2> and Y in <-2; 2>
-    X, Y = np.mgrid[-2:2:41j, -2:2:41j]
-    samples = np.column_stack([X.ravel(), Y.ravel()])
+    X, Y = cp.mgrid[-2:2:41j, -2:2:41j]
+    samples = cp.column_stack([X.ravel(), Y.ravel()])
     # print(f"{samples.shape=}")
 
     # indexes of input and output neurons (depends on the task, that author had in mind)
-    input_neurons = np.array([[0, 1]])
-    output_neurons = np.array([[3]])
+    input_neurons = cp.array([[0, 1]])
+    output_neurons = cp.array([[3]])
 
     # calculate initial error
     # the algorithm's task is to minimalize it
@@ -224,19 +230,19 @@ if __name__ == "__main__":
     # we need to have the data sequence and best parameters_2 unchanged in this process
 
     # params_1 population
-    iterable_params_1 = (np.random.randint(best_ndm.shape[0], size=PARAMETERS_SIZE) for _ in
+    iterable_params_1 = (cp.random.randint(best_ndm.shape[0], size=PARAMETERS_SIZE) for _ in
                          range(POPULATION_SIZE))
-    population_params_1 = np.fromiter(iterable_params_1, dtype=np.dtype(list))
+    population_params_1 = cp.fromiter(iterable_params_1, dtype=cp.dtype(list))
 
     # params_2 population
-    iterable_params_2 = (np.random.randint(best_ndm.shape[0], size=PARAMETERS_SIZE) for _ in
+    iterable_params_2 = (cp.random.randint(best_ndm.shape[0], size=PARAMETERS_SIZE) for _ in
                          range(POPULATION_SIZE))
-    population_params_2 = np.fromiter(iterable_params_2, dtype=np.dtype(list))
+    population_params_2 = cp.fromiter(iterable_params_2, dtype=cp.dtype(list))
     # print(f"{population_params_2.shape=}")
 
     # data_seq population
-    iterable_data_seq = ((2 * np.random.rand(1, DATA_SEQUENCE_SIZE) - 1)[0] for _ in range(POPULATION_SIZE))
-    population_data_seq = np.fromiter(iterable_data_seq, dtype=np.dtype(list))
+    iterable_data_seq = ((2 * cp.random.rand(1, DATA_SEQUENCE_SIZE) - 1)[0] for _ in range(POPULATION_SIZE))
+    population_data_seq = cp.fromiter(iterable_data_seq, dtype=cp.dtype(list))
 
     print("START!")
     for gen in range(1, NUMBER_OF_ITERATIONS):
@@ -261,7 +267,7 @@ if __name__ == "__main__":
                 out_neurons=output_neurons)
             for pop_par_1 in tqdm(population_params_1)
         )
-        scores_for_params_1 = np.fromiter(iter_evaluate_error_from_params_1, dtype=np.dtype(list))
+        scores_for_params_1 = cp.fromiter(iter_evaluate_error_from_params_1, dtype=cp.dtype(list))
         # print(f"{scores_for_params_1=}")
 
         # selecting the best params_1 candidates
@@ -285,7 +291,7 @@ if __name__ == "__main__":
                 out_neurons=output_neurons)
             for pop_data_seq in tqdm(population_data_seq)
         )
-        scores_for_data_seq = np.fromiter(iter_evaluate_error_from_data_seq, dtype=np.dtype(list))
+        scores_for_data_seq = cp.fromiter(iter_evaluate_error_from_data_seq, dtype=cp.dtype(list))
 
         # selecting the best data_seq candidates
         for i in range(POPULATION_SIZE):
@@ -309,7 +315,7 @@ if __name__ == "__main__":
                 out_neurons=output_neurons)
             for pop_par_2 in tqdm(population_params_2)
         )
-        scores_for_params_2 = np.fromiter(iter_evaluate_error_from_params_2, dtype=np.dtype(list))
+        scores_for_params_2 = cp.fromiter(iter_evaluate_error_from_params_2, dtype=cp.dtype(list))
 
         # selecting the best params_2 candidates
         for i in range(POPULATION_SIZE):
@@ -325,22 +331,22 @@ if __name__ == "__main__":
         print("\n Selecting parents from parameters_1 ...")
         iter_selected_params_1 = (tournament_selection(population_params_1, scores_for_params_1) for _ in
                                   tqdm(range(POPULATION_SIZE)))
-        selected_params_1 = np.fromiter(iter_selected_params_1, dtype=np.dtype(list))
+        selected_params_1 = cp.fromiter(iter_selected_params_1, dtype=cp.dtype(list))
 
         print("\n Selecting parents from data sequence ...")
         iter_selected_data_seq = (tournament_selection(population_data_seq, scores_for_data_seq) for _ in
                                   tqdm(range(POPULATION_SIZE)))
-        selected_data_seq = np.fromiter(iter_selected_data_seq, dtype=np.dtype(list))
+        selected_data_seq = cp.fromiter(iter_selected_data_seq, dtype=cp.dtype(list))
 
         print("\n Selecting parents from parameters_2 ...")
         iter_selected_params_2 = (tournament_selection(population_params_2, scores_for_params_2) for _ in
                                   tqdm(range(POPULATION_SIZE)))
-        selected_params_2 = np.fromiter(iter_selected_params_2, dtype=np.dtype(list))
+        selected_params_2 = cp.fromiter(iter_selected_params_2, dtype=cp.dtype(list))
 
         # create the next generation
-        children_of_params_1 = np.zeros((POPULATION_SIZE, PARAMETERS_SIZE), dtype=int)
-        children_of_data_seq = np.zeros((POPULATION_SIZE, DATA_SEQUENCE_SIZE))
-        children_of_params_2 = np.zeros((POPULATION_SIZE, PARAMETERS_SIZE), dtype=int)
+        children_of_params_1 = cp.zeros((POPULATION_SIZE, PARAMETERS_SIZE), dtype=int)
+        children_of_data_seq = cp.zeros((POPULATION_SIZE, DATA_SEQUENCE_SIZE))
+        children_of_params_2 = cp.zeros((POPULATION_SIZE, PARAMETERS_SIZE), dtype=int)
 
         for i in range(0, POPULATION_SIZE, 2):
             # get selected parents in pairs
@@ -378,5 +384,11 @@ if __name__ == "__main__":
         population_params_2 = children_of_params_2
 
     print(f"\nFinished, {minimal_error=}")
+
+    # timings
+    end_gpu.record()
+    end_gpu.synchronize()
+    print(f"\nElapsed time (on GPU): {cp.cuda.get_elapsed_time(start_gpu, end_gpu) / 1000.0:.3f} seconds.")
+
     end_cpu = time.perf_counter()
-    print(f"\nElapsed time: {end_cpu - start_cpu:.3f} seconds.")
+    print(f"\nElapsed time (on CPU): {end_cpu - start_cpu:.3f} seconds.")
