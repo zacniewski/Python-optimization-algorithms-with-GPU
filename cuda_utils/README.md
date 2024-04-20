@@ -51,10 +51,15 @@ sudo apt-get install libcudnn8=8.9.7.29-1+cuda12.2
 For newer version of CUDA we may need to upgrade the [driver's version](https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/#cuda-major-component-versions__table-cuda-toolkit-driver-versions
 ) of graphic card.
 
-From `nvidia-smi`:  
+From `nvidia-smi` command:  
 ```bash
+# on my PC (Titan XP)
 Driver Version: 550.54.14      CUDA Version: 12.4
+
+# on my laptop (RTX 4060 mobile)
+Driver Version: 545.29.06    CUDA Version: 12.3
 ```
+> I couldn't install the `550` driver version on my laptop (some dependency problems) and also CUDA version 12.3 is little suspicious
 
 For [JAX installation](https://jax.readthedocs.io/en/latest/installation.html):    
 If JAX detects the wrong version of the CUDA libraries, there are several things to check:  

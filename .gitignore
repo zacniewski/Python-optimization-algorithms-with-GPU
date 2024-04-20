@@ -133,6 +133,7 @@ my_env/
 .numba_env/
 .pycuda_env/
 .jax_env/
+.jax_venv/
 .common_env/
 .common_venv/
 .cuda_python_env/
