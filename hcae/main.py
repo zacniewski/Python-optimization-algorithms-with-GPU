@@ -15,6 +15,7 @@ from constants import (
     TOURNAMENT_CANDIDATES, POPULATION_SIZE,
 )
 from hcae_operations import oper2
+from utils import draw_sinus
 
 
 # first objective is a simple trigonometric function
@@ -178,6 +179,9 @@ def calculate_error(current_ndm, samples_values, in_neurons, out_neurons):
 
 
 if __name__ == "__main__":
+    # draw input function
+    draw_sinus()
+
     # start CPU measurement
     start_cpu = time.perf_counter()
 
@@ -240,7 +244,7 @@ if __name__ == "__main__":
 
     print("START!")
     for gen in range(1, NUMBER_OF_ITERATIONS):
-        print(f"\n --- Iteration {gen} ---")
+        print(f"\n ***** ITERATION {gen} *****")
         # print(f"{population_params_1[:3]=} from iteration #{gen}")
 
         # the first step in the algorithm iteration is to evaluate all candidates in the population
@@ -268,7 +272,7 @@ if __name__ == "__main__":
         for i in range(POPULATION_SIZE):
             if scores_for_params_1[i] < minimal_error:
                 minimal_error = scores_for_params_1[i]
-                best_ndm = oper2(population_params_1[i], best_data_seq, best_ndm)  # new best NDM
+                # best_ndm = oper2(population_params_1[i], best_data_seq, best_ndm)  # new best NDM
                 best_op_params_1 = population_params_1[i]  # new best params_1
                 print(f"New {minimal_error=} (for params_1)")
 
@@ -292,7 +296,7 @@ if __name__ == "__main__":
 
             if scores_for_data_seq[i] < minimal_error:
                 minimal_error = scores_for_data_seq[i]
-                best_ndm = oper2(best_op_params_1, population_data_seq[i], best_ndm)  # new best NDM
+                # best_ndm = oper2(best_op_params_1, population_data_seq[i], best_ndm)  # new best NDM
                 best_data_seq = population_data_seq[i]  # new best data_seq
                 print(f"New {minimal_error=} (for data_seq)")
 
@@ -315,7 +319,7 @@ if __name__ == "__main__":
         for i in range(POPULATION_SIZE):
             if scores_for_params_2[i] < minimal_error:
                 minimal_error = scores_for_params_2[i]
-                best_ndm = oper2(population_params_2[i], best_data_seq, best_ndm)  # new best NDM
+                # best_ndm = oper2(population_params_2[i], best_data_seq, best_ndm)  # new best NDM
                 best_op_params_2 = population_params_2[i]  # new best params_1
                 print(f"New {minimal_error=} (for params_2)")
 

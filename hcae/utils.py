@@ -7,6 +7,7 @@
 
 
 import matplotlib.pyplot as plt
+import numpy as np
 import networkx as nx
 
 
@@ -19,29 +20,38 @@ def draw_neural_network_from_ndm():
     graph_of_ndm.add_edge("c", "e", weight=0.7)
     graph_of_ndm.add_edge("c", "f", weight=0.9)
     graph_of_ndm.add_edge("a", "d", weight=0.3)
-    
+
     elarge = [(u, v) for (u, v, d) in graph_of_ndm.edges(data=True) if d["weight"] > 0.5]
     esmall = [(u, v) for (u, v, d) in graph_of_ndm.edges(data=True) if d["weight"] <= 0.5]
-    
+
     pos = nx.spring_layout(graph_of_ndm, seed=7)  # positions for all nodes - seed for reproducibility
-    
+
     # nodes
     nx.draw_networkx_nodes(graph_of_ndm, pos, node_size=700)
-    
+
     # edges
     nx.draw_networkx_edges(graph_of_ndm, pos, edgelist=elarge, width=6)
     nx.draw_networkx_edges(
         graph_of_ndm, pos, edgelist=esmall, width=6, alpha=0.5, edge_color="b", style="dashed"
     )
-    
+
     # node labels
     nx.draw_networkx_labels(graph_of_ndm, pos, font_size=20, font_family="sans-serif")
     # edge weight labels
     edge_labels = nx.get_edge_attributes(graph_of_ndm, "weight")
     nx.draw_networkx_edge_labels(graph_of_ndm, pos, edge_labels)
-    
+
     ax = plt.gca()
     ax.margins(0.08)
     plt.axis("off")
     plt.tight_layout()
+    plt.show()
+
+
+def draw_sinus():
+    x = np.linspace(-2, 2, 201)
+    plt.plot(x, np.sin(x))
+    plt.xlabel('Angle [rad]')
+    plt.ylabel('sin(x)')
+    plt.axis('tight')
     plt.show()
