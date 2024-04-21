@@ -119,7 +119,7 @@ def calculate_output_from_ndm(
         z = z + in_ndm[j][-2]
 
         # adding input value (if exists) multiplied by its weight (so far it's 1 by default)
-        if j in in_neurons:
+        if cp.any(in_neurons == j):
             z = z + in_neurons_value[j] * 1
 
         # determine the activation function of 'z' basing on the values of input and 'type of neuron' cell
@@ -133,7 +133,8 @@ def calculate_output_from_ndm(
     # print(f"{key}: {value}")
 
     # output value from FFN
-    out_value = sigma[out_neurons[0][0]]
+    # we have to use item() in CuPy: https://docs.cupy.dev/en/stable/reference/generated/cupy.ndarray.html
+    out_value = sigma[out_neurons[0][0].item()]
     return out_value
 
 
@@ -167,12 +168,12 @@ def calculate_error(current_ndm, samples_values, in_neurons, out_neurons):
         )
         for s in samples_values
     )
-    output_values_for_samples = cp.fromiter(iterable1, dtype=cp.dtype(list))
+    output_values_for_samples = cp.fromiter(iterable1, dtype=cp.dtype(cp.float64))
     # print(f"\n{output_values_for_samples[0:10]=}")
 
     # values of the objective function for all samples
     iterable2 = (objective(s) for s in samples_values)
-    objective_values_for_samples = cp.fromiter(iterable2, dtype=cp.dtype(list))
+    objective_values_for_samples = cp.fromiter(iterable2, cp.dtype(cp.float64))
     # print(f"{objective_values_for_samples[0: 10]=}")
 
     # error value
@@ -232,7 +233,7 @@ if __name__ == "__main__":
     # params_1 population
     iterable_params_1 = (cp.random.randint(best_ndm.shape[0], size=PARAMETERS_SIZE) for _ in
                          range(POPULATION_SIZE))
-    population_params_1 = cp.fromiter(iterable_params_1, dtype=cp.dtype(list))
+    population_params_1 = cp.fromiter(iterable_params_1, dtype=np.dtype(list))
 
     # params_2 population
     iterable_params_2 = (cp.random.randint(best_ndm.shape[0], size=PARAMETERS_SIZE) for _ in

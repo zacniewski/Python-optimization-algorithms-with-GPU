@@ -1,4 +1,4 @@
-import numpy as np
+import cupy as cp
 
 from constants import M, N
 
@@ -6,7 +6,7 @@ from constants import M, N
 # In all documentation comments, after the colon a name of the variable from original paper is given.
 
 # not used so far!!!
-def oper1(operation_parameters, data_sequence: np.ndarray, ndm) -> np.ndarray:
+def oper1(operation_parameters, data_sequence: cp.ndarray, ndm) -> cp.ndarray:
     """
      This function is an adaptation of a solution applied in AEEO.
      It is of a global range, which means that it can modify any element of NDM,
@@ -30,8 +30,8 @@ def oper1(operation_parameters, data_sequence: np.ndarray, ndm) -> np.ndarray:
     number_of_rows, number_of_columns = ndm.shape
 
     # 'row' and 'column' vectors as a containers for data from 'd'
-    row = np.zeros(number_of_rows)
-    column = np.zeros(number_of_columns)
+    row = cp.zeros(number_of_rows)
+    column = cp.zeros(number_of_columns)
 
     for i in range(number_of_rows):
         row[i] = data_sequence[i % len(data_sequence)]
@@ -43,8 +43,8 @@ def oper1(operation_parameters, data_sequence: np.ndarray, ndm) -> np.ndarray:
 
     # ann_inputs and ann_outputs are created only for the discussion purposes!
     # These inputs and outputs will be replaced by the ANN created from the operation parameters 'p'!
-    ann_inputs = np.zeros(2)
-    ann_outputs = np.zeros(5)
+    ann_inputs = cp.zeros(2)
+    ann_outputs = cp.zeros(5)
 
     for i in range(number_of_columns):
         for j in range(number_of_rows):
@@ -63,7 +63,7 @@ def oper1(operation_parameters, data_sequence: np.ndarray, ndm) -> np.ndarray:
 
 
 # not used so far!!!
-def get_ann(operation_parameters: np.ndarray) -> np.ndarray:
+def get_ann(operation_parameters: cp.ndarray) -> cp.ndarray:
     """
     This function generates the NDM operation and consequently, an ANN operation
     Like resultant ANNs, ANN operations are also represented in the form of NDMs,
@@ -82,7 +82,7 @@ def get_ann(operation_parameters: np.ndarray) -> np.ndarray:
     # Q: where to take the proper shape from?
     bad_hardcoded_shape = (5, 6)
 
-    ndm_operation = np.zeros(bad_hardcoded_shape)
+    ndm_operation = cp.zeros(bad_hardcoded_shape)
     number_of_item = 0
 
     # i - number of columns, j - number of rows
@@ -97,7 +97,7 @@ def get_ann(operation_parameters: np.ndarray) -> np.ndarray:
     return ndm_operation
 
 
-def oper2(operation_parameters, data_sequence: np.ndarray, ndm) -> np.ndarray:
+def oper2(operation_parameters, data_sequence: cp.ndarray, ndm) -> cp.ndarray:
     """
     This function  directly fills NDM with values from the data sequence of AEP.
     The operation parameters determine:
@@ -167,8 +167,8 @@ def oper2(operation_parameters, data_sequence: np.ndarray, ndm) -> np.ndarray:
 def fill(
         number_of_column: int,
         number_of_row: int,
-        operation_parameters: np.ndarray,
-        data_sequence: np.ndarray,
+        operation_parameters: cp.ndarray,
+        data_sequence: cp.ndarray,
         number_of_updated_items: int,
         starting_position_in_data: int,
         number_of_holes: int,
