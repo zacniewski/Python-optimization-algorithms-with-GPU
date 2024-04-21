@@ -233,17 +233,17 @@ if __name__ == "__main__":
     # params_1 population
     iterable_params_1 = (cp.random.randint(best_ndm.shape[0], size=PARAMETERS_SIZE) for _ in
                          range(POPULATION_SIZE))
-    population_params_1 = cp.fromiter(iterable_params_1, dtype=np.dtype(list))
+    population_params_1 = np.fromiter(iterable_params_1, dtype=np.dtype('O'))
 
     # params_2 population
     iterable_params_2 = (cp.random.randint(best_ndm.shape[0], size=PARAMETERS_SIZE) for _ in
                          range(POPULATION_SIZE))
-    population_params_2 = cp.fromiter(iterable_params_2, dtype=cp.dtype(list))
+    population_params_2 = np.fromiter(iterable_params_2, dtype=cp.dtype('O'))
     # print(f"{population_params_2.shape=}")
 
     # data_seq population
     iterable_data_seq = ((2 * cp.random.rand(1, DATA_SEQUENCE_SIZE) - 1)[0] for _ in range(POPULATION_SIZE))
-    population_data_seq = cp.fromiter(iterable_data_seq, dtype=cp.dtype(list))
+    population_data_seq = np.fromiter(iterable_data_seq, dtype=cp.dtype('O'))
 
     print("START!")
     for gen in range(1, NUMBER_OF_ITERATIONS):
@@ -268,7 +268,7 @@ if __name__ == "__main__":
                 out_neurons=output_neurons)
             for pop_par_1 in tqdm(population_params_1)
         )
-        scores_for_params_1 = cp.fromiter(iter_evaluate_error_from_params_1, dtype=cp.dtype(list))
+        scores_for_params_1 = np.fromiter(iter_evaluate_error_from_params_1, dtype=cp.dtype('O'))
         # print(f"{scores_for_params_1=}")
 
         # selecting the best params_1 candidates
@@ -292,7 +292,7 @@ if __name__ == "__main__":
                 out_neurons=output_neurons)
             for pop_data_seq in tqdm(population_data_seq)
         )
-        scores_for_data_seq = cp.fromiter(iter_evaluate_error_from_data_seq, dtype=cp.dtype(list))
+        scores_for_data_seq = np.fromiter(iter_evaluate_error_from_data_seq, dtype=cp.dtype('O'))
 
         # selecting the best data_seq candidates
         for i in range(POPULATION_SIZE):
@@ -316,7 +316,7 @@ if __name__ == "__main__":
                 out_neurons=output_neurons)
             for pop_par_2 in tqdm(population_params_2)
         )
-        scores_for_params_2 = cp.fromiter(iter_evaluate_error_from_params_2, dtype=cp.dtype(list))
+        scores_for_params_2 = np.fromiter(iter_evaluate_error_from_params_2, dtype=cp.dtype('O'))
 
         # selecting the best params_2 candidates
         for i in range(POPULATION_SIZE):
@@ -332,17 +332,17 @@ if __name__ == "__main__":
         print("\n Selecting parents from parameters_1 ...")
         iter_selected_params_1 = (tournament_selection(population_params_1, scores_for_params_1) for _ in
                                   tqdm(range(POPULATION_SIZE)))
-        selected_params_1 = cp.fromiter(iter_selected_params_1, dtype=cp.dtype(list))
+        selected_params_1 = np.fromiter(iter_selected_params_1, dtype=cp.dtype('O'))
 
         print("\n Selecting parents from data sequence ...")
         iter_selected_data_seq = (tournament_selection(population_data_seq, scores_for_data_seq) for _ in
                                   tqdm(range(POPULATION_SIZE)))
-        selected_data_seq = cp.fromiter(iter_selected_data_seq, dtype=cp.dtype(list))
+        selected_data_seq = np.fromiter(iter_selected_data_seq, dtype=cp.dtype('O'))
 
         print("\n Selecting parents from parameters_2 ...")
         iter_selected_params_2 = (tournament_selection(population_params_2, scores_for_params_2) for _ in
                                   tqdm(range(POPULATION_SIZE)))
-        selected_params_2 = cp.fromiter(iter_selected_params_2, dtype=cp.dtype(list))
+        selected_params_2 = np.fromiter(iter_selected_params_2, dtype=cp.dtype('O'))
 
         # create the next generation
         children_of_params_1 = cp.zeros((POPULATION_SIZE, PARAMETERS_SIZE), dtype=int)
