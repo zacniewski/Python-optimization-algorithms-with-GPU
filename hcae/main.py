@@ -5,12 +5,14 @@ from tqdm import tqdm
 
 from activation_functions import activation_function
 from constants import (
+    ACCEPTED_ERROR,
     CROSSOVER_RATE,
     DATA_SEQUENCE_SIZE,
     MUTATION_RATE,
+    MAX_ITER_NO_PROG,
     NDM_COLUMNS,
     NDM_ROWS,
-    NUMBER_OF_ITERATIONS,
+    TOTAL_NUMBER_OF_ITERATIONS,
     PARAMETERS_SIZE,
     TOURNAMENT_CANDIDATES, POPULATION_SIZE,
 )
@@ -210,7 +212,7 @@ if __name__ == "__main__":
 
     # calculate initial error
     # the algorithm's task is to minimalize it
-    best_ndm, minimal_error = initial_ndm, calculate_error(
+    best_ndm, current_error = initial_ndm, calculate_error(
         initial_ndm,
         samples,
         in_neurons=input_neurons,
@@ -218,7 +220,6 @@ if __name__ == "__main__":
     best_op_params_1, best_op_params_2, best_data_seq = (initial_operation_parameters_1,
                                                          initial_operation_parameters_2,
                                                          initial_data_sequence)
-    print(f"Initial error = {minimal_error}")
 
     # to modify NDM one need to invoke the 'oper2' function
     # its arguments are: parameters, data sequence and "current" NDM
@@ -243,8 +244,13 @@ if __name__ == "__main__":
     population_data_seq = np.fromiter(iterable_data_seq, dtype='O')
 
     print("START!")
-    for gen in range(1, NUMBER_OF_ITERATIONS):
-        print(f"\n ***** ITERATION {gen} *****")
+    print(f"Initial error = {current_error}")
+    number_of_iteration = 0
+    iterations_without_progress = 0
+
+    while number_of_iteration < TOTAL_NUMBER_OF_ITERATIONS and ACCEPTED_ERROR < current_error:
+
+        print(f"\n ***** ITERATION #{number_of_iteration + 1} *****")
         # print(f"{population_params_1[:3]=} from iteration #{gen}")
 
         # the first step in the algorithm iteration is to evaluate all candidates in the population
@@ -256,7 +262,7 @@ if __name__ == "__main__":
         # evaluate all candidates in the population (params_1)
         # best_data_seq and best_ndm are constant during evaluating candidates for params_1 population!
 
-        print(f"\n Evaluating parameters_1 in iteration #{gen} ...")
+        print(f"\n Evaluating parameters_1 in iteration #{number_of_iteration + 1} ...")
         iter_evaluate_error_from_params_1 = (
             calculate_error(
                 oper2(pop_par_1, best_data_seq, best_ndm),  # updated NDM after changing operation parameters_1
@@ -270,17 +276,17 @@ if __name__ == "__main__":
 
         # selecting the best params_1 candidates
         for i in range(POPULATION_SIZE):
-            if scores_for_params_1[i] < minimal_error:
-                minimal_error = scores_for_params_1[i]
+            if scores_for_params_1[i] < current_error:
+                current_error = scores_for_params_1[i]
                 # best_ndm = oper2(population_params_1[i], best_data_seq, best_ndm)  # new best NDM
                 best_op_params_1 = population_params_1[i]  # new best params_1
-                print(f"New {minimal_error=} (for params_1)")
+                print(f"New {current_error=} (for params_1)")
 
         # ---- SECOND COMPONENT -----
         # evaluate all candidates in the population (data_sequence)
         # best_op_params_1 and best_ndm are constant during evaluating candidates for data_seq population!
 
-        print(f"\n Evaluating data sequence in iteration #{gen} ...")
+        print(f"\n Evaluating data sequence in iteration #{number_of_iteration + 1} ...")
         iter_evaluate_error_from_data_seq = (
             calculate_error(
                 oper2(best_op_params_1, pop_data_seq, best_ndm),  # updated NDM after changing operation parameters_1
@@ -294,17 +300,17 @@ if __name__ == "__main__":
         # selecting the best data_seq candidates
         for i in range(POPULATION_SIZE):
 
-            if scores_for_data_seq[i] < minimal_error:
-                minimal_error = scores_for_data_seq[i]
+            if scores_for_data_seq[i] < current_error:
+                current_error = scores_for_data_seq[i]
                 # best_ndm = oper2(best_op_params_1, population_data_seq[i], best_ndm)  # new best NDM
                 best_data_seq = population_data_seq[i]  # new best data_seq
-                print(f"New {minimal_error=} (for data_seq)")
+                print(f"New {current_error=} (for data_seq)")
 
         # ---- THIRD COMPONENT -----
         # evaluate all candidates in the population (params_2)
         # best_data_seq and best_ndm are constant during evaluating candidates for params_2 population!
 
-        print(f"\n Evaluating parameters_2 in iteration #{gen} ...")
+        print(f"\n Evaluating parameters_2 in iteration #{number_of_iteration + 1} ...")
         iter_evaluate_error_from_params_2 = (
             calculate_error(
                 oper2(pop_par_2, best_data_seq, best_ndm),  # updated NDM after changing operation parameters_1
@@ -317,13 +323,13 @@ if __name__ == "__main__":
 
         # selecting the best params_2 candidates
         for i in range(POPULATION_SIZE):
-            if scores_for_params_2[i] < minimal_error:
-                minimal_error = scores_for_params_2[i]
+            if scores_for_params_2[i] < current_error:
+                current_error = scores_for_params_2[i]
                 # best_ndm = oper2(population_params_2[i], best_data_seq, best_ndm)  # new best NDM
                 best_op_params_2 = population_params_2[i]  # new best params_1
-                print(f"New {minimal_error=} (for params_2)")
+                print(f"New {current_error=} (for params_2)")
 
-        print(f"\n New {minimal_error=} (after evaluations)")
+        print(f"\n New {current_error=} (after evaluations)")
 
         # select parents
         print("\n Selecting parents from parameters_1 ...")
@@ -381,6 +387,9 @@ if __name__ == "__main__":
         population_data_seq = children_of_data_seq
         population_params_2 = children_of_params_2
 
-    print(f"\nFinished, {minimal_error=}")
+        number_of_iteration += 1
+        # END OF THE WHILE LOOP!
+
+    print(f"\nFinished, {current_error=}")
     end_cpu = time.perf_counter()
     print(f"\nElapsed time: {end_cpu - start_cpu:.3f} seconds.")
