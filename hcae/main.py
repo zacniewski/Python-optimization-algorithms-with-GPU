@@ -8,7 +8,9 @@ from constants import (
     ACCEPTED_ERROR,
     CROSSOVER_RATE,
     DATA_SEQUENCE_SIZE,
-    MUTATION_RATE,
+    MUTATION_RATE_PARAMS,
+    MUTATION_RATE_PARAMS_ZERO,
+    MUTATION_RATE_DATA_SEQ,
     MAX_ITER_NO_PROG,
     NDM_COLUMNS,
     NDM_ROWS,
@@ -68,7 +70,7 @@ def crossover(parent1, parent2, r_cross=CROSSOVER_RATE):
     return np.array([child1, child2])
 
 
-def mutation_of_parameters(params, mutation_rate=MUTATION_RATE):
+def mutation_of_parameters(params, mutation_rate=MUTATION_RATE_PARAMS):
     random_index = np.random.randint(params.size)
     if np.random.rand() < mutation_rate:
         # change the value at random index
@@ -77,12 +79,12 @@ def mutation_of_parameters(params, mutation_rate=MUTATION_RATE):
     # return params
 
 
-def mutation_of_data_sequence(d_s, mutation_rate=MUTATION_RATE):
+def mutation_of_data_sequence(d_s, mutation_rate=MUTATION_RATE_DATA_SEQ):
     random_index = np.random.randint(d_s.size)
     if np.random.rand() < mutation_rate:
         # change the value at random index
         # print("Mutation of data sequence!")
-        d_s[random_index] = np.random.randint(DATA_SEQUENCE_SIZE)
+        d_s[random_index] = d_s[random_index] + 2 * (np.random.rand() - 0.5)
     # return params
 
 
