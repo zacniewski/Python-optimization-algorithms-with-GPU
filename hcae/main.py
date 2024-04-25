@@ -75,7 +75,8 @@ def mutation_of_parameters(params, mutation_rate=MUTATION_RATE_PARAMS):
     if np.random.rand() < mutation_rate:
         # change the value at random index
         # print("Mutation of parameters!")
-        params[random_index] = np.random.randint(PARAMETERS_SIZE)
+        b = 5
+        params[random_index] = params[random_index] + np.random.randint(-b, b)
     # return params
 
 
@@ -225,6 +226,7 @@ if __name__ == "__main__":
     best_op_params_1, best_op_params_2, best_data_seq = (initial_operation_parameters_1,
                                                          initial_operation_parameters_2,
                                                          initial_data_sequence)
+    print(f"{best_ndm[:, [-2, -1]]=}")
 
     # to modify NDM one need to invoke the 'oper2' function
     # its arguments are: parameters, data sequence and "current" NDM
@@ -340,7 +342,7 @@ if __name__ == "__main__":
                 change_in_current_iteration = True
                 print(f"New {current_error=} (for params_2)")
 
-        print(f"\n New {current_error=} (after evaluations)")
+        print(f"\n{current_error=} (after evaluations)")
 
         # select parents
         print("\n Selecting parents from parameters_1 ...")
@@ -372,7 +374,7 @@ if __name__ == "__main__":
             # crossover and mutation for params_1
             for index, c in enumerate(crossover(parent_1, parent_2, CROSSOVER_RATE)):
                 # mutation
-                mutation_of_parameters(c, MUTATION_RATE)
+                mutation_of_parameters(c, MUTATION_RATE_PARAMS)
 
                 # store for next generation
                 children_of_params_1[i + index] = c
@@ -380,7 +382,7 @@ if __name__ == "__main__":
             # crossover and mutation for data_seq
             for index, d in enumerate(crossover(parent_3, parent_4, CROSSOVER_RATE)):
                 # mutation
-                mutation_of_data_sequence(d, MUTATION_RATE)
+                mutation_of_data_sequence(d, MUTATION_RATE_DATA_SEQ)
 
                 # store for next generation
                 children_of_data_seq[i + index] = d
@@ -388,7 +390,7 @@ if __name__ == "__main__":
             # crossover and mutation for params_2
             for index, e in enumerate(crossover(parent_5, parent_6, CROSSOVER_RATE)):
                 # mutation
-                mutation_of_parameters(e, MUTATION_RATE)
+                mutation_of_parameters(e, MUTATION_RATE_PARAMS)
 
                 # store for next generation
                 children_of_params_2[i + index] = e
@@ -401,9 +403,9 @@ if __name__ == "__main__":
         # checking changes during iteration
         if not change_in_current_iteration:
             iterations_without_progress += 1
-            print(f"Iterations without progress: {iterations_without_progress}.")
+            print(f"\nIterations without progress: {iterations_without_progress}.")
         if iterations_without_progress == MAX_ITER_NO_PROG:
-            print("NO PROGRESS!")
+            print("\nNO PROGRESS!")
             print("Params_1, params_2 and cdata_seq will be re-initialized!")
             print("Current best NDM will be used as a starting NDM in the next iteration!")
             best_op_params_1, best_op_params_2, best_data_seq = initialize_params_and_data_seq()
