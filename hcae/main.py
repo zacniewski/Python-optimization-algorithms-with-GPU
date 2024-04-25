@@ -84,7 +84,8 @@ def mutation_of_data_sequence(d_s, mutation_rate=MUTATION_RATE_DATA_SEQ):
     if np.random.rand() < mutation_rate:
         # change the value at random index
         # print("Mutation of data sequence!")
-        d_s[random_index] = d_s[random_index] + 2 * (np.random.rand() - 0.5)
+        a = 2  # this value could be changed if necessary
+        d_s[random_index] = d_s[random_index] + a * (np.random.rand() - 0.5)
     # return params
 
 
