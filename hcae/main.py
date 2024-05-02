@@ -344,6 +344,8 @@ if __name__ == "__main__":
 
         print(f"\n{current_error=} (after evaluations)")
 
+        print(f"Before parents - {best_ndm[:, [-2, -1]]=}")
+
         # select parents
         print("\n Selecting parents from parameters_1 ...")
         iter_selected_params_1 = (tournament_selection(population_params_1, scores_for_params_1) for _ in
