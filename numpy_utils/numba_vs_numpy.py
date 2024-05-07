@@ -1,8 +1,17 @@
-from numba import jit
-import numpy as np
+import math
 import time
 
-x = np.arange(10_000).reshape(100, 100)
+from numba import jit
+import numpy as np
+
+x = np.arange(1_000_000).reshape(1000, 1000)
+
+
+def go_python(a):
+    trace = 0.0
+    for i in range(a.shape[0]):
+        trace += math.tanh(a[i, i])
+    return a + trace
 
 
 def go_numpy(a):
@@ -19,6 +28,12 @@ def go_numba(a):  # Function is compiled and runs in machine code
         trace += np.tanh(a[i, i])
     return a + trace
 
+
+# ONLY PYTHON
+start = time.perf_counter()
+go_python(x)
+end = time.perf_counter()
+print(f"Elapsed time (only Python): {end - start:.6f} seconds.")
 
 # ONLY NUMPY
 start = time.perf_counter()

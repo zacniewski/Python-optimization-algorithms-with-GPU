@@ -1,6 +1,6 @@
 ### NumPy and other stuff related to faster execution of Python programs
 
-1. Links
+#### 1. Links
   - [NumPy](https://numpy.org/doc/stable/index.html) documentation,
   - [JAX](https://jax.readthedocs.io/en/latest/index.html): High-Performance Array Computing,
   - [XLA](https://openxla.org/xla) (Accelerated Linear Algebra) is an open-source compiler for machine learning,
@@ -8,5 +8,23 @@
   - [Optax](https://optax.readthedocs.io/en/latest/): gradient processing and optimization library for JAX,
   - [Orbax](https://orbax.readthedocs.io/en/latest/): training utilities for JAX users,
 
-2. Other
+#### 2. Machine Learning
   - Intro to [Machine Learning](https://python-course.eu/machine-learning/) with NumPy.
+
+#### 3. Benchmarks
+  - Python's list vs Numpy's array (file `numpy_array_vs_python_list.py`):    
+```bash
+Standard list with range() - created in 2.565 seconds.
+Numpy's array - created in 0.125 seconds.
+Sum of list (Python) - calculated in 60.86 seconds.
+Sum of array (Numpy) - calculated in 1.43 seconds.
+```
+
+  - Numba vs Numpy (file `mm`):  
+```bash
+Elapsed time (only Python): 0.003462 seconds.
+Elapsed time (only Numpy): 0.004415 seconds.
+Elapsed time (with Numba compilation): 0.548266 seconds.
+Elapsed time (after Numba compilation): 0.001286 seconds.
+
+```
