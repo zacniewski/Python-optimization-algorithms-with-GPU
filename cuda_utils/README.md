@@ -1,6 +1,6 @@
 ### CUDA related stuff
 
-0. Prerequisites
+1. Installation of CUDA on Linux systems
   - CUDA [Toolkit](https://developer.nvidia.com/cuda-downloads) installation is required!
   - in April 2024 the 12.4 version was suggested by Nvidia:  
 ```bash
@@ -23,6 +23,8 @@ and source it:
 ```bash
 source ~/.bashrc
 ```
+ 
+2. Installation of cuDNN on Linux systems
 
 To install cuDNN, go to the [Downloads](https://developer.nvidia.com/cudnn-downloads) page.
 In April 2024 the 9.0.0 version was suggested by Nvidia:  
@@ -61,6 +63,8 @@ Driver Version: 545.29.06    CUDA Version: 12.3
 ```
 > I couldn't install the `550` driver version on my laptop (some dependency problems) and also CUDA version 12.3 is little suspicious
 
+3. Installation of JAX
+
 For [JAX installation](https://jax.readthedocs.io/en/latest/installation.html):    
 If JAX detects the wrong version of the CUDA libraries, there are several things to check:  
     - make sure that LD_LIBRARY_PATH is not set, since LD_LIBRARY_PATH can override the CUDA libraries.  
@@ -73,7 +77,7 @@ pip install --upgrade "jax[cuda12_local]" -f https://storage.googleapis.com/jax-
 To check if everything is OK, after running the `jax_check.py` script we shouldn't see any errors.  
 
 
-1. Links
+4. Links
   - CUDA [cheat sheet](https://kdm.icm.edu.pl/Tutorials/GPU-intro/introduction.en/) from ICM UW :muscle:,
   - [Educator Programs](https://www.nvidia.com/en-us/training/educator-programs/) from NVIDIA,
   - [Deep Learning Institite](https://www.nvidia.com/en-us/training/) of NVIDIA,
@@ -81,7 +85,7 @@ To check if everything is OK, after running the `jax_check.py` script we shouldn
   - [Unified Memory](https://developer.nvidia.com/blog/unified-memory-cuda-beginners/) for CUDA Beginners,
   - CUDA [Pro Tip](https://developer.nvidia.com/blog/cuda-pro-tip-write-flexible-kernels-grid-stride-loops/): Write Flexible Kernels with Grid-Stride Loops,
   - CUDA [refresher](https://developer.nvidia.com/blog/cuda-refresher-cuda-programming-model/)
-  - [PyCUDA](https://documen.tician.de/pycuda/index.html) documentation,
+  - [CUDA programming](https://docs.nvidia.com/cuda/cuda-c-programming-guide/) guide,
   - Install CUDA on [Ubuntu 22.04](https://www.cherryservers.com/blog/install-cuda-ubuntu),  
   - NVIDIA [NSight](https://developer.nvidia.com/nsight-systems) Systems,  
   - Lesson of [GPU programming](https://carpentries-incubator.github.io/lesson-gpu-programming/) with different Python libraries, 
@@ -93,7 +97,7 @@ To check if everything is OK, after running the `jax_check.py` script we shouldn
   - [JAX](https://jax.readthedocs.io/en/latest/index.html) documentation,  
   - [WebGPU Shading Language](https://www.w3.org/TR/WGSL/) working draft.  
 
-2. Comparison of times execution with different configurations of CUDA blocks and threads for `Titan XP` GPU.  
+5. Comparison of times execution with different configurations of CUDA blocks and threads for `Titan XP` GPU.  
   - with one thread (file `add_with_one_thread.cu`):  
 
 To run standard C++ file (without CUDA code):  `g++ add.cpp -o add.out`,  
