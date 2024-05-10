@@ -82,15 +82,6 @@ cupy_backends.cuda.api.driver.CUDADriverError: CUDA_ERROR_INVALID_VALUE: invalid
 ```
 
   - Using proper CUDA indexing in the kernel (file ` 2c_cupy_vs_numpy_with_grid.py`):    
-```bash
-c_cpu=array([0.48116782, 1.1899436 , 0.32619858, ..., 0.42588684, 0.564336  ,
-       0.8028442 ], dtype=float32)
-cp.asnumpy(c_gpu)=array([0.48116782, 1.1899436 , 0.32619858, ..., 0.42588684, 0.564336  ,
-       0.8028442 ], dtype=float32)
-c_gpu.device=<CUDA Device 0>
-Error = 0.0
-```
-
 ```python
 # CUDA version of vector_add
 kernel_add_cuda = r'''
