@@ -4,7 +4,6 @@ import time
 import numpy as np
 
 NUMBER_OF_ELEMENTS = 100_000_000
-NUMBER_OF_INTEGERS = 10_000_000
 
 
 def python_create_range():
