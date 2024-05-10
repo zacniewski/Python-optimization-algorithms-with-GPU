@@ -155,12 +155,14 @@ def initialize_ndm() -> np.ndarray:
 
 def initialize_params_and_data_seq() -> tuple:
     # initialization of the operations_parameters - random int values from range <0; NDM_ROWS)
-    init_oper_params_1 = np.random.randint(NDM_ROWS, size=PARAMETERS_SIZE)
-    init_oper_params_2 = np.random.randint(NDM_ROWS, size=PARAMETERS_SIZE)
+    init_oper_params_1 = np.random.randint(5, size=PARAMETERS_SIZE)
+    init_oper_params_2 = np.random.randint(5, size=PARAMETERS_SIZE)
 
     # initialization of the data_sequence - random values from range (-1.0; 1.0)
     init_data_seq = (2 * np.random.rand(1, DATA_SEQUENCE_SIZE) - 1)[0]
-
+    print(f"{init_oper_params_1=}")
+    print(f"{init_oper_params_2=}")
+    print(f"{init_data_seq=}")
     return init_oper_params_1, init_oper_params_2, init_data_seq
 
 
@@ -226,7 +228,11 @@ if __name__ == "__main__":
     best_op_params_1, best_op_params_2, best_data_seq = (initial_operation_parameters_1,
                                                          initial_operation_parameters_2,
                                                          initial_data_sequence)
-    print(f"{best_ndm[:, [-2, -1]]=}")
+
+    best_ndm_for_params_1 = best_ndm.copy()
+    best_ndm_for_params_2 = best_ndm.copy()
+    best_ndm_for_data_seq = best_ndm.copy()
+
 
     # to modify NDM one need to invoke the 'oper2' function
     # its arguments are: parameters, data sequence and "current" NDM
@@ -270,22 +276,24 @@ if __name__ == "__main__":
         # best_data_seq and best_ndm are constant during evaluating candidates for params_1 population!
 
         print(f"\n Evaluating parameters_1 in iteration #{number_of_iteration + 1} ...")
+        print(f"{best_ndm_for_params_1[:, [-2, -1]]=}")
+
         iter_evaluate_error_from_params_1 = (
             calculate_error(
-                oper2(pop_par_1, best_data_seq, best_ndm),  # updated NDM after changing operation parameters_1
+                oper2(pop_par_1, best_data_seq, best_ndm_for_params_1),  # updated NDM after changing operation parameters_1
                 samples,
                 in_neurons=input_neurons,
                 out_neurons=output_neurons)
             for pop_par_1 in tqdm(population_params_1)
         )
         scores_for_params_1 = np.fromiter(iter_evaluate_error_from_params_1, dtype='O')
-        # print(f"{scores_for_params_1=}")
+        print(f"{best_ndm_for_params_1[:, [-2, -1]]=}")
 
         # selecting the best params_1 candidates
         for i in range(POPULATION_SIZE):
             if scores_for_params_1[i] < current_error:
                 current_error = scores_for_params_1[i]
-                # best_ndm = oper2(population_params_1[i], best_data_seq, best_ndm)  # new best NDM
+                best_ndm_for_params_1 = oper2(population_params_1[i], best_data_seq, best_ndm)  # new best NDM
                 best_op_params_1 = population_params_1[i]  # new best params_1
                 iterations_without_progress = 0
                 change_in_current_iteration = True
@@ -298,7 +306,7 @@ if __name__ == "__main__":
         print(f"\n Evaluating data sequence in iteration #{number_of_iteration + 1} ...")
         iter_evaluate_error_from_data_seq = (
             calculate_error(
-                oper2(best_op_params_1, pop_data_seq, best_ndm),  # updated NDM after changing operation parameters_1
+                oper2(best_op_params_1, pop_data_seq, best_ndm_for_data_seq),  # updated NDM after changing operation parameters_1
                 samples,
                 in_neurons=input_neurons,
                 out_neurons=output_neurons)
@@ -311,7 +319,7 @@ if __name__ == "__main__":
 
             if scores_for_data_seq[i] < current_error:
                 current_error = scores_for_data_seq[i]
-                # best_ndm = oper2(best_op_params_1, population_data_seq[i], best_ndm)  # new best NDM
+                best_ndm_for_data_seq = oper2(best_op_params_1, population_data_seq[i], best_ndm)  # new best NDM
                 best_data_seq = population_data_seq[i]  # new best data_seq
                 iterations_without_progress = 0
                 change_in_current_iteration = True
@@ -324,7 +332,7 @@ if __name__ == "__main__":
         print(f"\n Evaluating parameters_2 in iteration #{number_of_iteration + 1} ...")
         iter_evaluate_error_from_params_2 = (
             calculate_error(
-                oper2(pop_par_2, best_data_seq, best_ndm),  # updated NDM after changing operation parameters_1
+                oper2(pop_par_2, best_data_seq, best_ndm_for_params_2),  # updated NDM after changing operation parameters_1
                 samples,
                 in_neurons=input_neurons,
                 out_neurons=output_neurons)
@@ -336,15 +344,14 @@ if __name__ == "__main__":
         for i in range(POPULATION_SIZE):
             if scores_for_params_2[i] < current_error:
                 current_error = scores_for_params_2[i]
-                # best_ndm = oper2(population_params_2[i], best_data_seq, best_ndm)  # new best NDM
+                best_ndm_for_params_2 = oper2(population_params_2[i], best_data_seq, best_ndm)  # new best NDM
                 best_op_params_2 = population_params_2[i]  # new best params_1
                 iterations_without_progress = 0
                 change_in_current_iteration = True
                 print(f"New {current_error=} (for params_2)")
 
+        # All 3 populations are now evaluated
         print(f"\n{current_error=} (after evaluations)")
-
-        print(f"Before parents - {best_ndm[:, [-2, -1]]=}")
 
         # select parents
         print("\n Selecting parents from parameters_1 ...")
@@ -398,9 +405,9 @@ if __name__ == "__main__":
                 children_of_params_2[i + index] = e
 
         # replace populations
-        population_params_1 = children_of_params_1
-        population_data_seq = children_of_data_seq
-        population_params_2 = children_of_params_2
+        population_params_1 = children_of_params_1.copy()
+        population_data_seq = children_of_data_seq.copy()
+        population_params_2 = children_of_params_2.copy()
 
         # checking changes during iteration
         if not change_in_current_iteration:
