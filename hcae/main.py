@@ -277,10 +277,21 @@ if __name__ == "__main__":
 
         print(f"\n Evaluating parameters_1 in iteration #{number_of_iteration + 1} ...")
         print(f"{best_ndm_for_params_1[:, [-2, -1]]=}")
+        print(f"{population_params_1.shape[0]=}")
 
+        """iter_evaluate_error_from_params_1 = []
+        for i in range(population_params_1.shape[0]):
+            e = calculate_error(
+                oper2(population_params_1[i], best_data_seq, best_ndm_for_params_1.copy()),
+                # updated NDM after changing operation parameters_1
+                samples,
+                in_neurons=input_neurons,
+                out_neurons=output_neurons)
+            print(f"{best_ndm_for_params_1[:, [-2, -1]]=}")
+            iter_evaluate_error_from_params_1.append(e)"""
         iter_evaluate_error_from_params_1 = (
             calculate_error(
-                oper2(pop_par_1, best_data_seq, best_ndm_for_params_1),  # updated NDM after changing operation parameters_1
+                oper2(pop_par_1, best_data_seq, best_ndm_for_params_1.copy()),  # updated NDM after changing operation parameters_1
                 samples,
                 in_neurons=input_neurons,
                 out_neurons=output_neurons)
@@ -306,7 +317,7 @@ if __name__ == "__main__":
         print(f"\n Evaluating data sequence in iteration #{number_of_iteration + 1} ...")
         iter_evaluate_error_from_data_seq = (
             calculate_error(
-                oper2(best_op_params_1, pop_data_seq, best_ndm_for_data_seq),  # updated NDM after changing operation parameters_1
+                oper2(best_op_params_1, pop_data_seq, best_ndm_for_data_seq.copy()),  # updated NDM after changing operation parameters_1
                 samples,
                 in_neurons=input_neurons,
                 out_neurons=output_neurons)
@@ -332,7 +343,7 @@ if __name__ == "__main__":
         print(f"\n Evaluating parameters_2 in iteration #{number_of_iteration + 1} ...")
         iter_evaluate_error_from_params_2 = (
             calculate_error(
-                oper2(pop_par_2, best_data_seq, best_ndm_for_params_2),  # updated NDM after changing operation parameters_1
+                oper2(pop_par_2, best_data_seq, best_ndm_for_params_2.copy()),  # updated NDM after changing operation parameters_1
                 samples,
                 in_neurons=input_neurons,
                 out_neurons=output_neurons)
