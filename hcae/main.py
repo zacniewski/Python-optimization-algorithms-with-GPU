@@ -277,7 +277,6 @@ if __name__ == "__main__":
 
         print(f"\n Evaluating parameters_1 in iteration #{number_of_iteration + 1} ...")
         print(f"{best_ndm_for_params_1[:, [-2, -1]]=}")
-        print(f"{population_params_1.shape[0]=}")
 
         """iter_evaluate_error_from_params_1 = []
         for i in range(population_params_1.shape[0]):
@@ -298,13 +297,12 @@ if __name__ == "__main__":
             for pop_par_1 in tqdm(population_params_1)
         )
         scores_for_params_1 = np.fromiter(iter_evaluate_error_from_params_1, dtype='O')
-        print(f"{best_ndm_for_params_1[:, [-2, -1]]=}")
 
         # selecting the best params_1 candidates
         for i in range(POPULATION_SIZE):
             if scores_for_params_1[i] < current_error:
                 current_error = scores_for_params_1[i]
-                best_ndm_for_params_1 = oper2(population_params_1[i], best_data_seq, best_ndm)  # new best NDM
+                #best_ndm_for_params_1 = oper2(population_params_1[i], best_data_seq, best_ndm_for_params_1.copy())  # new best NDM
                 best_op_params_1 = population_params_1[i]  # new best params_1
                 iterations_without_progress = 0
                 change_in_current_iteration = True
@@ -330,7 +328,7 @@ if __name__ == "__main__":
 
             if scores_for_data_seq[i] < current_error:
                 current_error = scores_for_data_seq[i]
-                best_ndm_for_data_seq = oper2(best_op_params_1, population_data_seq[i], best_ndm)  # new best NDM
+                #best_ndm_for_data_seq = oper2(best_op_params_1, population_data_seq[i], best_ndm_for_data_seq.copy())  # new best NDM
                 best_data_seq = population_data_seq[i]  # new best data_seq
                 iterations_without_progress = 0
                 change_in_current_iteration = True
@@ -355,7 +353,7 @@ if __name__ == "__main__":
         for i in range(POPULATION_SIZE):
             if scores_for_params_2[i] < current_error:
                 current_error = scores_for_params_2[i]
-                best_ndm_for_params_2 = oper2(population_params_2[i], best_data_seq, best_ndm)  # new best NDM
+                #best_ndm_for_params_2 = oper2(population_params_2[i], best_data_seq, best_ndm_for_params_2.copy())  # new best NDM
                 best_op_params_2 = population_params_2[i]  # new best params_1
                 iterations_without_progress = 0
                 change_in_current_iteration = True
@@ -429,6 +427,7 @@ if __name__ == "__main__":
             print("Params_1, params_2 and cdata_seq will be re-initialized!")
             print("Current best NDM will be used as a starting NDM in the next iteration!")
             best_op_params_1, best_op_params_2, best_data_seq = initialize_params_and_data_seq()
+            iterations_without_progress = 0
 
         change_in_current_iteration = False
         number_of_iteration += 1
