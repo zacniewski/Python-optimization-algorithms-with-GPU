@@ -97,7 +97,7 @@ def get_ann(operation_parameters: np.ndarray) -> np.ndarray:
     return ndm_operation
 
 
-def oper2(operation_parameters, data_sequence: np.ndarray, ndm) -> np.ndarray:
+def oper2(operation_parameters, data_sequence: np.ndarray, input_ndm) -> np.ndarray:
     """
     This function  directly fills NDM with values from the data sequence of AEP.
     The operation parameters determine:
@@ -121,9 +121,10 @@ def oper2(operation_parameters, data_sequence: np.ndarray, ndm) -> np.ndarray:
 
     :param operation_parameters: 'p'
     :param data_sequence: 'd'
-    :param ndm: input 'NDM'
+    :param input_ndm: input 'NDM'
     :return: updated 'NDM'
     """
+    ndm = input_ndm.copy()
 
     filled = 0
     where = operation_parameters[5]
@@ -160,7 +161,7 @@ def oper2(operation_parameters, data_sequence: np.ndarray, ndm) -> np.ndarray:
                     # print("Not -1")
                 # else:
                     # print("-1 lower")
-
+    # print(f"{input_ndm[:, [-2, -1]]=}")
     return ndm
 
 

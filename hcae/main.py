@@ -87,6 +87,7 @@ def mutation_of_data_sequence(d_s, mutation_rate=MUTATION_RATE_DATA_SEQ):
         # print("Mutation of data sequence!")
         a = 2  # this value could be changed if necessary
         d_s[random_index] = d_s[random_index] + a * (np.random.rand() - 0.5)
+        print(f"{d_s=}")
     # return params
 
 
@@ -166,7 +167,7 @@ def initialize_params_and_data_seq() -> tuple:
     return init_oper_params_1, init_oper_params_2, init_data_seq
 
 
-def calculate_error(current_ndm, samples_values, in_neurons, out_neurons):
+def calculate_error(current_ndm, samples_values, in_neurons, out_neurons) -> float:
     # output values from NDM for all input samples
     iterable1 = (
         calculate_output_from_ndm(
@@ -229,6 +230,7 @@ if __name__ == "__main__":
                                                          initial_operation_parameters_2,
                                                          initial_data_sequence)
 
+    # Three copies of the "original" NDM
     best_ndm_for_params_1 = best_ndm.copy()
     best_ndm_for_params_2 = best_ndm.copy()
     best_ndm_for_data_seq = best_ndm.copy()
@@ -276,21 +278,13 @@ if __name__ == "__main__":
         # best_data_seq and best_ndm are constant during evaluating candidates for params_1 population!
 
         print(f"\n Evaluating parameters_1 in iteration #{number_of_iteration + 1} ...")
-        print(f"{best_ndm_for_params_1[:, [-2, -1]]=}")
+        current_ndm_for_params_1 = best_ndm_for_params_1.copy()
 
-        """iter_evaluate_error_from_params_1 = []
-        for i in range(population_params_1.shape[0]):
-            e = calculate_error(
-                oper2(population_params_1[i], best_data_seq, best_ndm_for_params_1.copy()),
-                # updated NDM after changing operation parameters_1
-                samples,
-                in_neurons=input_neurons,
-                out_neurons=output_neurons)
-            print(f"{best_ndm_for_params_1[:, [-2, -1]]=}")
-            iter_evaluate_error_from_params_1.append(e)"""
+        # current_ndm_for_params_1 should be the same for every params_1
+        # during calculations of error in the given iteration!
         iter_evaluate_error_from_params_1 = (
             calculate_error(
-                oper2(pop_par_1, best_data_seq, best_ndm_for_params_1.copy()),  # updated NDM after changing operation parameters_1
+                oper2(pop_par_1, best_data_seq, current_ndm_for_params_1),
                 samples,
                 in_neurons=input_neurons,
                 out_neurons=output_neurons)
@@ -302,7 +296,7 @@ if __name__ == "__main__":
         for i in range(POPULATION_SIZE):
             if scores_for_params_1[i] < current_error:
                 current_error = scores_for_params_1[i]
-                #best_ndm_for_params_1 = oper2(population_params_1[i], best_data_seq, best_ndm_for_params_1.copy())  # new best NDM
+                best_ndm_for_params_1 = oper2(population_params_1[i], best_data_seq, current_ndm_for_params_1)  # new best NDM
                 best_op_params_1 = population_params_1[i]  # new best params_1
                 iterations_without_progress = 0
                 change_in_current_iteration = True
