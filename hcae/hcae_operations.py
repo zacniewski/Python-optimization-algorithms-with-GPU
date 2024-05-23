@@ -161,7 +161,7 @@ def oper2(operation_parameters, data_sequence: np.ndarray, input_ndm) -> np.ndar
                     # print("Not -1")
                 # else:
                     # print("-1 lower")
-    # print(f"{input_ndm[:, [-2, -1]]=}")
+    print(f"{ndm.sum()=}")
     return ndm
 
 

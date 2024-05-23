@@ -145,11 +145,14 @@ def calculate_output_from_ndm(
 
 def initialize_ndm() -> np.ndarray:
     # initialization of the NDM - random values from range (-1.0; 1.0)
-    init_ndm = 2 * np.random.rand(NDM_ROWS, NDM_COLUMNS) - 1
+    # init_ndm = 2 * np.random.rand(NDM_ROWS, NDM_COLUMNS) - 1
+
+    # initialization of the NDM - zero values matrix
+    init_ndm = np.zeros((NDM_ROWS, NDM_COLUMNS))
 
     # zero the values under the 1st diagonal
     # https: // numpy.org / doc / stable / reference / generated / numpy.triu.html
-    init_ndm = np.triu(init_ndm, k=1)
+    # init_ndm = np.triu(init_ndm, k=1)
     return init_ndm
 
 
@@ -160,10 +163,11 @@ def initialize_params_and_data_seq() -> tuple:
 
     # initialization of the data_sequence - random values from range (-1.0; 1.0)
     init_data_seq = (2 * np.random.rand(1, DATA_SEQUENCE_SIZE) - 1)[0]
-    print(f"{init_oper_params_1=}")
-    print(f"{init_oper_params_2=}")
-    print(f"{init_data_seq=}")
     return init_oper_params_1, init_oper_params_2, init_data_seq
+
+
+def replace_ndm() -> np.array:
+    pass
 
 
 def calculate_error(current_ndm, samples_values, in_neurons, out_neurons) -> float:
@@ -242,18 +246,18 @@ if __name__ == "__main__":
     # cause for example when we'd like to select the best parameters_1 candidates,
     # we need to have the data sequence and best parameters_2 unchanged in this process
 
-    # params_1 population
+    # initial params_1 population
     iterable_params_1 = (np.random.randint(best_ndm.shape[0], size=PARAMETERS_SIZE) for _ in
                          range(POPULATION_SIZE))
     population_params_1 = np.fromiter(iterable_params_1, dtype='O')
 
-    # params_2 population
+    # initial params_2 population
     iterable_params_2 = (np.random.randint(best_ndm.shape[0], size=PARAMETERS_SIZE) for _ in
                          range(POPULATION_SIZE))
     population_params_2 = np.fromiter(iterable_params_2, dtype='O')
     # print(f"{population_params_2.shape=}")
 
-    # data_seq population
+    # initial data_seq population
     iterable_data_seq = ((2 * np.random.rand(1, DATA_SEQUENCE_SIZE) - 1)[0] for _ in range(POPULATION_SIZE))
     population_data_seq = np.fromiter(iterable_data_seq, dtype='O')
 
@@ -263,6 +267,7 @@ if __name__ == "__main__":
     iterations_without_progress = 0
     change_in_current_iteration = False
 
+    # The adventure starts here!
     while number_of_iteration < TOTAL_NUMBER_OF_ITERATIONS and ACCEPTED_ERROR < current_error:
 
         print(f"\n ***** ITERATION #{number_of_iteration + 1} *****")
@@ -283,8 +288,11 @@ if __name__ == "__main__":
         # best_data_seq and best_ndm are constant during evaluating candidates for params_1 population!
 
         print(f"\n Evaluating parameters_1 in iteration #{number_of_iteration + 1} ...")
-
-        # current_ndm_for_params_1 should be the same for every params_1
+        #print(f"{best_ndm_for_params_1=}")
+        #print(f"{best_op_params_1=}")
+        #print(f"{best_data_seq=}")
+        #print(f"{best_op_params_2=}")
+        # ndm_for_params_1 should be the same for every params_1
         # during calculations of error in the given iteration!
         iter_evaluate_error_from_params_1 = (
             calculate_error(
@@ -301,6 +309,7 @@ if __name__ == "__main__":
             if scores_for_params_1[i] < current_error:
                 current_error = scores_for_params_1[i]
                 best_op_params_1 = population_params_1[i]  # new best params_1
+                best_ndm_for_params_1 = oper2(best_op_params_1, best_data_seq, best_ndm_for_params_1.copy())
                 iterations_without_progress = 0
                 change_in_current_iteration = True
                 print(f"New {current_error=} (for params_1)")
@@ -325,6 +334,7 @@ if __name__ == "__main__":
             if scores_for_data_seq[i] < current_error:
                 current_error = scores_for_data_seq[i]
                 best_data_seq = population_data_seq[i]  # new best data_seq
+                best_ndm_for_data_seq = oper2(best_op_params_1, best_data_seq, best_ndm_for_data_seq.copy())
                 iterations_without_progress = 0
                 change_in_current_iteration = True
                 print(f"New {current_error=} (for data_seq)")
@@ -349,7 +359,8 @@ if __name__ == "__main__":
         for i in range(POPULATION_SIZE):
             if scores_for_params_2[i] < current_error:
                 current_error = scores_for_params_2[i]
-                best_op_params_2 = population_params_2[i]  # new best params_1
+                best_op_params_2 = population_params_2[i]  # new best params_2
+                best_ndm_for_params_2 = oper2(best_op_params_1, best_data_seq, best_ndm_for_params_2.copy())
                 iterations_without_progress = 0
                 change_in_current_iteration = True
                 print(f"New {current_error=} (for params_2)")
@@ -421,7 +432,7 @@ if __name__ == "__main__":
             print("\nNO PROGRESS!")
             print("Params_1, params_2 and cdata_seq will be re-initialized!")
             print("Current best NDM will be used as a starting NDM in the next iteration!")
-            best_op_params_1, best_op_params_2, best_data_seq = initialize_params_and_data_seq()
+            # best_op_params_1, best_op_params_2, best_data_seq = initialize_params_and_data_seq()
             iterations_without_progress = 0
 
         change_in_current_iteration = False
