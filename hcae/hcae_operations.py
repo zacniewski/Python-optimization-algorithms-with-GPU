@@ -136,32 +136,34 @@ def oper2(operation_parameters, data_sequence: np.ndarray, input_ndm) -> np.ndar
 
     # check direction of filling
     if operation_parameters[0] % 2 == 0:
-        # print("I'm in else of oper2")
+        print("I'm in if of oper2")
 
         for k in range(num_of_ndm_columns):
             for j in range(num_of_ndm_rows):
                 tmp = fill(
                     k, j, operation_parameters, data_sequence, filled, where, holes
                 )
-                if tmp != -1.0:
+                if tmp > -2.0:
+                    print(f"{k=} - {j=} - {tmp=}")
                     ndm[j][k] = tmp
                 # else:
                     # print("-1 upper")
 
     else:
-        # print("I'm in else of oper2")
+        print("I'm in else of oper2")
 
         for k in range(num_of_ndm_rows):
             for j in range(num_of_ndm_columns):
                 tmp = fill(
                     j, k, operation_parameters, data_sequence, filled, where, holes
                 )
-                if tmp != -1.0:
+                if tmp > -2.0:
                     ndm[k][j] = tmp
-                    # print("Not -1")
+                    print(f"{k=} - {j=} - {tmp=}")
                 # else:
                     # print("-1 lower")
-    if ndm.sum():
+    if ndm.sum() != 0.0:
+        print(f"{data_sequence=}")
         print(f"{ndm=}")
     return ndm
 
@@ -198,15 +200,16 @@ def fill(
 
     if (
             number_of_updated_items < operation_parameters[4]
-            and number_of_column > operation_parameters[3]
-            and number_of_row > operation_parameters[2]
+            and number_of_column >= operation_parameters[3]
+            and number_of_row >= operation_parameters[2]
     ):
         # print("I'm in if of fill")
         number_of_updated_items += 1
+        print(f"{number_of_updated_items=}")
         if number_of_holes == operation_parameters[1]:
             number_of_holes = 0
             starting_position_in_data += 1
-            # print(f"{starting_position_in_data=}")
+            print(f"{starting_position_in_data=}")
             # print(f"{data_sequence=}")
             # print(f"{data_sequence[starting_position_in_data % data_sequence.size]=}")
             return data_sequence[starting_position_in_data % data_sequence.size]
@@ -215,8 +218,4 @@ def fill(
             return 0.0
     else:
         # print("I'm in else of fill")
-        return -1.0
-
-
-def hcae_evolution():
-    pass
+        return -10.0
