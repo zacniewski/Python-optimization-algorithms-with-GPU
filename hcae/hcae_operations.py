@@ -210,7 +210,7 @@ def fill(
             number_of_holes = 0
             starting_position_in_data += 1
             print(f"{starting_position_in_data=}")
-            # print(f"{data_sequence=}")
+            print(f"{operation_parameters=}")
             # print(f"{data_sequence[starting_position_in_data % data_sequence.size]=}")
             return data_sequence[starting_position_in_data % data_sequence.size]
         else:
