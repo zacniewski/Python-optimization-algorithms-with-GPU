@@ -136,35 +136,58 @@ def oper2(operation_parameters, data_sequence: np.ndarray, input_ndm) -> np.ndar
 
     # check direction of filling
     if operation_parameters[0] % 2 == 0:
-        print("I'm in if of oper2")
+        # print("I'm in if of oper2")
 
         for k in range(num_of_ndm_columns):
             for j in range(num_of_ndm_rows):
-                tmp = fill(
-                    k, j, operation_parameters, data_sequence, filled, where, holes
-                )
-                if tmp > -2.0:
-                    print(f"{k=} - {j=} - {tmp=}")
-                    ndm[j][k] = tmp
-                # else:
-                    # print("-1 upper")
+                if (
+                        filled < operation_parameters[4]
+                        and k >= operation_parameters[3]
+                        and j >= operation_parameters[2]
+                ):
+                    # print("I'm in if of fill")
+                    filled += 1
+                    # print(f"{filled=}")
+                    if holes == operation_parameters[1]:
+                        holes = 0
+                        where += 1
+                        # print(f"{where=}")
+                        # print(f"{operation_parameters=}")
+                        # print(f"{data_sequence[starting_position_in_data % data_sequence.size]=}")
+                        ndm[j][k] = data_sequence[where % data_sequence.size]
+                    else:
+                        holes += 1
+                        # print(f"{holes=}")
+                        ndm[j][k] = 0.0
 
     else:
-        print("I'm in else of oper2")
+        # print("I'm in else of oper2")
 
         for k in range(num_of_ndm_rows):
             for j in range(num_of_ndm_columns):
-                tmp = fill(
-                    j, k, operation_parameters, data_sequence, filled, where, holes
-                )
-                if tmp > -2.0:
-                    ndm[k][j] = tmp
-                    print(f"{k=} - {j=} - {tmp=}")
-                # else:
-                    # print("-1 lower")
-    if ndm.sum() != 0.0:
-        print(f"{data_sequence=}")
-        print(f"{ndm=}")
+                if (
+                        filled < operation_parameters[4]
+                        and k >= operation_parameters[3]
+                        and j >= operation_parameters[2]
+                ):
+                    # print("I'm in if of fill")
+                    filled += 1
+                    #print(f"{filled=}")
+                    if holes == operation_parameters[1]:
+                        # print(f"holes=operation_parameters[1]")
+                        holes = 0
+                        where += 1
+                        # print(f"{where=}")
+                        # print(f"{operation_parameters=}")
+                        # print(f"{data_sequence[starting_position_in_data % data_sequence.size]=}")
+                        ndm[k][j] = data_sequence[where % data_sequence.size]
+                    else:
+                        holes += 1
+                        ndm[k][j] = 0.0
+
+    # if ndm.sum() != 0.0:
+        #print(f"{data_sequence=}")
+        # print(f"{ndm.sum()=}")
     return ndm
 
 
