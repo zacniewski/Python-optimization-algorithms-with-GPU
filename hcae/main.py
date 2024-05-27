@@ -158,8 +158,8 @@ def initialize_ndm() -> np.ndarray:
 
 def initialize_params_and_data_seq() -> tuple:
     # initialization of the operations_parameters - random int values from range <0; NDM_ROWS)
-    init_oper_params_1 = np.random.randint(NDM_ROWS, size=PARAMETERS_SIZE)
-    init_oper_params_2 = np.random.randint(NDM_ROWS, size=PARAMETERS_SIZE)
+    init_oper_params_1 = np.random.randint(5 * NDM_ROWS, size=PARAMETERS_SIZE)
+    init_oper_params_2 = np.random.randint(5 * NDM_ROWS, size=PARAMETERS_SIZE)
 
     # initialization of the data_sequence - random values from range (-1.0; 1.0)
     init_data_seq = (2 * np.random.rand(1, DATA_SEQUENCE_SIZE) - 1)[0]
@@ -231,6 +231,8 @@ if __name__ == "__main__":
         samples,
         in_neurons=input_neurons,
         out_neurons=output_neurons)
+
+    # initialize params_1, data_seq and params_2
     best_op_params_1, best_op_params_2, best_data_seq = (initial_operation_parameters_1,
                                                          initial_operation_parameters_2,
                                                          initial_data_sequence)
@@ -308,6 +310,7 @@ if __name__ == "__main__":
         for i in range(POPULATION_SIZE):
             if scores_for_params_1[i] < current_error:
                 current_error = scores_for_params_1[i]
+                error_of_best_ndm_for_params_1 = scores_for_params_1[i]
                 best_op_params_1 = population_params_1[i]  # new best params_1
                 best_ndm_for_params_1 = oper2(best_op_params_1, best_data_seq, best_ndm_for_params_1.copy())
                 iterations_without_progress = 0
@@ -333,6 +336,7 @@ if __name__ == "__main__":
         for i in range(POPULATION_SIZE):
             if scores_for_data_seq[i] < current_error:
                 current_error = scores_for_data_seq[i]
+                error_of_best_ndm_for_data_seq = scores_for_data_seq[i]
                 best_data_seq = population_data_seq[i]  # new best data_seq
                 best_ndm_for_data_seq = oper2(best_op_params_1, best_data_seq, best_ndm_for_data_seq.copy())
                 iterations_without_progress = 0
@@ -359,6 +363,7 @@ if __name__ == "__main__":
         for i in range(POPULATION_SIZE):
             if scores_for_params_2[i] < current_error:
                 current_error = scores_for_params_2[i]
+                error_of_best_ndm_for_params_2 = scores_for_params_2[i]
                 best_op_params_2 = population_params_2[i]  # new best params_2
                 best_ndm_for_params_2 = oper2(best_op_params_1, best_data_seq, best_ndm_for_params_2.copy())
                 iterations_without_progress = 0
