@@ -430,7 +430,7 @@ if __name__ == "__main__":
             print(f"\nIterations without progress: {iterations_without_progress}.")
         if iterations_without_progress == MAX_ITER_NO_PROG:
             print("\nNO PROGRESS!")
-            print("Params_1, params_2 and cdata_seq will be re-initialized!")
+            print("Params_1, params_2 and data_seq will be re-initialized!")
             print("Current best NDM will be used as a starting NDM in the next iteration!")
             # best_op_params_1, best_op_params_2, best_data_seq = initialize_params_and_data_seq()
             iterations_without_progress = 0
