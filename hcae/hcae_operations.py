@@ -185,10 +185,10 @@ def oper2(operation_parameters, data_sequence: np.ndarray, input_ndm) -> np.ndar
                         holes += 1
                         ndm[k][j] = 0.0
 
-    if ndm.sum() != 0.0 and operation_parameters[4] > 15:
+    """if ndm.sum() != 0.0 and operation_parameters[4] > 15:
         print(f"{operation_parameters=}")
         print(f"{filled=}")
-        print(f"{ndm=}")
+        print(f"{ndm=}")"""
     return ndm
 
 
