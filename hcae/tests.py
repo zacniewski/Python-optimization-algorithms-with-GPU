@@ -2,20 +2,24 @@ import numpy as np
 from numpy import asarray, ogrid
 from numpy.random import randint, rand
 
-from constants import DATA_SEQUENCE_SIZE, PARAMETERS_SIZE, MUTATION_RATE, POPULATION_SIZE
-from hcae_operations import fill, oper2
+from constants import (DATA_SEQUENCE_SIZE,
+                       PARAMETERS_SIZE,
+                       MUTATION_RATE_PARAMS,
+                       MUTATION_RATE_DATA_SEQ,
+                       POPULATION_SIZE)
+from hcae_operations import oper2
 from main import calculate_output_from_ndm, objective
 
 # NumPy's randint: https://numpy.org/doc/stable/reference/random/generated/numpy.random.randint.html
 
 # NDM from the article "Neural collision ..." by Tomek
-hardcoded_ndm = np.array([
+"""hardcoded_ndm = np.array([
     [0, 0.2, 0.3, 0, -0.7, 0.1],
     [-0.9, 0, 1, -0.5, -1, 0.9],
     [0.5, 0, 0, -0.5, 0.3, 0.2],
     [0, 0.3, 0, 0.6, 0.1, 0.5]
-])
-
+])"""
+hardcoded_ndm = np.ones((5, 7)) * 0.5
 triu = np.triu(hardcoded_ndm, k=1)
 print(f"{triu=}")
 
@@ -42,7 +46,7 @@ solution = bounds[:, 0] + rand(len(bounds)) * (bounds[:, 1] - bounds[:, 0])
 # print(f"{solution=}")
 
 
-def mutation_of_parameters(params, mutation_rate=MUTATION_RATE):
+def mutation_of_parameters(params, mutation_rate=MUTATION_RATE_PARAMS):
     random_index = randint(len(params))
     if np.random.rand() < mutation_rate:
         # change the value at random index
@@ -51,7 +55,7 @@ def mutation_of_parameters(params, mutation_rate=MUTATION_RATE):
     return params
 
 
-def mutation_of_data_sequence(data_seq, mutation_rate=MUTATION_RATE):
+def mutation_of_data_sequence(data_seq, mutation_rate=MUTATION_RATE_DATA_SEQ):
     random_index = randint(len(data_seq[0]))
     print(f"{len(data_seq[0])=}")
     if np.random.rand() < mutation_rate:
@@ -61,31 +65,19 @@ def mutation_of_data_sequence(data_seq, mutation_rate=MUTATION_RATE):
     return data_seq
 
 
-def mutation_of_bitstring(
-        bitstring, mutation_rate=MUTATION_RATE):
-    for i in range(len(bitstring)):
-        # check for a mutation
-        if np.random.rand() < mutation_rate:
-            # flip the bit
-            bitstring[i] = 1 - bitstring[i]
-
-
-print(
-    f"Mutated (or not) parameters: {mutation_of_parameters(hardcoded_operation_parameters, mutation_rate=MUTATION_RATE)}")
-
-testing_data_sequence = 2 * np.random.rand(1, DATA_SEQUENCE_SIZE) - 1
-print(f"Testing data sequence: {testing_data_sequence}")
+testing_data_sequence = (2 * np.random.rand(1, DATA_SEQUENCE_SIZE) - 1)[0]
+# print(f"Testing data sequence: {testing_data_sequence}")
 # print(f"Mutated (or not) data sequence: {mutation_of_data_sequence(testing_data_sequence)}")
 
 X, Y = np.mgrid[-2:2:41j, -2:2:41j]
 samples = np.column_stack([X.ravel(), Y.ravel()])
-print(samples.shape)
+print(f"{samples.shape=}")
 
 # checking NDM calculations for single output value
 ndm_out = calculate_output_from_ndm(
     hardcoded_ndm,
     in_neurons=np.array([[0, 1]]),
-    out_neurons=np.array([[3]]),
+    out_neurons=np.array([[4]]),
     in_neurons_value=samples[0]
 )
 
@@ -93,6 +85,7 @@ ndm_out = calculate_output_from_ndm(
 print(f"Single {ndm_out=}")
 
 # Single value of the objective function
+print(f"{samples[0]=}")
 objective_value = objective(samples[0])
 print(f"Single objective value: {objective_value}")
 

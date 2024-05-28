@@ -135,8 +135,8 @@ def calculate_output_from_ndm(
         z = 0
 
     # uncomment to check the outputs value of all neurons (after activation function)
-    # for key, value in sigma.items():
-    # print(f"{key}: {value}")
+    for key, value in sigma.items():
+        print(f"{key}: {value}")
 
     # output value from FFN
     out_value = sigma[out_neurons[0][0]]

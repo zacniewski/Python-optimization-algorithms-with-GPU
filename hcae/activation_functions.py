@@ -10,7 +10,7 @@ def tanh(z):
 
 
 def activation_function(input_value, type_of_neuron_value):
-    if abs(type_of_neuron_value) <= 0.5:
+    if abs(type_of_neuron_value) < 0.5:
         return tanh(input_value)
     else:
         return linear(input_value)
