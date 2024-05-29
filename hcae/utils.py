@@ -49,7 +49,7 @@ def draw_neural_network_from_ndm():
 
 
 def draw_sinus():
-    x = np.linspace(-2, 2, 201)
+    x = np.linspace(-4, 4, 201)
     plt.plot(x, np.sin(x))
     plt.xlabel('Angle [rad]')
     plt.ylabel('sin(x)')

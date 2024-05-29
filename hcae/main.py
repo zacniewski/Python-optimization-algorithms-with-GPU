@@ -26,7 +26,7 @@ from utils import draw_sinus
 # the second will be the Ackley's function
 def objective(v):
     x, y = v
-    return np.sin(x * y)
+    return np.sin(x + y)
 
 
 def tournament_selection(population, scores, k=TOURNAMENT_CANDIDATES):
@@ -135,8 +135,9 @@ def calculate_output_from_ndm(
         z = 0
 
     # uncomment to check the outputs value of all neurons (after activation function)
-    for key, value in sigma.items():
-        print(f"{key}: {value}")
+    # it's good for testing purposes!
+    # for key, value in sigma.items():
+    #     print(f"{key}: {value}")
 
     # output value from FFN
     out_value = sigma[out_neurons[0][0]]
@@ -169,8 +170,8 @@ def initialize_test_ndm() -> np.ndarray:
 
 def initialize_params_and_data_seq() -> tuple:
     # initialization of the operations_parameters - random int values from range <0; NDM_ROWS)
-    init_oper_params_1 = np.random.randint(0, [2, 3, NDM_ROWS, NDM_ROWS, DATA_SEQUENCE_SIZE, DATA_SEQUENCE_SIZE])
-    init_oper_params_2 = np.random.randint(0, [2, 3, NDM_ROWS, NDM_ROWS, DATA_SEQUENCE_SIZE, DATA_SEQUENCE_SIZE])
+    init_oper_params_1 = np.random.randint(0, [2, 3, NDM_ROWS, NDM_ROWS, 2 * DATA_SEQUENCE_SIZE, DATA_SEQUENCE_SIZE])
+    init_oper_params_2 = np.random.randint(0, [2, 3, NDM_ROWS, NDM_ROWS, 2 * DATA_SEQUENCE_SIZE, DATA_SEQUENCE_SIZE])
 
     # initialization of the data_sequence - random values from range (-1.0; 1.0)
     init_data_seq = (2 * np.random.rand(1, DATA_SEQUENCE_SIZE) - 1)[0]
@@ -188,6 +189,8 @@ def calculate_error(current_ndm, samples_values, in_neurons, out_neurons) -> flo
         )
         for s in samples_values
     )
+
+    # values calculated from the NDM
     output_values_for_samples = np.fromiter(iterable1, dtype=np.dtype(np.float128))
     # print(f"\n{output_values_for_samples.shape=}")
 
@@ -236,6 +239,11 @@ if __name__ == "__main__":
     best_ndm_for_params_2 = best_ndm.copy()
     best_ndm_for_data_seq = best_ndm.copy()
 
+    # Three "backups" of NDM, used for the replacement of the current NDM, if there's no progress
+    backup_ndm_for_params_1 = best_ndm_for_params_1.copy()
+    backup_ndm_for_params_2 = best_ndm_for_params_2.copy()
+    backup_ndm_for_data_seq = best_ndm_for_data_seq.copy()
+
     # Three copies of the current error
     error_of_best_ndm_for_params_1 = current_error
     error_of_best_ndm_for_data_seq = current_error
@@ -276,7 +284,7 @@ if __name__ == "__main__":
     print("START!")
 
     # TESTING IN PRODUCTION !!!!!!
-    for _ in range(100):
+    """for _ in range(100):
         test_p1, test_p2, test_data_seq = initialize_params_and_data_seq()
         test_ndm = initialize_test_ndm()
         print(f"{test_p1=}")
@@ -289,7 +297,7 @@ if __name__ == "__main__":
                 samples,
                 in_neurons=input_neurons,
                 out_neurons=output_neurons)
-        print(f"{test_evaluate_error_from_params_1=}")
+        print(f"{test_evaluate_error_from_params_1=}")"""
 
 
     #### END OF TESTS
@@ -319,10 +327,10 @@ if __name__ == "__main__":
         # best_data_seq and best_ndm are constant during evaluating candidates for params_1 population!
 
         print(f"\n Evaluating parameters_1 in iteration #{number_of_iteration + 1} ...")
-        #print(f"{best_ndm_for_params_1=}")
-        #print(f"{best_op_params_1=}")
-        #print(f"{best_data_seq=}")
-        #print(f"{best_op_params_2=}")
+        print(f"{best_ndm_for_params_1.sum()=}")
+        print(f"{best_ndm_for_params_2.sum()=}")
+        print(f"{best_ndm_for_data_seq.sum()=}")
+
         # ndm_for_params_1 should be the same for every params_1
         # during calculations of error in the given iteration!
         iter_evaluate_error_from_params_1 = (
@@ -342,7 +350,7 @@ if __name__ == "__main__":
                 # current_error = scores_for_params_1[i]
                 error_of_best_ndm_for_params_1 = scores_for_params_1[i]
                 best_op_params_1 = population_params_1[i]  # new best params_1
-                best_ndm_for_params_1 = oper2(best_op_params_1, best_data_seq, best_ndm_for_params_1.copy())
+                backup_ndm_for_params_1 = oper2(best_op_params_1, best_data_seq, best_ndm_for_params_1.copy())
                 iterations_without_progress = 0
                 change_in_current_iteration = True
                 print(f"New {error_of_best_ndm_for_params_1= } (for params_1)")
@@ -369,7 +377,7 @@ if __name__ == "__main__":
                 # current_error = scores_for_data_seq[i]
                 error_of_best_ndm_for_data_seq = scores_for_data_seq[i]
                 best_data_seq = population_data_seq[i]  # new best data_seq
-                best_ndm_for_data_seq = oper2(best_op_params_1, best_data_seq, best_ndm_for_data_seq.copy())
+                backup_ndm_for_data_seq = oper2(best_op_params_1, best_data_seq, best_ndm_for_data_seq.copy())
                 iterations_without_progress = 0
                 change_in_current_iteration = True
                 print(f"New {error_of_best_ndm_for_data_seq= } (for data_seq)")
@@ -397,12 +405,18 @@ if __name__ == "__main__":
                 # current_error = scores_for_params_2[i]
                 error_of_best_ndm_for_params_2 = scores_for_params_2[i]
                 best_op_params_2 = population_params_2[i]  # new best params_2
-                best_ndm_for_params_2 = oper2(best_op_params_1, best_data_seq, best_ndm_for_params_2.copy())
+                backup_ndm_for_params_2 = oper2(best_op_params_1, best_data_seq, best_ndm_for_params_2.copy())
                 iterations_without_progress = 0
                 change_in_current_iteration = True
                 print(f"New {error_of_best_ndm_for_params_2= } (for params_2)")
 
         # All 3 populations are now evaluated
+        current_errors = np.array([
+            error_of_best_ndm_for_params_1,
+            error_of_best_ndm_for_params_2,
+            error_of_best_ndm_for_data_seq
+        ])
+        current_error = current_errors.min()
         print(f"\n{current_error=} (after evaluations)")
 
         # select parents
@@ -467,15 +481,34 @@ if __name__ == "__main__":
             print(f"\nIterations without progress: {iterations_without_progress}.")
         if iterations_without_progress == MAX_ITER_NO_PROG:
             print("\nNO PROGRESS!")
-            print("Params_1, params_2 and data_seq will be re-initialized!")
             print("Current best NDM will be used as a starting NDM in the next iteration!")
-            # best_op_params_1, best_op_params_2, best_data_seq = initialize_params_and_data_seq()
+
+            # Which NDM gives the smallest error
+            where_min_error = np.argmin(current_errors)
+            if where_min_error == 0:
+                best_ndm_for_params_1 = backup_ndm_for_params_1.copy()
+                best_ndm_for_params_2 = backup_ndm_for_params_1.copy()
+                best_ndm_for_data_seq = backup_ndm_for_params_1.copy()
+
+            if where_min_error == 1:
+                best_ndm_for_params_1 = backup_ndm_for_params_2.copy()
+                best_ndm_for_params_2 = backup_ndm_for_params_2.copy()
+                best_ndm_for_data_seq = backup_ndm_for_params_2.copy()
+            if where_min_error == 2:
+                best_ndm_for_params_1 = backup_ndm_for_data_seq.copy()
+                best_ndm_for_params_2 = backup_ndm_for_data_seq.copy()
+                best_ndm_for_data_seq = backup_ndm_for_data_seq.copy()
+
+            error_of_best_ndm_for_params_1 = current_errors[where_min_error]
+            error_of_best_ndm_for_params_2 = current_errors[where_min_error]
+            error_of_best_ndm_for_params_1 = current_errors[where_min_error]
+
             iterations_without_progress = 0
 
         change_in_current_iteration = False
         number_of_iteration += 1
         # END OF THE WHILE LOOP!
 
-    print(f"\nFinished, {current_error=}")  # to fix!!!
+    print(f"\nFinished, the smallest error is: {current_error}")
     end_cpu = time.perf_counter()
     print(f"\nElapsed time: {end_cpu - start_cpu:.3f} seconds.")
