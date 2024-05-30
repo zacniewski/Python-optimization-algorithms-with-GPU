@@ -25,8 +25,8 @@ from utils import draw_sinus
 # first objective is a simple trigonometric function
 # the second will be the Ackley's function
 def objective(v):
-    x, y = v
-    return np.sin(x + y)
+    xx, yy = v
+    return np.sin(xx) * np.cos(yy)
 
 
 def tournament_selection(population, scores, k=TOURNAMENT_CANDIDATES):
@@ -216,9 +216,11 @@ if __name__ == "__main__":
 
     # create samples of input variables
     # X in <-2; 2> and Y in <-2; 2>
-    X, Y = np.mgrid[-2:2:41j, -2:2:41j]
-    samples = np.column_stack([X.ravel(), Y.ravel()])
-    # print(f"{samples.shape=}")
+    # X, Y = np.mgrid[-2:2:41j, -2:2:41j]
+    # samples = np.column_stack([X.ravel(), Y.ravel()])
+    x = np.linspace(-2, 2, 2001)
+    y = np.linspace(-2, 2, 2001)
+    samples = np.column_stack([x, y])
 
     # indexes of input and output neurons (depends on the task, that author had in mind)
     # two first neurons

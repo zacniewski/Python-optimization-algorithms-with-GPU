@@ -49,9 +49,17 @@ def draw_neural_network_from_ndm():
 
 
 def draw_sinus():
-    x = np.linspace(-4, 4, 201)
-    plt.plot(x, np.sin(x))
+    # create samples of input variables
+    # X in <-2; 2> and Y in <-2; 2>
+    # xx, yy = np.mgrid[-2:2:41j, -2:2:41j]
+    # samples = np.column_stack([xx.ravel(), yy.ravel()])
+
+    x = np.linspace(-2, 2, 2001)
+    y = np.linspace(-2, 2, 2001)
+    samples = np.column_stack([x, y])
+
+    plt.plot(x, np.sin(x) * np.cos(y))
     plt.xlabel('Angle [rad]')
-    plt.ylabel('sin(x)')
+    plt.ylabel('sin(x) * cos(x)')
     plt.axis('tight')
     plt.show()
