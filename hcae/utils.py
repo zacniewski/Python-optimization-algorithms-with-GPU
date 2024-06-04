@@ -54,9 +54,10 @@ def draw_sinus():
     # xx, yy = np.mgrid[-2:2:41j, -2:2:41j]
     # samples = np.column_stack([xx.ravel(), yy.ravel()])
 
-    x = np.linspace(-2, 2, 2001)
-    y = np.linspace(-2, 2, 2001)
+    x = np.linspace(-1, 1, 2001)
+    y = np.linspace(-1, 1, 2001)
     samples = np.column_stack([x, y])
+    print(f"{samples[0:3]=}")
 
     plt.plot(x, np.sin(x) * np.cos(y))
     plt.xlabel('Angle [rad]')

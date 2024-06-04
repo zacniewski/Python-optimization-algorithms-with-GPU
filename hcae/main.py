@@ -87,6 +87,10 @@ def mutation_of_data_sequence(d_s, mutation_rate=MUTATION_RATE_DATA_SEQ):
         # print("Mutation of data sequence!")
         a = 2  # this value could be changed if necessary
         d_s[random_index] = d_s[random_index] + a * (np.random.rand() - 0.5)
+        if d_s[random_index] < -1:
+            d_s[random_index] = -1
+        if d_s[random_index] > 1:
+            d_s[random_index] = 1
     # return params
 
 
@@ -218,8 +222,8 @@ if __name__ == "__main__":
     # X in <-2; 2> and Y in <-2; 2>
     # X, Y = np.mgrid[-2:2:41j, -2:2:41j]
     # samples = np.column_stack([X.ravel(), Y.ravel()])
-    x = np.linspace(-2, 2, 2001)
-    y = np.linspace(-2, 2, 2001)
+    x = np.linspace(-1, 1, 2001)
+    y = np.linspace(-1, 1, 2001)
     samples = np.column_stack([x, y])
 
     # indexes of input and output neurons (depends on the task, that author had in mind)
