@@ -222,8 +222,8 @@ if __name__ == "__main__":
     # X in <-2; 2> and Y in <-2; 2>
     # X, Y = np.mgrid[-2:2:41j, -2:2:41j]
     # samples = np.column_stack([X.ravel(), Y.ravel()])
-    x = np.linspace(-1, 1, 2001)
-    y = np.linspace(-1, 1, 2001)
+    x = np.linspace(-0.8, 0.8, 1601)
+    y = np.linspace(-0.8, 0.8, 1601)
     samples = np.column_stack([x, y])
 
     # indexes of input and output neurons (depends on the task, that author had in mind)

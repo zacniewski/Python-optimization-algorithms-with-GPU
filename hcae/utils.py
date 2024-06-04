@@ -54,8 +54,8 @@ def draw_sinus():
     # xx, yy = np.mgrid[-2:2:41j, -2:2:41j]
     # samples = np.column_stack([xx.ravel(), yy.ravel()])
 
-    x = np.linspace(-1, 1, 2001)
-    y = np.linspace(-1, 1, 2001)
+    x = np.linspace(-0.8, 0.8, 1601)
+    y = np.linspace(-0.8, 0.8, 1601)
     samples = np.column_stack([x, y])
     print(f"{samples[0:3]=}")
 
