@@ -185,25 +185,19 @@ def initialize_params_and_data_seq() -> tuple:
     return init_oper_params_1, init_oper_params_2, init_data_seq
 
 
+@numba.jit
 def calculate_error(current_ndm, samples_values, in_neurons, out_neurons) -> float:
-    # output values from NDM for all input samples
-    iterable1 = (
-        calculate_output_from_ndm(
-            current_ndm,
-            in_neurons,
-            out_neurons,
-            in_neurons_value=s,
-        )
-        for s in samples_values
-    )
-
     # values calculated from the NDM
-    output_values_for_samples = np.fromiter(iterable1, dtype=np.dtype(np.float128))
-    # print(f"\n{output_values_for_samples.shape=}")
+    output_values_for_samples = [calculate_output_from_ndm(
+        current_ndm,
+        in_neurons,
+        out_neurons,
+        in_neurons_value=s,
+    )
+        for s in samples_values]
 
     # values of the objective function for all samples
-    iterable2 = (objective(s) for s in samples_values)
-    objective_values_for_samples = np.fromiter(iterable2, dtype=np.dtype(np.float128))
+    objective_values_for_samples = [objective(s) for s in samples_values]
 
     # error value
     return np.sum(np.abs(output_values_for_samples - objective_values_for_samples))
