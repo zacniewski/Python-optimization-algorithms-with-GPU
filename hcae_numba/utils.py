@@ -7,6 +7,7 @@
 
 
 import matplotlib.pyplot as plt
+import numba
 import numpy as np
 import networkx as nx
 
@@ -48,6 +49,7 @@ def draw_neural_network_from_ndm():
     plt.show()
 
 
+@numba.jit
 def draw_sinus():
     # create samples of input variables
     # X in <-2; 2> and Y in <-2; 2>
@@ -57,7 +59,6 @@ def draw_sinus():
     x = np.linspace(-0.8, 0.8, 1601)
     y = np.linspace(-0.8, 0.8, 1601)
     samples = np.column_stack([x, y])
-    print(f"{samples[0:3]=}")
 
     plt.plot(x, np.sin(x) * np.cos(y))
     plt.xlabel('Angle [rad]')

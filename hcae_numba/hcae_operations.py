@@ -1,3 +1,4 @@
+import numba
 import numpy as np
 
 from constants import M, N
@@ -97,6 +98,7 @@ def get_ann(operation_parameters: np.ndarray) -> np.ndarray:
     return ndm_operation
 
 
+@numba.jit
 def oper2(operation_parameters, data_sequence: np.ndarray, input_ndm) -> np.ndarray:
     """
     This function  directly fills NDM with values from the data sequence of AEP.
@@ -192,6 +194,7 @@ def oper2(operation_parameters, data_sequence: np.ndarray, input_ndm) -> np.ndar
     return ndm
 
 
+@numba.jit
 def fill(
         number_of_column: int,
         number_of_row: int,

@@ -25,11 +25,12 @@ from utils import draw_sinus
 
 # first objective is a simple trigonometric function
 # the second will be the Ackley's function
+@numba.jit
 def objective(v):
     xx, yy = v
     return np.sin(xx) * np.cos(yy)
 
-
+@numba.jit
 def tournament_selection(population, scores, k=TOURNAMENT_CANDIDATES):
     """
     :param population: population of individuals (chromosomes)
@@ -48,7 +49,7 @@ def tournament_selection(population, scores, k=TOURNAMENT_CANDIDATES):
             selection_index = ix
     return population[selection_index]
 
-
+@numba.jit
 def crossover(parent1, parent2, r_cross=CROSSOVER_RATE):
     """
     :param parent1: first parent
@@ -70,7 +71,7 @@ def crossover(parent1, parent2, r_cross=CROSSOVER_RATE):
         child2 = np.concatenate((parent2[:pt], parent1[pt:]), axis=0)
     return np.array([child1, child2])
 
-
+@numba.jit
 def mutation_of_parameters(params, mutation_rate=MUTATION_RATE_PARAMS):
     random_index = np.random.randint(params.size)
     if np.random.rand() < mutation_rate:
@@ -80,7 +81,7 @@ def mutation_of_parameters(params, mutation_rate=MUTATION_RATE_PARAMS):
         params[random_index] = np.abs(params[random_index] + np.random.randint(-b, b))
     # return params
 
-
+@numba.jit
 def mutation_of_data_sequence(d_s, mutation_rate=MUTATION_RATE_DATA_SEQ):
     random_index = np.random.randint(d_s.size)
     if np.random.rand() < mutation_rate:
@@ -94,7 +95,7 @@ def mutation_of_data_sequence(d_s, mutation_rate=MUTATION_RATE_DATA_SEQ):
             d_s[random_index] = 1
     # return params
 
-
+@numba.jit
 def calculate_output_from_ndm(
         in_ndm: np.array,
         in_neurons: np.array,
@@ -148,7 +149,7 @@ def calculate_output_from_ndm(
     out_value = sigma[out_neurons[0][0]]
     return out_value
 
-
+@numba.jit
 def initialize_ndm() -> np.ndarray:
     # initialization of the NDM - random values from range (-1.0; 1.0)
     # init_ndm = 2 * np.random.rand(NDM_ROWS, NDM_COLUMNS) - 1
@@ -161,7 +162,7 @@ def initialize_ndm() -> np.ndarray:
     # init_ndm = np.triu(init_ndm, k=1)
     return init_ndm
 
-
+@numba.jit
 def initialize_test_ndm() -> np.ndarray:
     # initialization of the NDM - random values from range (-1.0; 1.0)
     # init_ndm = 2 * np.random.rand(NDM_ROWS, NDM_COLUMNS) - 1
@@ -174,7 +175,7 @@ def initialize_test_ndm() -> np.ndarray:
     # init_ndm = np.triu(init_ndm, k=1)
     return test_ndm
 
-
+@numba.jit
 def initialize_params_and_data_seq() -> tuple:
     # initialization of the operations_parameters - random int values from range <0; NDM_ROWS)
     init_oper_params_1 = np.random.randint(0, [2, 3, NDM_ROWS, NDM_ROWS, 2 * DATA_SEQUENCE_SIZE, DATA_SEQUENCE_SIZE])
