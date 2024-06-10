@@ -206,7 +206,7 @@ def calculate_error(current_ndm, samples_values, in_neurons, out_neurons) -> flo
 
 if __name__ == "__main__":
     # draw input function
-    draw_sinus()
+    # draw_sinus()
 
     # start CPU measurement
     start_cpu = time.perf_counter()

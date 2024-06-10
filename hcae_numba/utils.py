@@ -58,7 +58,7 @@ def draw_sinus():
 
     x = np.linspace(-0.8, 0.8, 1601)
     y = np.linspace(-0.8, 0.8, 1601)
-    samples = np.column_stack([x, y])
+    # samples = np.column_stack([x, y])
 
     plt.plot(x, np.sin(x) * np.cos(y))
     plt.xlabel('Angle [rad]')
