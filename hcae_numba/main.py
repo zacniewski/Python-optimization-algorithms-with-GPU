@@ -20,15 +20,15 @@ from constants import (
     TOURNAMENT_CANDIDATES, POPULATION_SIZE,
 )
 from hcae_operations import oper2
-from utils import draw_sinus
 
 
 # first objective is a simple trigonometric function
 # the second will be the Ackley's function
-@numba.jit
+@numba.njit
 def objective(v):
     xx, yy = v
     return np.sin(xx) * np.cos(yy)
+
 
 @numba.jit
 def tournament_selection(population, scores, k=TOURNAMENT_CANDIDATES):
@@ -38,9 +38,12 @@ def tournament_selection(population, scores, k=TOURNAMENT_CANDIDATES):
     :param k: number of tournament candidates
     :return: chromosome who won the selection
     """
+    print("population=", population)
+    print("scores=", scores)
 
     # first random selected index
     selection_index = np.random.randint(len(population))
+    print("selection_index=", selection_index)
 
     # checking another (k-1) candidates
     for ix in np.random.randint(0, len(population), k - 1):
@@ -48,6 +51,7 @@ def tournament_selection(population, scores, k=TOURNAMENT_CANDIDATES):
         if scores[ix] < scores[selection_index]:
             selection_index = ix
     return population[selection_index]
+
 
 @numba.jit
 def crossover(parent1, parent2, r_cross=CROSSOVER_RATE):
@@ -71,6 +75,7 @@ def crossover(parent1, parent2, r_cross=CROSSOVER_RATE):
         child2 = np.concatenate((parent2[:pt], parent1[pt:]), axis=0)
     return np.array([child1, child2])
 
+
 @numba.jit
 def mutation_of_parameters(params, mutation_rate=MUTATION_RATE_PARAMS):
     random_index = np.random.randint(params.size)
@@ -80,6 +85,7 @@ def mutation_of_parameters(params, mutation_rate=MUTATION_RATE_PARAMS):
         b = 5
         params[random_index] = np.abs(params[random_index] + np.random.randint(-b, b))
     # return params
+
 
 @numba.jit
 def mutation_of_data_sequence(d_s, mutation_rate=MUTATION_RATE_DATA_SEQ):
@@ -94,6 +100,7 @@ def mutation_of_data_sequence(d_s, mutation_rate=MUTATION_RATE_DATA_SEQ):
         if d_s[random_index] > 1:
             d_s[random_index] = 1
     # return params
+
 
 @numba.jit
 def calculate_output_from_ndm(
@@ -149,6 +156,7 @@ def calculate_output_from_ndm(
     out_value = sigma[out_neurons[0][0]]
     return out_value
 
+
 @numba.jit
 def initialize_ndm() -> np.ndarray:
     # initialization of the NDM - random values from range (-1.0; 1.0)
@@ -162,6 +170,7 @@ def initialize_ndm() -> np.ndarray:
     # init_ndm = np.triu(init_ndm, k=1)
     return init_ndm
 
+
 @numba.jit
 def initialize_test_ndm() -> np.ndarray:
     # initialization of the NDM - random values from range (-1.0; 1.0)
@@ -174,6 +183,7 @@ def initialize_test_ndm() -> np.ndarray:
     # https: // numpy.org / doc / stable / reference / generated / numpy.triu.html
     # init_ndm = np.triu(init_ndm, k=1)
     return test_ndm
+
 
 @numba.jit
 def initialize_params_and_data_seq() -> tuple:
@@ -201,7 +211,8 @@ def calculate_error(current_ndm, samples_values, in_neurons, out_neurons) -> flo
     objective_values_for_samples = [objective(s) for s in samples_values]
 
     # error value
-    return np.sum(np.abs(output_values_for_samples - objective_values_for_samples))
+    return sum([np.abs(out - obj) for out, obj in zip(output_values_for_samples, objective_values_for_samples)])
+    # return np.sum(np.abs(output_values_for_samples - objective_values_for_samples))
 
 
 if __name__ == "__main__":
@@ -321,16 +332,14 @@ if __name__ == "__main__":
 
         # ndm_for_params_1 should be the same for every params_1
         # during calculations of error in the given iteration!
-        iter_evaluate_error_from_params_1 = (
+        scores_for_params_1 = [
             calculate_error(
                 oper2(pop_par_1, best_data_seq, best_ndm_for_params_1),
                 samples,
                 in_neurons=input_neurons,
                 out_neurons=output_neurons)
             for pop_par_1 in tqdm(population_params_1)
-        )
-        scores_for_params_1 = np.fromiter(iter_evaluate_error_from_params_1, dtype='O')
-        # print(f"{scores_for_params_1=}")
+        ]
 
         # selecting the best params_1 candidates
         for i in range(POPULATION_SIZE):
@@ -347,16 +356,14 @@ if __name__ == "__main__":
         # best_op_params_1 and best_ndm are constant during evaluating candidates for data_seq population!
 
         print(f"\n Evaluating data sequence in iteration #{number_of_iteration + 1} ...")
-        iter_evaluate_error_from_data_seq = (
+        scores_for_data_seq = [
             calculate_error(
                 oper2(best_op_params_1, pop_data_seq, best_ndm_for_data_seq),
                 samples,
                 in_neurons=input_neurons,
                 out_neurons=output_neurons)
             for pop_data_seq in tqdm(population_data_seq)
-        )
-        scores_for_data_seq = np.fromiter(iter_evaluate_error_from_data_seq, dtype='O')
-        # print(f"{scores_for_data_seq=}")
+        ]
 
         # selecting the best data_seq candidates
         for i in range(POPULATION_SIZE):
@@ -374,7 +381,7 @@ if __name__ == "__main__":
         # best_data_seq and best_ndm are constant during evaluating candidates for params_2 population!
 
         print(f"\n Evaluating parameters_2 in iteration #{number_of_iteration + 1} ...")
-        iter_evaluate_error_from_params_2 = (
+        scores_for_params_2 = [
             calculate_error(
                 oper2(pop_par_2, best_data_seq, best_ndm_for_params_2),
                 # updated NDM after changing operation parameters_1
@@ -382,9 +389,7 @@ if __name__ == "__main__":
                 in_neurons=input_neurons,
                 out_neurons=output_neurons)
             for pop_par_2 in tqdm(population_params_2)
-        )
-        scores_for_params_2 = np.fromiter(iter_evaluate_error_from_params_2, dtype='O')
-        # print(f"{scores_for_params_2=}")
+        ]
 
         # selecting the best params_2 candidates
         for i in range(POPULATION_SIZE):
@@ -408,19 +413,19 @@ if __name__ == "__main__":
 
         # select parents
         print("\n Selecting parents from parameters_1 ...")
-        iter_selected_params_1 = (tournament_selection(population_params_1, scores_for_params_1) for _ in
-                                  tqdm(range(POPULATION_SIZE)))
-        selected_params_1 = np.fromiter(iter_selected_params_1, dtype='O')
+        print(f"{population_params_1=}")
+        print(f"{scores_for_params_1=}")
+
+        selected_params_1 = [tournament_selection(population_params_1, scores_for_params_1) for _ in
+                             tqdm(range(POPULATION_SIZE))]
 
         print("\n Selecting parents from data sequence ...")
-        iter_selected_data_seq = (tournament_selection(population_data_seq, scores_for_data_seq) for _ in
-                                  tqdm(range(POPULATION_SIZE)))
-        selected_data_seq = np.fromiter(iter_selected_data_seq, dtype='O')
+        selected_data_seq = [tournament_selection(population_data_seq, scores_for_data_seq) for _ in
+                             tqdm(range(POPULATION_SIZE))]
 
         print("\n Selecting parents from parameters_2 ...")
-        iter_selected_params_2 = (tournament_selection(population_params_2, scores_for_params_2) for _ in
-                                  tqdm(range(POPULATION_SIZE)))
-        selected_params_2 = np.fromiter(iter_selected_params_2, dtype='O')
+        selected_params_2 = [tournament_selection(population_params_2, scores_for_params_2) for _ in
+                             tqdm(range(POPULATION_SIZE))]
 
         # create the next generation
         children_of_params_1 = np.zeros((POPULATION_SIZE, PARAMETERS_SIZE), dtype=int)
