@@ -332,14 +332,13 @@ if __name__ == "__main__":
 
         # ndm_for_params_1 should be the same for every params_1
         # during calculations of error in the given iteration!
-        scores_for_params_1 = [
-            calculate_error(
-                oper2(pop_par_1, best_data_seq, best_ndm_for_params_1),
+        scores_for_params_1 = np.empty(100, dtype='float')
+        for i in range(POPULATION_SIZE):
+            scores_for_params_1[i] = calculate_error(
+                oper2(population_params_1[i], best_data_seq, best_ndm_for_params_1),
                 samples,
                 in_neurons=input_neurons,
                 out_neurons=output_neurons)
-            for pop_par_1 in tqdm(population_params_1)
-        ]
 
         # selecting the best params_1 candidates
         for i in range(POPULATION_SIZE):
@@ -413,8 +412,8 @@ if __name__ == "__main__":
 
         # select parents
         print("\n Selecting parents from parameters_1 ...")
-        print(f"{population_params_1=}")
-        print(f"{scores_for_params_1=}")
+        print(f"{population_params_1[:3]=}")
+        print(f"{tournament_selection(population_params_1[0], scores_for_params_1[0])=}")
 
         selected_params_1 = [tournament_selection(population_params_1, scores_for_params_1) for _ in
                              tqdm(range(POPULATION_SIZE))]

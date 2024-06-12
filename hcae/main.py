@@ -415,6 +415,7 @@ if __name__ == "__main__":
         iter_selected_params_1 = (tournament_selection(population_params_1, scores_for_params_1) for _ in
                                   tqdm(range(POPULATION_SIZE)))
         selected_params_1 = np.fromiter(iter_selected_params_1, dtype='O')
+        print(f"{selected_params_1=}")
 
         print("\n Selecting parents from data sequence ...")
         iter_selected_data_seq = (tournament_selection(population_data_seq, scores_for_data_seq) for _ in
