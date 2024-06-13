@@ -271,6 +271,7 @@ if __name__ == "__main__":
                          in
                          range(POPULATION_SIZE))
     population_params_1 = np.fromiter(iterable_params_1, dtype='O')
+    print(f"{population_params_1[0].shape=}")
 
     # initial params_2 population
     iterable_params_2 = (np.random.randint(0, [2, 3, NDM_ROWS, NDM_ROWS, DATA_SEQUENCE_SIZE, DATA_SEQUENCE_SIZE]) for _
@@ -297,7 +298,7 @@ if __name__ == "__main__":
     print(f"{best_op_params_1=}")
     print(f"{best_op_params_2=}")
     print(f"{best_data_seq=}")
-
+    breakpoint()
     print("START!")
     print(f"Initial error = {current_error}")
     number_of_iteration = 0

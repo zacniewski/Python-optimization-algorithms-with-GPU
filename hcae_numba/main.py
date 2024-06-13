@@ -292,8 +292,9 @@ if __name__ == "__main__":
         )
         for _ in range(POPULATION_SIZE)
     ]
+    population_params_1 = np.asarray(population_params_1)
     #population_params_1 = np.fromiter(iterable_params_1, dtype="O")
-    print(f"{type(population_params_1)=}")
+    print(f"{np.random.choice(population_params_1[0], 1)=}")
 
     # initial params_2 population
     iterable_params_2 = (
