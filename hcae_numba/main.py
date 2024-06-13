@@ -17,14 +17,15 @@ from constants import (
     NDM_ROWS,
     TOTAL_NUMBER_OF_ITERATIONS,
     PARAMETERS_SIZE,
-    TOURNAMENT_CANDIDATES, POPULATION_SIZE,
+    TOURNAMENT_CANDIDATES,
+    POPULATION_SIZE,
 )
 from hcae_operations import oper2
 
 
 # first objective is a simple trigonometric function
 # the second will be the Ackley's function
-@numba.njit
+@numba.jit
 def objective(v):
     xx, yy = v
     return np.sin(xx) * np.cos(yy)
@@ -104,10 +105,10 @@ def mutation_of_data_sequence(d_s, mutation_rate=MUTATION_RATE_DATA_SEQ):
 
 @numba.jit
 def calculate_output_from_ndm(
-        in_ndm: np.array,
-        in_neurons: np.array,
-        out_neurons: np.array,
-        in_neurons_value: np.array,
+    in_ndm: np.array,
+    in_neurons: np.array,
+    out_neurons: np.array,
+    in_neurons_value: np.array,
 ) -> float:
     """
     :param in_ndm: input NDM matrix
@@ -188,8 +189,12 @@ def initialize_test_ndm() -> np.ndarray:
 @numba.jit
 def initialize_params_and_data_seq() -> tuple:
     # initialization of the operations_parameters - random int values from range <0; NDM_ROWS)
-    init_oper_params_1 = np.random.randint(0, [2, 3, NDM_ROWS, NDM_ROWS, 2 * DATA_SEQUENCE_SIZE, DATA_SEQUENCE_SIZE])
-    init_oper_params_2 = np.random.randint(0, [2, 3, NDM_ROWS, NDM_ROWS, 2 * DATA_SEQUENCE_SIZE, DATA_SEQUENCE_SIZE])
+    init_oper_params_1 = np.random.randint(
+        0, [2, 3, NDM_ROWS, NDM_ROWS, 2 * DATA_SEQUENCE_SIZE, DATA_SEQUENCE_SIZE]
+    )
+    init_oper_params_2 = np.random.randint(
+        0, [2, 3, NDM_ROWS, NDM_ROWS, 2 * DATA_SEQUENCE_SIZE, DATA_SEQUENCE_SIZE]
+    )
 
     # initialization of the data_sequence - random values from range (-1.0; 1.0)
     init_data_seq = (2 * np.random.rand(1, DATA_SEQUENCE_SIZE) - 1)[0]
@@ -199,19 +204,26 @@ def initialize_params_and_data_seq() -> tuple:
 @numba.jit
 def calculate_error(current_ndm, samples_values, in_neurons, out_neurons) -> float:
     # values calculated from the NDM
-    output_values_for_samples = [calculate_output_from_ndm(
-        current_ndm,
-        in_neurons,
-        out_neurons,
-        in_neurons_value=s,
-    )
-        for s in samples_values]
+    output_values_for_samples = [
+        calculate_output_from_ndm(
+            current_ndm,
+            in_neurons,
+            out_neurons,
+            in_neurons_value=s,
+        )
+        for s in samples_values
+    ]
 
     # values of the objective function for all samples
     objective_values_for_samples = [objective(s) for s in samples_values]
 
     # error value
-    return sum([np.abs(out - obj) for out, obj in zip(output_values_for_samples, objective_values_for_samples)])
+    return sum(
+        [
+            np.abs(out - obj)
+            for out, obj in zip(output_values_for_samples, objective_values_for_samples)
+        ]
+    )
     # return np.sum(np.abs(output_values_for_samples - objective_values_for_samples))
 
 
@@ -274,20 +286,30 @@ if __name__ == "__main__":
     # we need to have the data sequence and best parameters_2 unchanged in this process
 
     # initial params_1 population
-    iterable_params_1 = (np.random.randint(0, [2, 3, NDM_ROWS, NDM_ROWS, DATA_SEQUENCE_SIZE, DATA_SEQUENCE_SIZE]) for _
-                         in
-                         range(POPULATION_SIZE))
-    population_params_1 = np.fromiter(iterable_params_1, dtype='O')
+    population_params_1 = [
+        np.random.randint(
+            0, [2, 3, NDM_ROWS, NDM_ROWS, DATA_SEQUENCE_SIZE, DATA_SEQUENCE_SIZE], dtype=np.int64
+        )
+        for _ in range(POPULATION_SIZE)
+    ]
+    #population_params_1 = np.fromiter(iterable_params_1, dtype="O")
+    print(f"{type(population_params_1)=}")
 
     # initial params_2 population
-    iterable_params_2 = (np.random.randint(0, [2, 3, NDM_ROWS, NDM_ROWS, DATA_SEQUENCE_SIZE, DATA_SEQUENCE_SIZE]) for _
-                         in
-                         range(POPULATION_SIZE))
-    population_params_2 = np.fromiter(iterable_params_2, dtype='O')
+    iterable_params_2 = (
+        np.random.randint(
+            0, [2, 3, NDM_ROWS, NDM_ROWS, DATA_SEQUENCE_SIZE, DATA_SEQUENCE_SIZE]
+        )
+        for _ in range(POPULATION_SIZE)
+    )
+    population_params_2 = np.fromiter(iterable_params_2, dtype="O")
 
     # initial data_seq population
-    iterable_data_seq = ((2 * np.random.rand(1, DATA_SEQUENCE_SIZE) - 1)[0] for _ in range(POPULATION_SIZE))
-    population_data_seq = np.fromiter(iterable_data_seq, dtype='O')
+    iterable_data_seq = (
+        (2 * np.random.rand(1, DATA_SEQUENCE_SIZE) - 1)[0]
+        for _ in range(POPULATION_SIZE)
+    )
+    population_data_seq = np.fromiter(iterable_data_seq, dtype="O")
 
     # initialize "best" params_1, data_seq and params_2
     # initial candidates - two for operations and one for data sequence
@@ -312,7 +334,10 @@ if __name__ == "__main__":
     change_in_current_iteration = False
 
     # The adventure starts here!
-    while number_of_iteration < TOTAL_NUMBER_OF_ITERATIONS and ACCEPTED_ERROR < current_error:
+    while (
+        number_of_iteration < TOTAL_NUMBER_OF_ITERATIONS
+        and ACCEPTED_ERROR < current_error
+    ):
 
         print(f"\n ***** ITERATION #{number_of_iteration + 1} *****")
 
@@ -332,20 +357,23 @@ if __name__ == "__main__":
 
         # ndm_for_params_1 should be the same for every params_1
         # during calculations of error in the given iteration!
-        scores_for_params_1 = np.empty(100, dtype='float')
+        scores_for_params_1 = np.empty(100, dtype="float")
         for i in range(POPULATION_SIZE):
             scores_for_params_1[i] = calculate_error(
                 oper2(population_params_1[i], best_data_seq, best_ndm_for_params_1),
                 samples,
                 in_neurons=input_neurons,
-                out_neurons=output_neurons)
+                out_neurons=output_neurons,
+            )
 
         # selecting the best params_1 candidates
         for i in range(POPULATION_SIZE):
             if scores_for_params_1[i] < error_of_best_ndm_for_params_1:
                 error_of_best_ndm_for_params_1 = scores_for_params_1[i]
                 backup_op_params_1 = population_params_1[i]  # new best params_1
-                backup_ndm_for_params_1 = oper2(best_op_params_1, best_data_seq, best_ndm_for_params_1.copy())
+                backup_ndm_for_params_1 = oper2(
+                    best_op_params_1, best_data_seq, best_ndm_for_params_1.copy()
+                )
                 iterations_without_progress = 0
                 change_in_current_iteration = True
                 print(f"New {error_of_best_ndm_for_params_1= } (for params_1)")
@@ -354,13 +382,16 @@ if __name__ == "__main__":
         # evaluate all candidates in the population (data_sequence)
         # best_op_params_1 and best_ndm are constant during evaluating candidates for data_seq population!
 
-        print(f"\n Evaluating data sequence in iteration #{number_of_iteration + 1} ...")
+        print(
+            f"\n Evaluating data sequence in iteration #{number_of_iteration + 1} ..."
+        )
         scores_for_data_seq = [
             calculate_error(
                 oper2(best_op_params_1, pop_data_seq, best_ndm_for_data_seq),
                 samples,
                 in_neurons=input_neurons,
-                out_neurons=output_neurons)
+                out_neurons=output_neurons,
+            )
             for pop_data_seq in tqdm(population_data_seq)
         ]
 
@@ -370,7 +401,9 @@ if __name__ == "__main__":
                 # current_error = scores_for_data_seq[i]
                 error_of_best_ndm_for_data_seq = scores_for_data_seq[i]
                 backup_data_seq = population_data_seq[i]  # new best data_seq
-                backup_ndm_for_data_seq = oper2(best_op_params_1, best_data_seq, best_ndm_for_data_seq.copy())
+                backup_ndm_for_data_seq = oper2(
+                    best_op_params_1, best_data_seq, best_ndm_for_data_seq.copy()
+                )
                 iterations_without_progress = 0
                 change_in_current_iteration = True
                 print(f"New {error_of_best_ndm_for_data_seq= } (for data_seq)")
@@ -386,7 +419,8 @@ if __name__ == "__main__":
                 # updated NDM after changing operation parameters_1
                 samples,
                 in_neurons=input_neurons,
-                out_neurons=output_neurons)
+                out_neurons=output_neurons,
+            )
             for pop_par_2 in tqdm(population_params_2)
         ]
 
@@ -396,35 +430,45 @@ if __name__ == "__main__":
                 # current_error = scores_for_params_2[i]
                 error_of_best_ndm_for_params_2 = scores_for_params_2[i]
                 backup_op_params_2 = population_params_2[i]  # new best params_2
-                backup_ndm_for_params_2 = oper2(best_op_params_1, best_data_seq, best_ndm_for_params_2.copy())
+                backup_ndm_for_params_2 = oper2(
+                    best_op_params_1, best_data_seq, best_ndm_for_params_2.copy()
+                )
                 iterations_without_progress = 0
                 change_in_current_iteration = True
                 print(f"New {error_of_best_ndm_for_params_2= } (for params_2)")
 
         # All 3 populations are now evaluated
-        current_errors = np.array([
-            error_of_best_ndm_for_params_1,
-            error_of_best_ndm_for_params_2,
-            error_of_best_ndm_for_data_seq
-        ])
+        current_errors = np.array(
+            [
+                error_of_best_ndm_for_params_1,
+                error_of_best_ndm_for_params_2,
+                error_of_best_ndm_for_data_seq,
+            ]
+        )
         current_error = current_errors.min()
         print(f"\n{current_error=} (after evaluations)")
 
         # select parents
         print("\n Selecting parents from parameters_1 ...")
         print(f"{population_params_1[:3]=}")
-        print(f"{tournament_selection(population_params_1[0], scores_for_params_1[0])=}")
+        print(f"{tournament_selection(population_params_1, scores_for_params_1)=}")
 
-        selected_params_1 = [tournament_selection(population_params_1, scores_for_params_1) for _ in
-                             tqdm(range(POPULATION_SIZE))]
+        selected_params_1 = [
+            tournament_selection(population_params_1, scores_for_params_1)
+            for _ in tqdm(range(POPULATION_SIZE))
+        ]
 
         print("\n Selecting parents from data sequence ...")
-        selected_data_seq = [tournament_selection(population_data_seq, scores_for_data_seq) for _ in
-                             tqdm(range(POPULATION_SIZE))]
+        selected_data_seq = [
+            tournament_selection(population_data_seq, scores_for_data_seq)
+            for _ in tqdm(range(POPULATION_SIZE))
+        ]
 
         print("\n Selecting parents from parameters_2 ...")
-        selected_params_2 = [tournament_selection(population_params_2, scores_for_params_2) for _ in
-                             tqdm(range(POPULATION_SIZE))]
+        selected_params_2 = [
+            tournament_selection(population_params_2, scores_for_params_2)
+            for _ in tqdm(range(POPULATION_SIZE))
+        ]
 
         # create the next generation
         children_of_params_1 = np.zeros((POPULATION_SIZE, PARAMETERS_SIZE), dtype=int)
@@ -477,7 +521,9 @@ if __name__ == "__main__":
             print(f"\nIterations without progress: {iterations_without_progress}.")
         if iterations_without_progress == MAX_ITER_NO_PROG:
             print("\nNO PROGRESS!")
-            print("Current best NDM will be used as a starting NDM in the next iteration!")
+            print(
+                "Current best NDM will be used as a starting NDM in the next iteration!"
+            )
 
             # Which NDM gives the smallest error
             where_min_error = np.argmin(current_errors)

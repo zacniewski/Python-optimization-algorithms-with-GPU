@@ -1,3 +1,4 @@
+import numba
 import numpy as np
 from numpy import asarray, ogrid
 from numpy.random import randint, rand
@@ -23,7 +24,6 @@ hardcoded_ndm = np.ones((5, 7)) * 0.5
 triu = np.triu(hardcoded_ndm, k=1)
 print(f"{triu=}")
 
-
 # input values
 hardcoded_input_neuron_values = np.array([[1, 1]])
 # random input values in the range (-1; 1)
@@ -43,6 +43,8 @@ bounds = asarray([[-3.0, 3.0], [-5.0, 5.0]])
 # print(f"\n{bounds[0]=} and {bounds[1]=}")
 # print(f"{bounds[:, 0]=} and {bounds[:, 1]=}")
 solution = bounds[:, 0] + rand(len(bounds)) * (bounds[:, 1] - bounds[:, 0])
+
+
 # print(f"{solution=}")
 
 
@@ -105,3 +107,13 @@ print(f"{population_params.shape=}")
 iterable_data_seq = ((2 * np.random.rand(1, DATA_SEQUENCE_SIZE) - 1)[0] for _ in range(3))
 population_data_seq = np.fromiter(iterable_data_seq, dtype=np.dtype(list))
 print(f"{population_data_seq[0].size=}")
+
+
+@numba.jit
+def objective(v):
+    xx, yy = v
+    return np.sin(xx) * np.cos(yy)
+
+
+sample = np.array([1, 3])
+print(objective(sample))
