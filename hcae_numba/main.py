@@ -1,5 +1,6 @@
 import numba
 import numpy as np
+import random
 import time
 
 from tqdm import tqdm
@@ -292,9 +293,11 @@ if __name__ == "__main__":
         )
         for _ in range(POPULATION_SIZE)
     ]
-    population_params_1 = np.asarray(population_params_1)
+    print(f"{random.choice(population_params_1)=}")
+    # population_params_1 = np.asarray(population_params_1)
+    # print(f"{population_params_1=}")
+
     #population_params_1 = np.fromiter(iterable_params_1, dtype="O")
-    print(f"{np.random.choice(population_params_1[0], 1)=}")
 
     # initial params_2 population
     iterable_params_2 = (
@@ -315,7 +318,7 @@ if __name__ == "__main__":
     # initialize "best" params_1, data_seq and params_2
     # initial candidates - two for operations and one for data sequence
 
-    best_op_params_1 = np.random.choice(population_params_1, 1)[0]
+    best_op_params_1 = random.choice(population_params_1)
     best_op_params_2 = np.random.choice(population_params_2, 1)[0]
     best_data_seq = np.random.choice(population_data_seq, 1)[0]
 
