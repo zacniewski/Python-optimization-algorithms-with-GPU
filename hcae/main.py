@@ -298,7 +298,6 @@ if __name__ == "__main__":
     print(f"{best_op_params_1=}")
     print(f"{best_op_params_2=}")
     print(f"{best_data_seq=}")
-    breakpoint()
     print("START!")
     print(f"Initial error = {current_error}")
     number_of_iteration = 0
