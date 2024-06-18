@@ -40,12 +40,8 @@ def tournament_selection(population, scores, k=TOURNAMENT_CANDIDATES):
     :param k: number of tournament candidates
     :return: chromosome who won the selection
     """
-    print("population=", population)
-    print("scores=", scores)
-
     # first random selected index
     selection_index = np.random.randint(len(population))
-    print("selection_index=", selection_index)
 
     # checking another (k-1) candidates
     for ix in np.random.randint(0, len(population), k - 1):
@@ -73,8 +69,11 @@ def crossover(parent1, parent2, r_cross=CROSSOVER_RATE):
         pt = np.random.randint(1, len(parent1) - 2)
 
         # perform crossover
-        child1 = np.concatenate((parent1[:pt], parent2[pt:]), axis=0)
-        child2 = np.concatenate((parent2[:pt], parent1[pt:]), axis=0)
+        tmp = parent2[:pt].copy()
+        parent2[:pt], parent1[:pt] = parent1[:pt], tmp
+
+        child1 = np.concatenate((parent1[:pt], parent2[pt:]), axis=0, dtype=np.int64)
+        child2 = np.concatenate((parent2[:pt], parent1[pt:]), axis=0, dtype=np.int64)
     return np.array([child1, child2])
 
 
@@ -300,27 +299,25 @@ if __name__ == "__main__":
     #population_params_1 = np.fromiter(iterable_params_1, dtype="O")
 
     # initial params_2 population
-    iterable_params_2 = (
+    population_params_2 = [
         np.random.randint(
-            0, [2, 3, NDM_ROWS, NDM_ROWS, DATA_SEQUENCE_SIZE, DATA_SEQUENCE_SIZE]
+            0, [2, 3, NDM_ROWS, NDM_ROWS, DATA_SEQUENCE_SIZE, DATA_SEQUENCE_SIZE], dtype=np.int64
         )
         for _ in range(POPULATION_SIZE)
-    )
-    population_params_2 = np.fromiter(iterable_params_2, dtype="O")
+    ]
 
     # initial data_seq population
-    iterable_data_seq = (
+    population_data_seq = [
         (2 * np.random.rand(1, DATA_SEQUENCE_SIZE) - 1)[0]
         for _ in range(POPULATION_SIZE)
-    )
-    population_data_seq = np.fromiter(iterable_data_seq, dtype="O")
+    ]
 
     # initialize "best" params_1, data_seq and params_2
     # initial candidates - two for operations and one for data sequence
 
     best_op_params_1 = random.choice(population_params_1)
-    best_op_params_2 = np.random.choice(population_params_2, 1)[0]
-    best_data_seq = np.random.choice(population_data_seq, 1)[0]
+    best_op_params_2 = random.choice(population_params_2)
+    best_data_seq = random.choice(population_data_seq)
 
     # Three backups of the best individuals from every population
     backup_op_params_1 = best_op_params_1.copy()
@@ -484,6 +481,7 @@ if __name__ == "__main__":
             parent_1, parent_2 = selected_params_1[i], selected_params_1[i + 1]
             parent_3, parent_4 = selected_data_seq[i], selected_data_seq[i + 1]
             parent_5, parent_6 = selected_params_2[i], selected_params_2[i + 1]
+            breakpoint()
 
             # crossover and mutation for params_1
             for index, c in enumerate(crossover(parent_1, parent_2, CROSSOVER_RATE)):
