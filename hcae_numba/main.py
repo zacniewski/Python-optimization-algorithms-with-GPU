@@ -69,11 +69,12 @@ def crossover(parent1, parent2, r_cross=CROSSOVER_RATE):
         pt = np.random.randint(1, len(parent1) - 2)
 
         # perform crossover
-        tmp = parent2[:pt].copy()
-        parent2[:pt], parent1[:pt] = parent1[:pt], tmp
-
-        child1 = np.concatenate((parent1[:pt], parent2[pt:]), axis=0, dtype=np.int64)
-        child2 = np.concatenate((parent2[:pt], parent1[pt:]), axis=0, dtype=np.int64)
+        # tmp = parent2[:pt].copy()
+        # parent2[:pt], parent1[:pt] = parent1[:pt], tmp
+        child1 = np.append(parent1[:pt], parent2[pt:])
+        child2 = np.append(parent2[:pt], parent1[pt:])
+        # child1 = np.concatenate((parent1[:pt], parent2[pt:]), axis=0, dtype=np.int64)
+        # child2 = np.concatenate((parent2[:pt], parent1[pt:]), axis=0, dtype=np.int64)
     return np.array([child1, child2])
 
 
@@ -481,7 +482,7 @@ if __name__ == "__main__":
             parent_1, parent_2 = selected_params_1[i], selected_params_1[i + 1]
             parent_3, parent_4 = selected_data_seq[i], selected_data_seq[i + 1]
             parent_5, parent_6 = selected_params_2[i], selected_params_2[i + 1]
-            breakpoint()
+            # breakpoint()
 
             # crossover and mutation for params_1
             for index, c in enumerate(crossover(parent_1, parent_2, CROSSOVER_RATE)):
