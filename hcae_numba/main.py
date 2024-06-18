@@ -72,7 +72,7 @@ def crossover_params(parent1, parent2, r_cross=CROSSOVER_RATE):
         # parent2[:pt], parent1[:pt] = parent1[:pt], tmp
         child1 = np.append(parent1[:pt], parent2[pt:])
         child2 = np.append(parent2[:pt], parent1[pt:])
-    return np.array([child1, child2])
+    return np.array([child1, child2], dtype=np.int64)
 
 @numba.jit
 def crossover_data_seq(parent1, parent2, r_cross=CROSSOVER_RATE):
@@ -95,7 +95,7 @@ def crossover_data_seq(parent1, parent2, r_cross=CROSSOVER_RATE):
         # parent2[:pt], parent1[:pt] = parent1[:pt], tmp
         child1 = np.append(parent1[:pt], parent2[pt:])
         child2 = np.append(parent2[:pt], parent1[pt:])
-    return np.array([child1, child2])
+    return np.array([child1, child2], dtype=np.float64)
 
 
 @numba.jit
