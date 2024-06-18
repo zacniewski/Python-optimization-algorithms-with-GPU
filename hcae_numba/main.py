@@ -52,7 +52,7 @@ def tournament_selection(population, scores, k=TOURNAMENT_CANDIDATES):
 
 
 @numba.jit
-def crossover(parent1, parent2, r_cross=CROSSOVER_RATE):
+def crossover_params(parent1, parent2, r_cross=CROSSOVER_RATE):
     """
     :param parent1: first parent
     :param parent2: second parent
@@ -62,7 +62,6 @@ def crossover(parent1, parent2, r_cross=CROSSOVER_RATE):
 
     # children are created from parents
     child1, child2 = parent1.copy(), parent2.copy()
-
     # check for recombination
     if np.random.rand() < r_cross:
         # select crossover point that is not on the end of the chromosome
@@ -73,8 +72,29 @@ def crossover(parent1, parent2, r_cross=CROSSOVER_RATE):
         # parent2[:pt], parent1[:pt] = parent1[:pt], tmp
         child1 = np.append(parent1[:pt], parent2[pt:])
         child2 = np.append(parent2[:pt], parent1[pt:])
-        # child1 = np.concatenate((parent1[:pt], parent2[pt:]), axis=0, dtype=np.int64)
-        # child2 = np.concatenate((parent2[:pt], parent1[pt:]), axis=0, dtype=np.int64)
+    return np.array([child1, child2])
+
+@numba.jit
+def crossover_data_seq(parent1, parent2, r_cross=CROSSOVER_RATE):
+    """
+    :param parent1: first parent
+    :param parent2: second parent
+    :param r_cross: crossover rate
+    :return: a pair of children after crossover
+    """
+
+    # children are created from parents
+    child1, child2 = parent1.copy(), parent2.copy()
+    # check for recombination
+    if np.random.rand() < r_cross:
+        # select crossover point that is not on the end of the chromosome
+        pt = np.random.randint(1, len(parent1) - 2)
+
+        # perform crossover
+        # tmp = parent2[:pt].copy()
+        # parent2[:pt], parent1[:pt] = parent1[:pt], tmp
+        child1 = np.append(parent1[:pt], parent2[pt:])
+        child2 = np.append(parent2[:pt], parent1[pt:])
     return np.array([child1, child2])
 
 
@@ -482,10 +502,10 @@ if __name__ == "__main__":
             parent_1, parent_2 = selected_params_1[i], selected_params_1[i + 1]
             parent_3, parent_4 = selected_data_seq[i], selected_data_seq[i + 1]
             parent_5, parent_6 = selected_params_2[i], selected_params_2[i + 1]
-            # breakpoint()
+            breakpoint()
 
             # crossover and mutation for params_1
-            for index, c in enumerate(crossover(parent_1, parent_2, CROSSOVER_RATE)):
+            for index, c in enumerate(crossover_params(parent_1, parent_2, CROSSOVER_RATE)):
                 # mutation
                 mutation_of_parameters(c, MUTATION_RATE_PARAMS)
 
@@ -493,7 +513,7 @@ if __name__ == "__main__":
                 children_of_params_1[i + index] = c
 
             # crossover and mutation for data_seq
-            for index, d in enumerate(crossover(parent_3, parent_4, CROSSOVER_RATE)):
+            for index, d in enumerate(crossover_data_seq(parent_3, parent_4, CROSSOVER_RATE)):
                 # mutation
                 mutation_of_data_sequence(d, MUTATION_RATE_DATA_SEQ)
 
@@ -501,7 +521,7 @@ if __name__ == "__main__":
                 children_of_data_seq[i + index] = d
 
             # crossover and mutation for params_2
-            for index, e in enumerate(crossover(parent_5, parent_6, CROSSOVER_RATE)):
+            for index, e in enumerate(crossover_params(parent_5, parent_6, CROSSOVER_RATE)):
                 # mutation
                 mutation_of_parameters(e, MUTATION_RATE_PARAMS)
 
