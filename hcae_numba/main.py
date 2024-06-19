@@ -22,6 +22,7 @@ from constants import (
     POPULATION_SIZE,
 )
 from hcae_operations import oper2
+from utils import make_2d
 
 
 # first objective is a simple trigonometric function
@@ -68,11 +69,10 @@ def crossover_params(parent1, parent2, r_cross=CROSSOVER_RATE):
         pt = np.random.randint(1, len(parent1) - 2)
 
         # perform crossover
-        # tmp = parent2[:pt].copy()
-        # parent2[:pt], parent1[:pt] = parent1[:pt], tmp
         child1 = np.append(parent1[:pt], parent2[pt:])
         child2 = np.append(parent2[:pt], parent1[pt:])
-    return np.array([child1, child2], dtype=np.int64)
+    return make_2d([child1, child2])
+    # return np.array([child1, child2], dtype=np.int64)
 
 @numba.jit
 def crossover_data_seq(parent1, parent2, r_cross=CROSSOVER_RATE):
@@ -95,7 +95,8 @@ def crossover_data_seq(parent1, parent2, r_cross=CROSSOVER_RATE):
         # parent2[:pt], parent1[:pt] = parent1[:pt], tmp
         child1 = np.append(parent1[:pt], parent2[pt:])
         child2 = np.append(parent2[:pt], parent1[pt:])
-    return np.array([child1, child2], dtype=np.float64)
+    return make_2d([child1, child2])
+    # return np.array([child1, child2], dtype=np.float64)
 
 
 @numba.jit
@@ -313,9 +314,7 @@ if __name__ == "__main__":
         )
         for _ in range(POPULATION_SIZE)
     ]
-    print(f"{random.choice(population_params_1)=}")
     # population_params_1 = np.asarray(population_params_1)
-    # print(f"{population_params_1=}")
 
     #population_params_1 = np.fromiter(iterable_params_1, dtype="O")
 
@@ -472,8 +471,6 @@ if __name__ == "__main__":
 
         # select parents
         print("\n Selecting parents from parameters_1 ...")
-        print(f"{population_params_1[:3]=}")
-        print(f"{tournament_selection(population_params_1, scores_for_params_1)=}")
 
         selected_params_1 = [
             tournament_selection(population_params_1, scores_for_params_1)
@@ -502,7 +499,7 @@ if __name__ == "__main__":
             parent_1, parent_2 = selected_params_1[i], selected_params_1[i + 1]
             parent_3, parent_4 = selected_data_seq[i], selected_data_seq[i + 1]
             parent_5, parent_6 = selected_params_2[i], selected_params_2[i + 1]
-            breakpoint()
+            # breakpoint()
 
             # crossover and mutation for params_1
             for index, c in enumerate(crossover_params(parent_1, parent_2, CROSSOVER_RATE)):
