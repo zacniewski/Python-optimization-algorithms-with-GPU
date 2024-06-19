@@ -3,6 +3,12 @@ import numpy as np
 
 @njit
 def make_2d(arraylist):
+    """
+
+    :param arraylist: list of Numpy's arrays
+    :return: 2D Numpy's array with particular input arrays
+    Link: https://numba.discourse.group/t/passing-a-list-of-numpy-arrays-into-np-array-with-numba/278
+    """
     n = len(arraylist)
     k = arraylist[0].shape[0]
     a2d = np.zeros((n, k))
