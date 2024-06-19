@@ -12,6 +12,16 @@ import numpy as np
 import networkx as nx
 
 
+@numba.njit
+def make_2d(arraylist):
+    n = len(arraylist)
+    k = arraylist[0].shape[0]
+    a2d = np.zeros((n, k))
+    for i in range(n):
+        a2d[i] = arraylist[i]
+    return a2d
+
+
 def draw_neural_network_from_ndm():
     graph_of_ndm = nx.Graph()
 

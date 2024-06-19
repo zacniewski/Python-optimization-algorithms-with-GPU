@@ -15,5 +15,7 @@ b = np.array((4, 5, 6, 7))
 c = np.array((9, 10, 11, 12))
 
 d = make_2d([a, b, c])
+
+print(f"{d=}")
 print(f"{d.shape=}")
 print(f"{type(d)=}")
