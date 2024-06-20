@@ -63,6 +63,7 @@ Driver Version: 545.29.06    CUDA Version: 12.3
 ```
 > I couldn't install the `550` driver version on my laptop (some dependency problems) and also CUDA version 12.3 is little suspicious
 > Update on 19th, June 2024: I installed the `550` driver using this [solution](https://askubuntu.com/questions/1376490/failed-to-update-driver-pk-client-error-quarkfailed-to-obtain-authentication).
+> But it's not seen by my Ubuntu 22.04 system on the laptop
 
 3. Installation of JAX
 
