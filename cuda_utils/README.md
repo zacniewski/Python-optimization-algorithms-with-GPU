@@ -53,17 +53,29 @@ sudo apt-get install libcudnn8=8.9.7.29-1+cuda12.2
 For newer version of CUDA we may need to upgrade the [driver's version](https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/#cuda-major-component-versions__table-cuda-toolkit-driver-versions
 ) of graphic card.
 
-From `nvidia-smi` command:  
+- CUDA version from `nvidia-smi` command:  
 ```bash
-# on my PC (Titan XP)
+# on my PC (Titan XP, Ubuntu 22.04 LTS)
 Driver Version: 550.54.14      CUDA Version: 12.4
 
-# on my laptop (RTX 4060 mobile)
-Driver Version: 545.29.06    CUDA Version: 12.3
+# on my laptop (RTX 4060 mobile, Debian 12.5)
+Driver Version: .....    CUDA Version: ...
 ```
+
+- cuDNN [version](https://stackoverflow.com/questions/31326015/how-to-verify-cudnn-installation)
+```bash
+# on my PC (Titan XP, Ubuntu 22.04 LTS)
+cudnn-local-repo-ubuntu2204-8.9.7.29/now 1.0-1 amd64 [installed,local]
+libcudnn8/unknown,now 8.9.7.29-1+cuda12.2 amd64 [installed]
+
+
+# on my laptop (RTX 4060 mobile, Debian 12.5)
+......
+```
+
 > I couldn't install the `550` driver version on my laptop (some dependency problems) and also CUDA version 12.3 is little suspicious
-> Update on 19th, June 2024: I installed the `550` driver using this [solution](https://askubuntu.com/questions/1376490/failed-to-update-driver-pk-client-error-quarkfailed-to-obtain-authentication).
-> But it's not seen by my Ubuntu 22.04 system on the laptop
+> Update on 19th, June 2024: I tried to install the `550` driver using this [solution](https://askubuntu.com/questions/1376490/failed-to-update-driver-pk-client-error-quarkfailed-to-obtain-authentication).
+> But I had problems with 535, 545 and 550 driver's version on my Ubuntu 22.04 system on the laptop and I decided to switch to Debian 12.5 (bookworm).
 
 3. Installation of JAX
 
