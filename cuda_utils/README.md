@@ -58,8 +58,8 @@ For newer version of CUDA we may need to upgrade the [driver's version](https://
 # on my PC (Titan XP, Ubuntu 22.04 LTS)
 Driver Version: 550.54.14      CUDA Version: 12.4
 
-# on my laptop (RTX 4060 mobile, Debian 12.5)
-Driver Version: .....    CUDA Version: ...
+# on my laptop (RTX 4060 mobile, Ubuntu 22.04 LTS)
+Driver Version: 535.183.01    CUDA Version: 12.2
 ```
 
 - cuDNN [version](https://stackoverflow.com/questions/31326015/how-to-verify-cudnn-installation)
