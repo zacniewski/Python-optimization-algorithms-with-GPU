@@ -503,6 +503,8 @@ if __name__ == "__main__":
 
             # crossover and mutation for params_1
             for index, c in enumerate(crossover_params(parent_1, parent_2, CROSSOVER_RATE)):
+                print(index, " - ", c)
+
                 # mutation
                 mutation_of_parameters(c, MUTATION_RATE_PARAMS)
 
