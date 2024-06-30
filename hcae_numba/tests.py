@@ -1,6 +1,6 @@
 import numba
 import numpy as np
-from numpy import asarray, ogrid
+from numpy import asarray
 from numpy.random import randint, rand
 
 from constants import (DATA_SEQUENCE_SIZE,
@@ -43,9 +43,6 @@ bounds = asarray([[-3.0, 3.0], [-5.0, 5.0]])
 # print(f"\n{bounds[0]=} and {bounds[1]=}")
 # print(f"{bounds[:, 0]=} and {bounds[:, 1]=}")
 solution = bounds[:, 0] + rand(len(bounds)) * (bounds[:, 1] - bounds[:, 0])
-
-
-# print(f"{solution=}")
 
 
 def mutation_of_parameters(params, mutation_rate=MUTATION_RATE_PARAMS):
