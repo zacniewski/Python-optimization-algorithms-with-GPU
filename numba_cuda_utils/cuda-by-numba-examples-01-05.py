@@ -13,6 +13,7 @@ def add_array(a, b, c):
 N = 20
 a = np.arange(N, dtype=np.float32)
 b = np.arange(N, dtype=np.float32)
+
 dev_c = cuda.device_array_like(a)
 dev_a = cuda.to_device(a)
 dev_b = cuda.to_device(b)
