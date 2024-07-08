@@ -378,14 +378,16 @@ if __name__ == "__main__":
 
         # ndm_for_params_1 should be the same for every params_1
         # during calculations of error in the given iteration!
-        scores_for_params_1 = np.empty(100, dtype="float")
-        for i in range(POPULATION_SIZE):
-            scores_for_params_1[i] = calculate_error(
-                oper2(population_params_1[i], best_data_seq, best_ndm_for_params_1),
+        scores_for_params_1 = [
+            calculate_error(
+                oper2(pop_par_1, best_data_seq, best_ndm_for_params_1),
+                # updated NDM after changing operation parameters_1
                 samples,
                 in_neurons=input_neurons,
                 out_neurons=output_neurons,
             )
+            for pop_par_1 in tqdm(population_params_1)
+        ]
 
         # selecting the best params_1 candidates
         for i in range(POPULATION_SIZE):
@@ -437,7 +439,7 @@ if __name__ == "__main__":
         scores_for_params_2 = [
             calculate_error(
                 oper2(pop_par_2, best_data_seq, best_ndm_for_params_2),
-                # updated NDM after changing operation parameters_1
+                # updated NDM after changing operation parameters_2
                 samples,
                 in_neurons=input_neurons,
                 out_neurons=output_neurons,
@@ -503,7 +505,7 @@ if __name__ == "__main__":
 
             # crossover and mutation for params_1
             for index, c in enumerate(crossover_params(parent_1, parent_2, CROSSOVER_RATE)):
-                print(index, " - ", c)
+                # print(index, " - ", c)
 
                 # mutation
                 mutation_of_parameters(c, MUTATION_RATE_PARAMS)
