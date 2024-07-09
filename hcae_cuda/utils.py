@@ -63,3 +63,28 @@ def calculate_output_from_ndm(
     # output value from FFN
     out_value = sigma[out_neurons[0][0]]
     return out_value
+
+
+@numba.jit
+def calculate_error(current_ndm, samples_values, in_neurons, out_neurons) -> float:
+    # values calculated from the NDM
+    output_values_for_samples = [
+        calculate_output_from_ndm(
+            current_ndm,
+            in_neurons,
+            out_neurons,
+            in_neurons_value=s,
+        )
+        for s in samples_values
+    ]
+
+    # values of the objective function for all samples
+    objective_values_for_samples = [objective(s) for s in samples_values]
+
+    # error value
+    return sum(
+        [
+            np.abs(out - obj)
+            for out, obj in zip(output_values_for_samples, objective_values_for_samples)
+        ]
+    )
