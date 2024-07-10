@@ -16,7 +16,7 @@ def calculate_output_from_ndm(
         in_neurons: np.array,
         out_neurons: np.array,
         in_neurons_value: np.array,
-) -> float:
+):
     """
     :param in_ndm: input NDM matrix
     :param in_neurons: numbers of input neurons (starting from zero, first neuron has '0' index, etc., like in the 0-indexed array)
@@ -88,3 +88,4 @@ def calculate_error(current_ndm, samples_values, in_neurons, out_neurons) -> flo
             for out, obj in zip(output_values_for_samples, objective_values_for_samples)
         ]
     )
+
