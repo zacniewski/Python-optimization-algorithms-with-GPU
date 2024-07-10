@@ -100,18 +100,18 @@ def my_kernel(scores_for_params_1):
     """
     pos = cuda.grid(1)
     if pos < scores_for_params_1.size:
-        scores_for_params_1[pos] = calculate_error(
+        """scores_for_params_1[pos] = calculate_error(
             oper2(population_params_1[pos], best_data_seq, best_ndm_for_params_1),
             # updated NDM after changing operation parameters_1
             samples,
             in_neurons=input_neurons,
             out_neurons=output_neurons,
-        )
-
+        )"""
+        scores_for_params_1[pos] = pos ** 2
 
 threads_per_block = 256
 blocks_per_grid = (POPULATION_SIZE + (threads_per_block - 1)) // threads_per_block
-some_scores = np.zeros(POPULATION_SIZE)
+some_scores = np.zeros(POPULATION_SIZE, dtype=np.float32)
 dev_scores_for_params_1 = cuda.to_device(some_scores)
 
 my_kernel[blocks_per_grid, threads_per_block](dev_scores_for_params_1)
