@@ -88,6 +88,11 @@ population_params_1 = [
 dev_population_params_1 = cuda.to_device(population_params_1)
 
 
+@jit
+def square(a: np.float32):
+    a *= 2
+
+
 @cuda.jit
 def my_kernel(scores_for_params_1):
     """
@@ -107,14 +112,15 @@ def my_kernel(scores_for_params_1):
             in_neurons=input_neurons,
             out_neurons=output_neurons,
         )"""
-        scores_for_params_1[pos] = pos ** 2
+        scores_for_params_1[pos] = pos ** 3
+
 
 threads_per_block = 256
 blocks_per_grid = (POPULATION_SIZE + (threads_per_block - 1)) // threads_per_block
+print(f"{blocks_per_grid=}")
 some_scores = np.zeros(POPULATION_SIZE, dtype=np.float32)
 dev_scores_for_params_1 = cuda.to_device(some_scores)
 
 my_kernel[blocks_per_grid, threads_per_block](dev_scores_for_params_1)
 host_scores = dev_scores_for_params_1.copy_to_host()
 print(f"{host_scores=}")
-
