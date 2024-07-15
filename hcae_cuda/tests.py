@@ -103,8 +103,10 @@ def my_kernel(scores_for_params_1):
     Computation of the first integer is as follows::  cuda.threadIdx.x + cuda.blockIdx.x * cuda.blockDim.x
     and is similar for the other two indices, but using the `y` and `z` attributes.
     """
-    pos = cuda.grid(1)
-    if pos < scores_for_params_1.size:
+    pos = cuda.grid(2)
+    print(pos[0], pos[1])
+
+    if pos[0] < scores_for_params_1.size:
         """scores_for_params_1[pos] = calculate_error(
             oper2(population_params_1[pos], best_data_seq, best_ndm_for_params_1),
             # updated NDM after changing operation parameters_1
@@ -112,7 +114,7 @@ def my_kernel(scores_for_params_1):
             in_neurons=input_neurons,
             out_neurons=output_neurons,
         )"""
-        scores_for_params_1[pos] = pos ** 3
+        scores_for_params_1[pos[0]] = pos[0] ** 3
 
 
 threads_per_block = 256
