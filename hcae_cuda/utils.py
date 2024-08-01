@@ -65,7 +65,7 @@ def calculate_output_from_ndm(
     return out_value
 
 
-@numba.vectorize([numba.float32(numba.float32, numba.int64, numba.float32, numba.float32)], target='cuda')
+@numba.vectorize(['float32(float32, float32, float32, float32)'], target='cuda')
 def cuda_calculate_output_from_ndm(
         in_ndm: np.array,
         in_neurons: np.array,
