@@ -5,6 +5,7 @@ from numba import guvectorize, int64, float64
 
 @guvectorize([(int64[:], int64[:], int64[:])], '(n),()->(n)')
 def g(x, y, res):
+    z_for_first_neuron = x[0] * 1 + y[0]
     for i in range(x.shape[0]):
         res[i] = x[i] + y[0]
 

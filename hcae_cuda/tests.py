@@ -47,11 +47,20 @@ samples = np.column_stack([x, y])
 dev_samples = cuda.to_device(samples)
 
 # checking NDM calculations for single output value
+in_neurons=np.array([[0, 1]])
+out_neurons=np.array([[4]])
+in_neurons_value=samples[0]
+
+print(f"{hardcoded_ndm.shape=}")
+print(f"{in_neurons.shape=}")
+print(f"{out_neurons.shape=}")
+print(f"{in_neurons_value.shape=}")
+
 ndm_out = calculate_output_from_ndm(
     hardcoded_ndm,
-    in_neurons=np.array([[0, 1]]),
-    out_neurons=np.array([[4]]),
-    in_neurons_value=samples[0]
+    in_neurons=in_neurons,
+    out_neurons=out_neurons,
+    in_neurons_value=in_neurons_value
 )
 
 # single output from the NDM for the samples[0]
@@ -104,7 +113,7 @@ def my_kernel(scores_for_params_1):
     and is similar for the other two indices, but using the `y` and `z` attributes.
     """
     pos = cuda.grid(2)
-    print(pos[0], pos[1])
+    # print(pos[0], pos[1])
 
     if pos[0] < scores_for_params_1.size:
         """scores_for_params_1[pos] = calculate_error(
@@ -125,4 +134,4 @@ dev_scores_for_params_1 = cuda.to_device(some_scores)
 
 my_kernel[blocks_per_grid, threads_per_block](dev_scores_for_params_1)
 host_scores = dev_scores_for_params_1.copy_to_host()
-print(f"{host_scores=}")
+# print(f"{host_scores=}")

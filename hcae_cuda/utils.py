@@ -1,16 +1,16 @@
-import numba
+from numba import jit, vectorize, guvectorize, int64, float64
 import numpy as np
 
 from activation_functions import activation_function
 
 
-@numba.jit
+@jit
 def objective(v):
     xx, yy = v
     return np.sin(xx) * np.cos(yy)
 
 
-@numba.jit
+@jit
 def calculate_output_from_ndm(
         in_ndm: np.array,
         in_neurons: np.array,
@@ -65,12 +65,13 @@ def calculate_output_from_ndm(
     return out_value
 
 
-@numba.vectorize(['float32(float32, float32, float32, float32)'], target='cuda')
+#@guvectorize([(float64[:, :], int64[:, :], int64[:, :], float64[:], float64)], '(m, n),(m, n),(m, n),(n)->()', target='cuda')
 def cuda_calculate_output_from_ndm(
         in_ndm: np.array,
         in_neurons: np.array,
         out_neurons: np.array,
         in_neurons_value: np.array,
+        out_value
 ):
     """
     :param in_ndm: input NDM matrix
@@ -117,10 +118,10 @@ def cuda_calculate_output_from_ndm(
 
     # output value from FFN
     out_value = sigma[out_neurons[0][0]]
-    return out_value
+    # return out_value
 
 
-@numba.jit
+@jit
 def calculate_error(current_ndm, samples_values, in_neurons, out_neurons) -> float:
     # values calculated from the NDM
     output_values_for_samples = [
