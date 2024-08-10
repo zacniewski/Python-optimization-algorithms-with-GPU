@@ -65,12 +65,12 @@ def calculate_output_from_ndm(
     return out_value
 
 
-#@guvectorize([(float64[:, :], int64[:, :], int64[:, :], float64[:], float64)], '(m, n),(m, n),(m, n),(n)->()', target='cuda')
+@guvectorize([(float64[:, :], float64)], '(m, n)->()', target='cuda')
 def cuda_calculate_output_from_ndm(
         in_ndm: np.array,
-        in_neurons: np.array,
-        out_neurons: np.array,
-        in_neurons_value: np.array,
+        #in_neurons: np.array,
+        #out_neurons: np.array,
+        #in_neurons_value: np.array,
         out_value
 ):
     """
@@ -82,42 +82,13 @@ def cuda_calculate_output_from_ndm(
     # the column with index '-2' of 'ndm' is a bias column
     # the column with index '-1' of 'ndm' stores the type of activation function for the given neuron,
     # e.g. 'linear' or 'sigmoid'
-    z_for_first_neuron = in_neurons_value[0] * 1 + in_ndm[0][-2]
-
-    # storage for sigma values, first pair is for the '0' neuron
-    # (first neuron, with '1' index on the figures and with '0' index in the NDM)
-    sigma = {
-        0: activation_function(
-            input_value=z_for_first_neuron, type_of_neuron_value=in_ndm[0][-1]
-        )
-    }
-
-    # calculating output values of neurons and storing them in the 'sigma' dictionary
-    z = 0
-    for j in range(1, in_ndm.shape[1] - 2):
-        for i in range(j):
-            z = z + in_ndm[i][j] * sigma[i]
-
-        # adding bias
-        z = z + in_ndm[j][-2]
-
-        # adding input value (if exists) multiplied by its weight (so far it's 1 by default)
-        if j in in_neurons:
-            z = z + in_neurons_value[j] * 1
-
-        # determine the activation function of 'z' basing on the values of input and 'type of neuron' cell
-        sigma[j] = activation_function(
-            input_value=z, type_of_neuron_value=abs(in_ndm[j][-1])
-        )
-        z = 0
-
-    # uncomment to check the outputs value of all neurons (after activation function)
-    # it's good for testing purposes!
-    # for key, value in sigma.items():
-    #     print(f"{key}: {value}")
+    acc = 0
+    for i in range(in_ndm.shape[0]):
+        for j in range(in_ndm.shape[1]):
+            acc += in_ndm[i][j]
 
     # output value from FFN
-    out_value = sigma[out_neurons[0][0]]
+    out_value = acc
     # return out_value
 
 

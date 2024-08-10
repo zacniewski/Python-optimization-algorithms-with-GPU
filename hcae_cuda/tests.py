@@ -11,7 +11,7 @@ from constants import (DATA_SEQUENCE_SIZE,
                        MUTATION_RATE_DATA_SEQ,
                        POPULATION_SIZE, NDM_ROWS, NDM_COLUMNS)
 from hcae_operations import oper2
-from utils import calculate_output_from_ndm, calculate_error
+from utils import calculate_output_from_ndm, calculate_error, cuda_calculate_output_from_ndm
 
 # NumPy's randint: https://numpy.org/doc/stable/reference/random/generated/numpy.random.randint.html
 
