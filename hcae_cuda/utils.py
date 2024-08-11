@@ -65,12 +65,12 @@ def calculate_output_from_ndm(
     return out_value
 
 
-@guvectorize([(float64[:, :], float64)], '(m, n)->()', target='cuda')
+@guvectorize([(float64[:, :], float64[:, :], float64[:, :], float64[:],  float64)], '(m, n), (o, p), (o, o), (p)->()', target='cuda')
 def cuda_calculate_output_from_ndm(
         in_ndm: np.array,
-        #in_neurons: np.array,
-        #out_neurons: np.array,
-        #in_neurons_value: np.array,
+        in_neurons: np.array,
+        out_neurons: np.array,
+        in_neurons_value: np.array,
         out_value
 ):
     """
@@ -88,7 +88,7 @@ def cuda_calculate_output_from_ndm(
             acc += in_ndm[i][j]
 
     # output value from FFN
-    out_value = acc
+    out_value = acc + in_neurons[0][0] + out_neurons[0][0] + in_neurons_value[0]
     # return out_value
 
 
