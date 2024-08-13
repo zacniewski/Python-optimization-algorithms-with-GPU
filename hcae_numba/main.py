@@ -151,6 +151,11 @@ def calculate_output_from_ndm(
         )
     }
 
+    sigma_2 = np.zeros(NDM_ROWS)
+    sigma_2[0] = activation_function(
+            input_value=z_for_first_neuron, type_of_neuron_value=in_ndm[0][-1]
+        )
+
     # calculating output values of neurons and storing them in the 'sigma' dictionary
     z = 0
     for j in range(1, in_ndm.shape[1] - 2):
@@ -168,12 +173,18 @@ def calculate_output_from_ndm(
         sigma[j] = activation_function(
             input_value=z, type_of_neuron_value=abs(in_ndm[j][-1])
         )
+        sigma_2[j] = activation_function(
+            input_value=z, type_of_neuron_value=abs(in_ndm[j][-1])
+        )
         z = 0
 
     # uncomment to check the outputs value of all neurons (after activation function)
     # it's good for testing purposes!
-    # for key, value in sigma.items():
-    #     print(f"{key}: {value}")
+    print(sigma)
+    print(sigma_2)
+
+    for key, value in sigma.items():
+        print(f"{key}: {value}")
 
     # output value from FFN
     out_value = sigma[out_neurons[0][0]]
