@@ -18,6 +18,10 @@ def main():
 
 start_cpu = time.perf_counter()
 
+x = np.linspace(-0.8, 0.8, 1601)
+y = np.linspace(-0.8, 0.8, 1601)
+samples = np.column_stack([x, y])
+
 main[blockspergrid, threadsperblock]()
 
 end_cpu = time.perf_counter()
