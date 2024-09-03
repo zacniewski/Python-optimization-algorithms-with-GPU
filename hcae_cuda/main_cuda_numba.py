@@ -11,14 +11,18 @@ blockspergrid = (256, 256)  # Blocks per grid
 
 @cuda.jit
 def main():
-    # start CPU measurement
     init_ndm = cuda.shared.array(shape=(NDM_ROWS, NDM_COLUMNS), dtype=float32)
+    # samples = np.column_stack([np.array([1, 2]), np.array([3, 4])])
+
     x, y = cuda.grid(2)
 
 
+# start CPU measurement
 start_cpu = time.perf_counter()
 
 x = np.linspace(-0.8, 0.8, 1601)
+print(f"{x.shape=}")
+print(f"{np.array([1, 2]).shape}")
 y = np.linspace(-0.8, 0.8, 1601)
 samples = np.column_stack([x, y])
 
