@@ -1,3 +1,4 @@
+from numba import cuda
 import numpy as np
 import numpy.random as rnd
 import matplotlib.pyplot as plt
