@@ -21,7 +21,7 @@ def populate(size):
 
 
 POP_SIZE = 10 #population size
-MAX_ITER = 30 #the amount of optimization iterations
+MAX_ITER = 3000 #the amount of optimization iterations
 w = 0.8 #inertia weight
 c1 = 1 #personal acceleration factor
 c2 = 2 #social acceleration factor
