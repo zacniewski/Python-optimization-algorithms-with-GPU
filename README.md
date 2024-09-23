@@ -29,13 +29,18 @@
 
 
 ### II. Running the code
-- create virtual environment with `pip` or `conda` and activate it,
-- install dependencies from the chosen `*_requirements.txt` file, for example `pip install -r numba_env_requirements.txt`, 
-- run the given script with `python name_of_the_file.py`,
-- enjoy the results :smiley:
+  - create virtual environment with `pip` or `conda` and activate it,
+  - install dependencies from the chosen `*_requirements.txt` file, for example `pip install -r requirements/common_env_requirements.txt`, 
+  - run the given script with `python name_of_the_file.py`,
+  - enjoy the results :smiley:  
 
 
-### III. Bibliography
+### III. Useful links
+  - [Path planning](https://github.com/zhm-real/PathPlanning) algorithms,  
+  - [Python Robotics](https://github.com/AtsushiSakai/PythonRobotics) - code for robotics algorithm.  
+
+
+### IV. Bibliography
 1. "Optimization for Machine Learning", J. Brownlee, 2023.
 2. "Hill-Climb-Assembler Encoding: Evolution of Small/Mid-Scale Artificial Neural Networks for Classification and
 Control Problems", T. Praczyk, 2022.
