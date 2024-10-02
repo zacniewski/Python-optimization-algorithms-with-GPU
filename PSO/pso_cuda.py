@@ -1,3 +1,4 @@
+from numba import cuda
 import numpy as np
 import numpy.random as rnd
 import matplotlib.pyplot as plt
@@ -17,6 +18,13 @@ def populate(size):
   x1, x2 = -10, 3 #x1, x2 = right and left boundaries of our X axis
   pop = rnd.uniform(x1,x2, size) # size = amount of particles in population
   return pop
+
+@cuda.jit
+def pso_kernel(a, b):
+  i = cuda.grid(1)
+  if i < MAX_ITER:
+      a[i] = b
+
 
 
 POP_SIZE = 10 #population size
@@ -53,6 +61,8 @@ swarm_best_gain = np.max(gains)  # highest gain
 l = np.empty((MAX_ITER, POP_SIZE))  # array to collect all pops to visualize afterward
 plt.plot(x, y, lw=3, label='Func to optimize')
 
+dev_l = cuda.device_array_like(l)
+dev_particles = cuda.to_device(particles)
 
 
 for i in range(MAX_ITER):
