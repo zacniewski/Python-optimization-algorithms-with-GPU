@@ -19,6 +19,11 @@ def populate(size):
   pop = rnd.uniform(x1,x2, size) # size = amount of particles in population
   return pop
 
+@cuda.jit
+def pso_kernel():
+  i = cuda.grid(1)
+  pass
+
 
 POP_SIZE = 10 #population size
 MAX_ITER = 3000 #the amount of optimization iterations
@@ -53,6 +58,8 @@ swarm_best_gain = np.max(gains)  # highest gain
 
 l = np.empty((MAX_ITER, POP_SIZE))  # array to collect all pops to visualize afterward
 plt.plot(x, y, lw=3, label='Func to optimize')
+
+
 
 for i in range(MAX_ITER):
 
