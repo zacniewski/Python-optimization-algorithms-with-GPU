@@ -21,24 +21,24 @@ def populate(size):
 
 @cuda.jit
 def pso_kernel(a, b):
-  i = cuda.grid(1)
-  if i < MAX_ITER:
-      a[i] = b
+  x, y = cuda.grid(2)
+  if x < b.shape[0] and y < b.shape[1]:
+    b[x, y] = 1
 
 
 
-POP_SIZE = 10 #population size
-MAX_ITER = 3000 #the amount of optimization iterations
-w = 0.8 #inertia weight
-c1 = 1 #personal acceleration factor
-c2 = 2 #social acceleration factor
+POP_SIZE = 10 # population size
+MAX_ITER = 300 # the amount of optimization iterations
+w = 0.8 # inertia weight
+c1 = 1 # personal acceleration factor
+c2 = 2 # social acceleration factor
 
 
-x = np.arange(-10,3, 0.001)
+x = np.arange(-10, 3, 0.001)
 y = function(x)
 
-x1=populate(50)
-y1=function(x1)
+x1 = populate(50)
+y1 = function(x1)
 
 plt.plot(x,y, lw=3, label='Func to optimize')
 plt.plot(x1,y1,marker='o', ls='', label='Particles')
@@ -60,10 +60,26 @@ swarm_best_gain = np.max(gains)  # highest gain
 
 l = np.empty((MAX_ITER, POP_SIZE))  # array to collect all pops to visualize afterward
 plt.plot(x, y, lw=3, label='Func to optimize')
+print(f"{l[0][0]=}")
+print(f"{l[0]=}")
 
 dev_l = cuda.device_array_like(l)
-dev_particles = cuda.to_device(particles)
+print(f"{dev_l.shape=}")
 
+dev_particles = cuda.to_device(particles)
+print(f"{dev_particles.shape=}")
+
+a = np.arange(100, dtype=np.float32)
+print(f"{a=}")
+dev_a = cuda.to_device(a)
+
+
+threads_per_block = 256
+blocks_per_grid = (MAX_ITER + (threads_per_block - 1)) // threads_per_block
+
+pso_kernel[blocks_per_grid, threads_per_block](dev_particles, dev_l)
+host_l = dev_l.copy_to_host()
+print(f"{host_l=}")
 
 for i in range(MAX_ITER):
 
@@ -88,7 +104,7 @@ for i in range(MAX_ITER):
     print(f"{swarm_best_position=}")
     swarm_best_gain = np.max(new_gains)  # assigning the best gain
 
-  print(f'Iteration {i + 1} \tGain: {swarm_best_gain}')
+  # print(f'Iteration {i + 1} \tGain: {swarm_best_gain}')
 
 plt.plot(swarm_best_position, function([swarm_best_position]), marker='o', ls='', label='Best particle')
 plt.xlabel('x')
