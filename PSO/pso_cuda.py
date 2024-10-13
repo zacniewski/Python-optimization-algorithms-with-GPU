@@ -23,7 +23,7 @@ def populate(size):
 def pso_kernel(a, b):
   x, y = cuda.grid(2)
   if x < b.shape[0] and y < b.shape[1]:
-    b[x, y] = 1
+    b[x, y] = a
 
 
 
@@ -58,7 +58,7 @@ best_positions = np.copy(particles)  # it's our first iteration, so all position
 swarm_best_position = particles[np.argmax(gains)]  # x with the highest gain
 swarm_best_gain = np.max(gains)  # highest gain
 
-l = np.empty((MAX_ITER, POP_SIZE))  # array to collect all pops to visualize afterward
+l = np.zeros((MAX_ITER, POP_SIZE))  # array to collect all pops to visualize afterward
 plt.plot(x, y, lw=3, label='Func to optimize')
 print(f"{l[0][0]=}")
 print(f"{l[0]=}")
@@ -77,7 +77,7 @@ dev_a = cuda.to_device(a)
 threads_per_block = 256
 blocks_per_grid = (MAX_ITER + (threads_per_block - 1)) // threads_per_block
 
-pso_kernel[blocks_per_grid, threads_per_block](dev_particles, dev_l)
+pso_kernel[blocks_per_grid, threads_per_block](dev_a[0], dev_l)
 host_l = dev_l.copy_to_host()
 print(f"{host_l=}")
 
