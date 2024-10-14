@@ -25,6 +25,18 @@ def pso_kernel(a, b):
   if x < b.shape[0] and y < b.shape[1]:
     b[x, y] = a
 
+@cuda.jit
+def increment_a_2D_array(an_array):
+    x, y = cuda.grid(2)
+    print(x)
+    if x <= an_array.shape[0] and y <= an_array.shape[1]:
+       an_array[x, y] += 1
+
+@cuda.jit
+def increment_by_one(an_array):
+    pos = cuda.grid(1)
+    if pos < an_array.size:
+        an_array[pos] += 1
 
 
 POP_SIZE = 10 # population size
@@ -58,30 +70,38 @@ best_positions = np.copy(particles)  # it's our first iteration, so all position
 swarm_best_position = particles[np.argmax(gains)]  # x with the highest gain
 swarm_best_gain = np.max(gains)  # highest gain
 
-l = np.zeros((MAX_ITER, POP_SIZE))  # array to collect all pops to visualize afterward
+l = np.ones((MAX_ITER, POP_SIZE))  # array to collect all pops to visualize afterward
 plt.plot(x, y, lw=3, label='Func to optimize')
 print(f"{l[0][0]=}")
 print(f"{l[0]=}")
 
-dev_l = cuda.device_array_like(l)
+dev_l = cuda.to_device(l)
 print(f"{dev_l.shape=}")
 
 dev_particles = cuda.to_device(particles)
 print(f"{dev_particles.shape=}")
 
-a = np.arange(100, dtype=np.float32)
+a = np.arange(10, dtype=np.float32)
 print(f"{a=}")
 dev_a = cuda.to_device(a)
+
+b = np.ones((2, 2), dtype=np.float32)
+print(f"{b=}")
+dev_b = cuda.to_device(b)
 
 
 threads_per_block = 256
 blocks_per_grid = (MAX_ITER + (threads_per_block - 1)) // threads_per_block
 
-pso_kernel[blocks_per_grid, threads_per_block](dev_a[0], dev_l)
+# pso_kernel[blocks_per_grid, threads_per_block](dev_a[0], dev_l)
+increment_a_2D_array[blocks_per_grid, threads_per_block](dev_b)
+increment_by_one[blocks_per_grid, threads_per_block](dev_a)
 
+host_a = dev_a.copy_to_host()
+print(f"{host_a=}")
 
-host_l = dev_l.copy_to_host()
-print(f"{host_l=}")
+host_b = dev_b.copy_to_host()
+print(f"{host_b=}")
 
 for i in range(MAX_ITER):
 
