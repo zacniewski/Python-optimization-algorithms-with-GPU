@@ -78,6 +78,8 @@ threads_per_block = 256
 blocks_per_grid = (MAX_ITER + (threads_per_block - 1)) // threads_per_block
 
 pso_kernel[blocks_per_grid, threads_per_block](dev_a[0], dev_l)
+
+
 host_l = dev_l.copy_to_host()
 print(f"{host_l=}")
 

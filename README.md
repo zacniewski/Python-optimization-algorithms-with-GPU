@@ -9,19 +9,19 @@
 #### 1. Basic [optimization](https://github.com/zacniewski/Python-optimization-algorithms-with-GPU/tree/main/basic_optimization_algorithms) algorithms,  
 
 ---
-#### 2. Stochastic [Hill Climbing](https://github.com/zacniewski/Python-optimization-algorithms-with-GPU/tree/main/stochastic_hill_climbing) algorithm,  
+#### 2. Stochastic [Hill Climbing](https://github.com/zacniewski/Python-optimization-algorithms-with-GPU/tree/main/stochastic_hill_climbing_classic) algorithm,  
 
 ---
 #### 3. Hill [Climbing](https://github.com/zacniewski/Python-optimization-algorithms-with-GPU/tree/main/hill_climbing_standard_utils) local search algorithm variations,  
 
 ---
-#### 4. Hill [Climbing](https://github.com/zacniewski/Python-optimization-algorithms-with-GPU/tree/main/hcae) with Assembler Encoding,  
+#### 4. Hill [Climbing](https://github.com/zacniewski/Python-optimization-algorithms-with-GPU/tree/main/hcae_with_numba) with Assembler Encoding,  
 
 ---
 #### 5. CUDA [utilities](https://github.com/zacniewski/Python-optimization-algorithms-with-GPU/tree/main/cuda_utils) programs,  
 
 ---
-#### 6. Genetic [algorithms](https://github.com/zacniewski/Python-optimization-algorithms-with-GPU/tree/main/genetic_algorithms) use cases,  
+#### 6. Genetic [algorithms](https://github.com/zacniewski/Python-optimization-algorithms-with-GPU/tree/main/genetic_algorithms_classic) use cases,  
 
 ---
 #### 7. NumPy's [utilities](https://github.com/zacniewski/Python-optimization-algorithms-with-GPU/tree/main/numpy_utils).  
