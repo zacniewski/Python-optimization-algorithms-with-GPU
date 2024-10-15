@@ -28,7 +28,7 @@ def pso_kernel(a, b):
 @cuda.jit
 def increment_a_2D_array(an_array):
     x, y = cuda.grid(2)
-    print(x)
+    print(x, y)
     if x <= an_array.shape[0] and y <= an_array.shape[1]:
        an_array[x, y] += 1
 
@@ -94,7 +94,7 @@ threads_per_block = 256
 blocks_per_grid = (MAX_ITER + (threads_per_block - 1)) // threads_per_block
 
 # pso_kernel[blocks_per_grid, threads_per_block](dev_a[0], dev_l)
-increment_a_2D_array[blocks_per_grid, threads_per_block](dev_b)
+increment_a_2D_array[8, 16](dev_b)
 increment_by_one[blocks_per_grid, threads_per_block](dev_a)
 
 host_a = dev_a.copy_to_host()
