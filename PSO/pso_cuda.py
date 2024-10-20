@@ -36,6 +36,7 @@ def increment_a_2D_array(an_array):
 def increment_by_one(an_array):
     pos = cuda.grid(1)
     if pos < an_array.size:
+        print(pos)
         an_array[pos] += 1
 
 
@@ -92,9 +93,10 @@ dev_b = cuda.to_device(b)
 
 threads_per_block = 256
 blocks_per_grid = (MAX_ITER + (threads_per_block - 1)) // threads_per_block
+print(f"{blocks_per_grid=}")
 
 # pso_kernel[blocks_per_grid, threads_per_block](dev_a[0], dev_l)
-increment_a_2D_array[8, 16](dev_b)
+# increment_a_2D_array[8, 16](dev_b)
 increment_by_one[blocks_per_grid, threads_per_block](dev_a)
 
 host_a = dev_a.copy_to_host()
