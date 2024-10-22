@@ -29,7 +29,7 @@ def pso_kernel(a, b):
 def increment_a_2D_array(an_array):
     x, y = cuda.grid(2)
     print(x, y)
-    if x <= an_array.shape[0] and y <= an_array.shape[1]:
+    if x < an_array.shape[0] and y < an_array.shape[1]:
        an_array[x, y] += 1
 
 @cuda.jit
@@ -87,7 +87,7 @@ print(f"{a=}")
 dev_a = cuda.to_device(a)
 
 b = np.ones((2, 2), dtype=np.float32)
-print(f"{b=}")
+print(f"{b.shape=}")
 dev_b = cuda.to_device(b)
 
 
@@ -96,8 +96,8 @@ blocks_per_grid = (MAX_ITER + (threads_per_block - 1)) // threads_per_block
 print(f"{blocks_per_grid=}")
 
 # pso_kernel[blocks_per_grid, threads_per_block](dev_a[0], dev_l)
-# increment_a_2D_array[8, 16](dev_b)
-increment_by_one[blocks_per_grid, threads_per_block](dev_a)
+increment_a_2D_array[(1, 1), (2, 2)](dev_b)
+# increment_by_one[blocks_per_grid, threads_per_block](dev_a)
 
 host_a = dev_a.copy_to_host()
 print(f"{host_a=}")
