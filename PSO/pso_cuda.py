@@ -86,7 +86,7 @@ a = np.arange(10, dtype=np.float32)
 print(f"{a=}")
 dev_a = cuda.to_device(a)
 
-b = np.ones((2, 2), dtype=np.float32)
+b = np.ones((3, 2), dtype=np.float32)
 print(f"{b.shape=}")
 dev_b = cuda.to_device(b)
 
