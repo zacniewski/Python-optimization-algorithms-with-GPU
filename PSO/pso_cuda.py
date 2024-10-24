@@ -30,7 +30,7 @@ def increment_a_2D_array(an_array):
     x, y = cuda.grid(2)
     print(x, y)
     if x < an_array.shape[0] and y < an_array.shape[1]:
-       an_array[x, y] += 1
+       an_array[x, y] += 10
 
 @cuda.jit
 def increment_by_one(an_array):
@@ -86,7 +86,7 @@ a = np.arange(10, dtype=np.float32)
 print(f"{a=}")
 dev_a = cuda.to_device(a)
 
-b = np.ones((3, 2), dtype=np.float32)
+b = np.arange(16, dtype=np.float32).reshape(4, 4)
 print(f"{b.shape=}")
 dev_b = cuda.to_device(b)
 
@@ -96,7 +96,7 @@ blocks_per_grid = (MAX_ITER + (threads_per_block - 1)) // threads_per_block
 print(f"{blocks_per_grid=}")
 
 # pso_kernel[blocks_per_grid, threads_per_block](dev_a[0], dev_l)
-increment_a_2D_array[(1, 1), (2, 2)](dev_b)
+increment_a_2D_array[(1, 1), (4, 4)](dev_b)
 # increment_by_one[blocks_per_grid, threads_per_block](dev_a)
 
 host_a = dev_a.copy_to_host()
@@ -125,7 +125,7 @@ for i in range(MAX_ITER):
 
   if np.max(new_gains) > swarm_best_gain:  # if current maxima is greater than across all previous iters, then assign
     swarm_best_position = particles[np.argmax(new_gains)]  # assigning the best candidate solution
-    print(f"{swarm_best_position=}")
+    # print(f"{swarm_best_position=}")
     swarm_best_gain = np.max(new_gains)  # assigning the best gain
 
   # print(f'Iteration {i + 1} \tGain: {swarm_best_gain}')
