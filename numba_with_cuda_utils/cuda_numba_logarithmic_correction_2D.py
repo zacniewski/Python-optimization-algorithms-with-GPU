@@ -11,6 +11,8 @@ moon = data.moon().astype(np.float32) / 255.
 @cuda.jit
 def adjust_log(inp, gain, out):
     ix, iy = cuda.grid(2)  # The first index is the fastest dimension
+    # ix and iy change from 0 to 1023
+
     threads_per_grid_x, threads_per_grid_y = cuda.gridsize(2)  # threads per grid dimension
     # in this case threads_per_grid_x = threads_per_block_2d[0] * blocks_per_grid_2d[0]
     # in this case threads_per_grid_y = threads_per_block_2d[1] * blocks_per_grid_2d[1]
