@@ -21,9 +21,9 @@ def populate(size):
 
 @cuda.jit
 def pso_kernel(a, b):
-  x, y = cuda.grid(2)
-  if x < b.shape[0] and y < b.shape[1]:
-    b[x, y] = a
+  ix, iy = cuda.grid(2)
+  if ix < b.shape[0] and iy < b.shape[1]:
+    b[ix, iy] = a
 
 @cuda.jit
 def increment_a_2D_array(an_array):
