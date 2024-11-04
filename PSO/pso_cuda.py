@@ -20,10 +20,13 @@ def populate(size):
   return pop
 
 @cuda.jit
-def pso_kernel(a, b):
+def pso_kernel(pop, out):
   ix, iy = cuda.grid(2)
-  if ix < b.shape[0] and iy < b.shape[1]:
-    b[ix, iy] = a
+  threads_per_grid_x, threads_per_grid_y = cuda.gridsize(2)  # threads per grid dimension
+  n0, n1 = MAX_ITER, pop.size
+  for i0 in range(iy, n0, threads_per_grid_y):
+      for i1 in range(ix, n1, threads_per_grid_x):
+        out[i0, i1] = pop[i0, i1] # to change!!!
 
 @cuda.jit
 def increment_a_2D_array(an_array):
