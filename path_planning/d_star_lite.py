@@ -423,5 +423,7 @@ def main():
                    spoofed_ox=spoofed_ox, spoofed_oy=spoofed_oy)
 
 
+    plt.savefig("d_star_lite.png")
+
 if __name__ == "__main__":
     main()
