@@ -1,11 +1,6 @@
 """
-
-SIPP implementation  
-
-author: Ashwin Bose (@atb033)
-
+SIPP implementation
 See the article: DOI: 10.1109/ICRA.2011.5980306
-
 """
 
 import argparse
