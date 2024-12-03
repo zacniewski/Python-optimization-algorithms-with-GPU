@@ -1,11 +1,6 @@
 """
-
 Extension of SIPP to multi-robot scenarios
-
-author: Ashwin Bose (@atb033)
-
 See the article: 10.1109/ICRA.2011.5980306
-
 """
 
 import argparse
