@@ -9,7 +9,9 @@ decorator==5.1.1
 exceptiongroup==1.2.0
 executing==2.0.1
 fastrlock==0.8.2
+ffmpeg-python==0.2.0
 fonttools==4.50.0
+future==1.0.0
 imageio==2.34.1
 ipython==8.23.0
 jedi==0.19.1
