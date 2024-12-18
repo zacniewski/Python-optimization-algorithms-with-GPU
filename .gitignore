@@ -137,6 +137,7 @@ my_env/
 .common_env/
 .common_venv/
 .cuda_python_env/
+.pymapf_env/
 
 # Spyder project settings
 .spyderproject
