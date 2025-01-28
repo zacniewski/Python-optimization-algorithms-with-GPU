@@ -1,4 +1,6 @@
 import velocity_obstacle.velocity_obstacle as velocity_obstacle
+import velocity_obstacle.velocity_obstacle_2 as velocity_obstacle_2
+
 import nmpc.nmpc as nmpc
 import argparse
 
@@ -12,6 +14,8 @@ if __name__ == "__main__":
     args = parser.parse_args()
     if args.mode == "velocity_obstacle":
         velocity_obstacle.simulate(args.filename)
+    elif args.mode == "velocity_obstacle_2":
+        velocity_obstacle_2.simulate(args.filename)
     elif args.mode == "nmpc":
         nmpc.simulate(args.filename)
     else:
