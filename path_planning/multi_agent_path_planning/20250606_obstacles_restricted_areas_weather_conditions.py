@@ -1,3 +1,32 @@
+"""
+Multi-Agent Path Planning with Environmental Factors
+
+This script implements a multi-agent path planning simulation in a continuous space with
+various environmental factors including obstacles, restricted areas, and weather conditions.
+
+Algorithms used:
+1. Force-based Path Planning: Each agent's movement is determined by a combination of forces:
+   - Goal-seeking force: Attracts the agent toward its goal position
+   - Agent avoidance force: Repels the agent from other agents to prevent collisions
+   - Obstacle avoidance force: Repels the agent from obstacles
+   - Restricted area avoidance force: Keeps agents out of restricted areas
+   - Weather effect: Simulates wind that affects agent movement
+
+2. Steering Behaviors:
+   - Seek: Directs the agent toward a target position
+   - Arrival: Slows down the agent as it approaches its goal
+   - Separation: Keeps agents from getting too close to each other
+   - Obstacle Avoidance: Steers agents away from obstacles
+   - Boundary Avoidance: Keeps agents within the environment boundaries
+
+3. Force Combination:
+   - Different forces are weighted and combined to determine the final movement
+   - Forces are limited to prevent excessive acceleration
+   - Velocity is limited to maintain realistic movement speeds
+
+The simulation visualizes the agents' paths and can save the animation as a video file.
+"""
+
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
@@ -17,76 +46,76 @@ class Agent:
         self.max_speed = 2.0
         self.max_force = 0.5
         self.arrival_threshold = 0.5
-        
+
     def update(self, agents, obstacles, restricted_areas, weather, dt):
         # Calculate steering forces
         goal_force = self.seek(self.goal)
         avoid_agent_force = self.avoid_agents(agents)
         avoid_obstacle_force = self.avoid_obstacles(obstacles)
         avoid_restricted_force = self.avoid_restricted_areas(restricted_areas)
-        
+
         # Apply weather effect
         weather_effect = np.array([weather['wind_x'], weather['wind_y']]) * 0.3
-        
+
         # Combine all forces
         total_force = (goal_force * 1.5 + avoid_agent_force * 1.2 + 
                        avoid_obstacle_force * 1.5 + avoid_restricted_force * 1.5 + 
                        weather_effect)
-        
+
         # Limit force
         total_force = self.limit_force(total_force)
-        
+
         # Update velocity and position
         self.velocity += total_force * dt
         self.velocity = self.limit_velocity(self.velocity)
         self.position += self.velocity * dt
-        
+
         # Record path (for visualization)
         self.path.append(self.position.copy())
         if len(self.path) > 100:  # Limit path length
             self.path.pop(0)
-    
+
     def seek(self, target):
         desired_velocity = (target - self.position)
         distance = np.linalg.norm(desired_velocity)
-        
+
         if distance < self.arrival_threshold:
             return np.zeros(2)
-        
+
         desired_velocity = desired_velocity / distance * self.max_speed
-        
+
         # Slow down when approaching the goal
         if distance < 5.0:
             desired_velocity = desired_velocity * (distance / 5.0)
-        
+
         steer = desired_velocity - self.velocity
         return self.limit_force(steer)
-    
+
     def avoid_agents(self, agents):
         avoidance_force = np.zeros(2)
         avoidance_distance = self.size * 3
-        
+
         for agent in agents:
             if agent.id == self.id:
                 continue
-                
+
             to_other = self.position - agent.position
             distance = np.linalg.norm(to_other)
-            
+
             if distance < avoidance_distance and distance > 0:
                 strength = min(1.0, (avoidance_distance - distance) / avoidance_distance)
                 avoidance_force += (to_other / distance) * strength * self.max_force * 2
-        
+
         return avoidance_force
-    
+
     def avoid_obstacles(self, obstacles):
         avoidance_force = np.zeros(2)
         avoidance_distance = self.size * 4
-        
+
         for obstacle in obstacles:
             to_obstacle = obstacle['position'] - self.position
             distance = np.linalg.norm(to_obstacle)
-            
+
             if distance < (obstacle['radius'] + avoidance_distance):
                 if distance <= obstacle['radius']:
                     # Emergency avoidance if inside obstacle
@@ -101,26 +130,26 @@ class Agent:
                     # Normal avoidance
                     strength = 1.0 - (distance - obstacle['radius']) / avoidance_distance
                     avoidance_force += (-to_obstacle / distance) * strength * self.max_force * 2
-        
+
         return avoidance_force
-    
+
     def avoid_restricted_areas(self, restricted_areas):
         avoidance_force = np.zeros(2)
         avoidance_distance = self.size * 5
-        
+
         for area in restricted_areas:
             # Check if agent is inside the restricted area
             if (area['x'] - area['width']/2 <= self.position[0] <= area['x'] + area['width']/2 and
                 area['y'] - area['height']/2 <= self.position[1] <= area['y'] + area['height']/2):
-                
+
                 # Find closest edge
                 left_dist = self.position[0] - (area['x'] - area['width']/2)
                 right_dist = (area['x'] + area['width']/2) - self.position[0]
                 bottom_dist = self.position[1] - (area['y'] - area['height']/2)
                 top_dist = (area['y'] + area['height']/2) - self.position[1]
-                
+
                 min_dist = min(left_dist, right_dist, bottom_dist, top_dist)
-                
+
                 if min_dist == left_dist:
                     escape_dir = np.array([-1, 0])
                 elif min_dist == right_dist:
@@ -129,36 +158,36 @@ class Agent:
                     escape_dir = np.array([0, -1])
                 else:
                     escape_dir = np.array([0, 1])
-                
+
                 avoidance_force += escape_dir * self.max_force * 3
-            
+
             # Also avoid getting too close to restricted areas
             else:
                 # Calculate distance to area boundaries
                 closest_x = max(area['x'] - area['width']/2, min(self.position[0], area['x'] + area['width']/2))
                 closest_y = max(area['y'] - area['height']/2, min(self.position[1], area['y'] + area['height']/2))
-                
+
                 to_area = np.array([closest_x, closest_y]) - self.position
                 distance = np.linalg.norm(to_area)
-                
+
                 if distance < avoidance_distance:
                     strength = 1.0 - distance / avoidance_distance
                     avoidance_force += (-to_area / distance) * strength * self.max_force
-        
+
         return avoidance_force
-    
+
     def limit_velocity(self, velocity):
         speed = np.linalg.norm(velocity)
         if speed > self.max_speed:
             return velocity / speed * self.max_speed
         return velocity
-    
+
     def limit_force(self, force):
         force_norm = np.linalg.norm(force)
         if force_norm > self.max_force:
             return force / force_norm * self.max_force
         return force
-    
+
     def reached_goal(self):
         return np.linalg.norm(self.position - self.goal) < self.arrival_threshold
 
@@ -172,32 +201,32 @@ class Environment:
         self.required_areas = []
         self.weather = {'wind_x': 0, 'wind_y': 0}
         self.time = 0
-        
+
     def add_agent(self, agent):
         self.agents.append(agent)
-        
+
     def add_obstacle(self, position, radius):
         self.obstacles.append({'position': np.array(position), 'radius': radius})
-        
+
     def add_restricted_area(self, x, y, width, height):
         self.restricted_areas.append({'x': x, 'y': y, 'width': width, 'height': height})
-        
+
     def add_required_area(self, x, y, width, height):
         self.required_areas.append({'x': x, 'y': y, 'width': width, 'height': height})
-        
+
     def update_weather(self):
         # Change weather gradually and randomly
         self.time += 1
         if self.time % 20 == 0:  # Change weather every 20 updates
             self.weather['wind_x'] = np.random.uniform(-1, 1)
             self.weather['wind_y'] = np.random.uniform(-1, 1)
-        
+
     def update(self, dt):
         self.update_weather()
-        
+
         for agent in self.agents:
             agent.update(self.agents, self.obstacles, self.restricted_areas, self.weather, dt)
-            
+
             # Check if agent needs to visit required areas
             for area in self.required_areas:
                 if (area['x'] - area['width']/2 <= agent.position[0] <= area['x'] + area['width']/2 and
@@ -205,18 +234,30 @@ class Environment:
                     # This agent has visited this area
                     pass
 
-def visualize(env, frames=500):
+def visualize(env, frames=500, save_video=False, filename='simulation.mp4'):
+    """
+    Visualize the multi-agent path planning simulation.
+
+    Args:
+        env: The Environment object containing agents, obstacles, and other elements
+        frames: Number of frames to simulate
+        save_video: Whether to save the animation as a video file
+        filename: Name of the video file to save (if save_video is True)
+
+    Returns:
+        The animation object
+    """
     fig, ax = plt.subplots(figsize=(10, 10))
     ax.set_xlim(0, env.width)
     ax.set_ylim(0, env.height)
     ax.set_aspect('equal')
     ax.grid(True)
-    
+
     # Draw obstacles
     for obstacle in env.obstacles:
         circle = plt.Circle(obstacle['position'], obstacle['radius'], color='gray', alpha=0.7)
         ax.add_patch(circle)
-    
+
     # Draw restricted areas
     for area in env.restricted_areas:
         rect = patches.Rectangle(
@@ -225,7 +266,7 @@ def visualize(env, frames=500):
             linewidth=1, edgecolor='r', facecolor='red', alpha=0.2
         )
         ax.add_patch(rect)
-    
+
     # Draw required areas
     for area in env.required_areas:
         rect = patches.Rectangle(
@@ -234,48 +275,57 @@ def visualize(env, frames=500):
             linewidth=1, edgecolor='g', facecolor='green', alpha=0.2
         )
         ax.add_patch(rect)
-    
+
     # Initialize agent artists
     agent_artists = []
     path_artists = []
     for agent in env.agents:
         agent_circle = plt.Circle(agent.position, agent.size, color=agent.color, alpha=0.8)
         agent_artists.append(ax.add_patch(agent_circle))
-        
+
         # Goal marker
         goal_marker = plt.Circle(agent.goal, 0.2, color=agent.color, alpha=0.3)
         ax.add_patch(goal_marker)
-        
+
         # Path line
         path_line, = ax.plot([], [], color=agent.color, alpha=0.5, linewidth=1)
         path_artists.append(path_line)
-    
+
     # Weather text
     weather_text = ax.text(env.width * 0.02, env.height * 0.95, '', fontsize=10)
-    
+
     def init():
         return agent_artists + path_artists + [weather_text]
-    
+
     def animate(i):
         env.update(0.1)  # Update with small time step
-        
+
         for j, agent in enumerate(env.agents):
             agent_artists[j].center = agent.position
             if len(agent.path) > 1:
                 path_artists[j].set_data([p[0] for p in agent.path], [p[1] for p in agent.path])
-        
+
         # Update weather display
         wind_speed = np.linalg.norm([env.weather['wind_x'], env.weather['wind_y']])
         wind_dir = np.arctan2(env.weather['wind_y'], env.weather['wind_x']) * 180 / np.pi
         weather_text.set_text(f'Wind: {wind_speed:.1f} m/s, Direction: {wind_dir:.0f}°')
-        
+
         return agent_artists + path_artists + [weather_text]
-    
+
     anim = FuncAnimation(fig, animate, frames=frames, init_func=init,
                          blit=True, interval=50)
+
     plt.title('Multi-Agent Path Planning with Continuous Space')
     plt.xlabel('X position')
     plt.ylabel('Y position')
+
+    # Save the animation as a video file if requested
+    if save_video:
+        print(f"Saving animation to {filename}...")
+        # Requires ffmpeg to be installed
+        anim.save(filename, writer='ffmpeg', fps=20)
+        print(f"Animation saved to {filename}")
+
     plt.show()
     return anim
 
@@ -303,5 +353,5 @@ env.add_agent(Agent(1, start_pos=(18, 2), goal_pos=(2, 18), color='red'))
 env.add_agent(Agent(2, start_pos=(2, 18), goal_pos=(18, 2), color='green'))
 env.add_agent(Agent(3, start_pos=(18, 18), goal_pos=(2, 2), color='purple'))
 
-# Visualize the simulation
-anim = visualize(env, frames=500)
+# Visualize the simulation and save as video
+anim = visualize(env, frames=500, save_video=True, filename='multi_agent_simulation.mp4')
