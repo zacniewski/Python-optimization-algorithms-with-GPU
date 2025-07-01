@@ -1,0 +1,60 @@
+@startuml
+package "Command and Control Unit" {
+  [User Interface] as UI
+  [Authentication Module] as AUTH
+  [Mission Planning Interface] as MPI
+  [Map Visualization] as MAP
+  [Alert Management] as ALERT
+  [Communication Module] as COMM
+}
+
+package "Mission Management Module" {
+  [Mission Manager] as MM
+  [Path Planning] as PP
+  [Mission Monitoring] as MMON
+  [Task Allocation] as TA
+  [Mission Replanning] as MR
+  
+  package "Data Services" {
+    [Map Data Service] as MDS
+    [Weather Service] as WS
+    [Entity Status Service] as ESS
+    [Telemetry Service] as TS
+  }
+}
+
+cloud "External Systems" {
+  [Weather API] as WAPI
+  [Terrain Database] as TDB
+  [Entity Control Systems] as ECS
+}
+
+UI --> AUTH : user credentials
+UI --> MPI : mission parameters
+UI --> MAP : display control
+UI --> ALERT : alert interaction
+
+MPI --> COMM : mission plans
+COMM --> MM : mission plans
+MM --> PP : path requests
+MM --> TA : task allocation requests
+MM --> MMON : mission registration
+MM --> MR : replanning requests
+
+PP --> MDS : map data
+PP --> WS : weather data
+MMON --> TS : telemetry data
+MMON --> ESS : entity status
+MR --> PP : path replanning
+MR --> TA : task reallocation
+
+MDS --> TDB : terrain data
+WS --> WAPI : weather forecasts
+ESS --> ECS : entity commands
+TS <-- ECS : entity telemetry
+
+MMON --> COMM : status updates
+ALERT <-- COMM : alerts
+MAP <-- COMM : entity positions
+
+@enduml

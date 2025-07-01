@@ -1,0 +1,86 @@
+@startuml
+actor Operator
+participant "CommandControlInterface" as CCI
+participant "MissionManager" as MM
+participant "PathPlanner" as PP
+participant "TaskAllocator" as TA
+participant "MissionMonitor" as MMon
+participant "MissionReplanner" as MR
+
+== Mission Planning Phase ==
+
+Operator -> CCI : login(username, password)
+activate CCI
+CCI --> Operator : authentication successful
+Operator -> CCI : createMission(parameters)
+CCI -> CCI : createMissionPlan()
+CCI --> Operator : displays mission plan draft
+Operator -> CCI : modifyMission(parameters)
+CCI -> CCI : updateMissionPlan()
+Operator -> CCI : deployMission(missionPlan)
+CCI -> MM : receiveMissionPlan(missionPlan)
+activate MM
+MM -> PP : planPath(start, end, constraints)
+activate PP
+PP --> MM : returns optimized paths
+deactivate PP
+MM -> TA : allocateTasks(mission)
+activate TA
+TA --> MM : returns task allocation
+deactivate TA
+MM -> MM : createMission(plan)
+MM --> CCI : mission deployment confirmed
+CCI --> Operator : displays mission confirmation
+deactivate CCI
+
+== Mission Execution Phase ==
+
+MM -> MMon : registerMission(mission)
+activate MMon
+MM -> MM : startMission(missionId)
+MM --> CCI : mission started notification
+CCI --> Operator : displays mission status
+
+loop Every status update interval
+    MMon -> MMon : processTelemetry(entityId, data)
+    MMon -> MMon : checkMissionProgress(missionId)
+    MMon --> MM : reports mission progress
+    MM --> CCI : updates mission status
+    CCI --> Operator : displays updated status
+end
+
+== Anomaly Detection and Replanning ==
+
+MMon -> MMon : detectAnomalies(missionId)
+MMon --> MM : reports anomaly
+activate MM
+MM -> MR : evaluateDeviation(mission, currentState)
+activate MR
+MR --> MM : returns deviation assessment
+MM -> MR : determineReplanningNeed(assessment)
+MR --> MM : confirms replanning needed
+MM -> MR : generateAlternativePlan(mission, constraints)
+MR -> PP : planPath(newStart, end, constraints)
+PP --> MR : returns new paths
+MR -> TA : reallocateTasks(mission, changes)
+TA --> MR : returns new task allocation
+MR --> MM : returns alternative mission plan
+deactivate MR
+MM -> MM : updateMission(missionId, newPlan)
+MM --> CCI : mission replanning notification
+CCI --> Operator : displays replanning alert
+Operator -> CCI : acknowledgeMissionChange()
+CCI -> MM : confirmMissionUpdate(missionId)
+deactivate MM
+
+== Mission Completion ==
+
+MMon -> MM : missionCompleteNotification(missionId)
+deactivate MMon
+activate MM
+MM -> MM : finalizeMission(missionId)
+MM --> CCI : mission completion notification
+CCI --> Operator : displays mission completion
+deactivate MM
+
+@enduml

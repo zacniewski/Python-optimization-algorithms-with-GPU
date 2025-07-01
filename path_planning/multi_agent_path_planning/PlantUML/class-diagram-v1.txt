@@ -1,0 +1,219 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+package "Command and Control Unit" {
+  class CommandControlInterface {
+    - userSession: UserSession
+    - missionPlans: List<MissionPlan>
+    - activeMissions: List<Mission>
+    - systemStatus: SystemStatus
+    - displaySettings: DisplaySettings
+    - mapView: MapView
+    - alertSystem: AlertSystem
+    + __init__()
+    + login(username, password): bool
+    + logout(): void
+    + createMission(parameters): MissionPlan
+    + deployMission(missionPlan): Mission
+    + abortMission(missionId): bool
+    + modifyMission(missionId, parameters): bool
+    + getSystemStatus(): SystemStatus
+    + getMissionStatus(missionId): MissionStatus
+    + acknowledgeAlert(alertId): void
+    + configureDisplay(settings): void
+    + zoomMap(level): void
+    + panMap(x, y): void
+    + selectEntity(entityId): void
+  }
+  
+  class UserSession {
+    - userId: string
+    - username: string
+    - role: UserRole
+    - permissions: List<Permission>
+    - loginTime: DateTime
+    - lastActivity: DateTime
+    + __init__(userId, username, role)
+    + hasPermission(permission): bool
+    + updateLastActivity(): void
+    + getSessionDuration(): int
+    + isActive(): bool
+  }
+  
+  class MapView {
+    - currentZoom: float
+    - centerCoordinates: Coordinates
+    - visibleLayers: List<MapLayer>
+    - selectedEntities: List<Entity>
+    - trackingMode: TrackingMode
+    + __init__()
+    + setZoom(level): void
+    + pan(x, y): void
+    + toggleLayer(layerId, visible): void
+    + selectEntity(entityId): void
+    + startTracking(entityId): void
+    + stopTracking(): void
+    + showRoute(routeId): void
+    + hideRoute(routeId): void
+    + showRestriction(restrictionId): void
+    + hideRestriction(restrictionId): void
+  }
+  
+  class AlertSystem {
+    - activeAlerts: List<Alert>
+    - alertHistory: List<Alert>
+    - alertSettings: AlertSettings
+    + __init__()
+    + raiseAlert(type, message, severity): Alert
+    + acknowledgeAlert(alertId): void
+    + dismissAlert(alertId): void
+    + getActiveAlerts(): List<Alert>
+    + configureAlertSettings(settings): void
+  }
+}
+
+package "Mission Management Module" {
+  class MissionManager {
+    - pathPlanner: PathPlanner
+    - missionMonitor: MissionMonitor
+    - taskAllocator: TaskAllocator
+    - missionReplanner: MissionReplanner
+    - activeMissions: List<Mission>
+    - missionQueue: Queue<MissionPlan>
+    + __init__()
+    + receiveMissionPlan(missionPlan): bool
+    + startMission(missionId): bool
+    + pauseMission(missionId): bool
+    + resumeMission(missionId): bool
+    + abortMission(missionId): bool
+    + getMissionStatus(missionId): MissionStatus
+    + handleMissionEvent(event): void
+    + updateMissionPriorities(priorityMap): void
+  }
+  
+  class PathPlanner {
+    - mapData: MapData
+    - routeLibrary: RouteLibrary
+    - pathfindingAlgorithms: Map<String, Algorithm>
+    - weatherData: WeatherData
+    - terrainData: TerrainData
+    - restrictedAreas: List<Area>
+    + __init__(mapData)
+    + planPath(start, end, constraints): Path
+    + optimizePath(path, criteria): Path
+    + validatePath(path): bool
+    + estimatePathDuration(path): float
+    + estimatePathRisk(path): float
+    + getAlternativePaths(start, end, count): List<Path>
+    + handleDynamicObstacle(obstacle, affectedPaths): List<Path>
+  }
+  
+  class MissionMonitor {
+    - activeMissions: List<Mission>
+    - telemetryData: Map<EntityId, TelemetryStream>
+    - alertThresholds: AlertThresholds
+    - statusUpdateInterval: int
+    - healthCheckInterval: int
+    + __init__()
+    + registerMission(mission): void
+    + unregisterMission(missionId): void
+    + processTelemetry(entityId, data): void
+    + checkMissionProgress(missionId): MissionProgress
+    + detectAnomalies(missionId): List<Anomaly>
+    + generateStatusReport(missionId): StatusReport
+    + setAlertThreshold(type, value): void
+    + requestHealthCheck(entityId): HealthStatus
+  }
+  
+  class TaskAllocator {
+    - availableEntities: List<Entity>
+    - entityCapabilities: Map<EntityId, Capabilities>
+    - taskConstraints: TaskConstraints
+    - allocationStrategy: AllocationStrategy
+    - taskPriorities: Map<TaskId, Priority>
+    + __init__()
+    + allocateTasks(mission): TaskAllocation
+    + reallocateTasks(mission, changes): TaskAllocation
+    + optimizeAllocation(allocation, criteria): TaskAllocation
+    + validateAllocation(allocation): bool
+    + getEntityWorkload(entityId): Workload
+    + reserveEntity(entityId, duration): bool
+    + releaseEntity(entityId): void
+    + updateEntityStatus(entityId, status): void
+  }
+  
+  class MissionReplanner {
+    - pathPlanner: PathPlanner
+    - taskAllocator: TaskAllocator
+    - riskAssessor: RiskAssessor
+    - contingencyPlans: Map<ScenarioType, Plan>
+    - replanningSensitivity: float
+    + __init__(pathPlanner, taskAllocator)
+    + evaluateDeviation(mission, currentState): DeviationAssessment
+    + determineReplanningNeed(assessment): bool
+    + generateAlternativePlan(mission, constraints): MissionPlan
+    + applyContingencyPlan(mission, scenario): MissionPlan
+    + adjustTimeline(mission, delay): bool
+    + prioritizeObjectives(mission, constraints): List<Objective>
+    + estimateReplanningImpact(originalPlan, newPlan): ImpactAssessment
+  }
+  
+  class Mission {
+    - id: string
+    - plan: MissionPlan
+    - status: MissionStatus
+    - assignedEntities: List<Entity>
+    - tasks: List<Task>
+    - timeline: Timeline
+    - progress: float
+    - startTime: DateTime
+    - estimatedEndTime: DateTime
+    + __init__(id, plan)
+    + start(): bool
+    + pause(): bool
+    + resume(): bool
+    + abort(): bool
+    + updateStatus(status): void
+    + addTask(task): void
+    + removeTask(taskId): bool
+    + getProgress(): float
+    + getRemainingTime(): float
+    + getAssignedEntities(): List<Entity>
+  }
+  
+  class MissionPlan {
+    - id: string
+    - objectives: List<Objective>
+    - constraints: List<Constraint>
+    - requiredCapabilities: List<Capability>
+    - estimatedDuration: float
+    - priority: Priority
+    - creationTime: DateTime
+    - creator: UserId
+    + __init__(id, objectives)
+    + addObjective(objective): void
+    + removeObjective(objectiveId): bool
+    + addConstraint(constraint): void
+    + removeConstraint(constraintId): bool
+    + validate(): bool
+    + estimateResources(): ResourceEstimate
+    + getPriority(): Priority
+    + setPriority(priority): void
+  }
+}
+
+CommandControlInterface --> UserSession : manages
+CommandControlInterface --> MapView : displays
+CommandControlInterface --> AlertSystem : uses
+CommandControlInterface --> MissionManager : sends mission plans to
+MissionManager --> PathPlanner : uses
+MissionManager --> MissionMonitor : uses
+MissionManager --> TaskAllocator : uses
+MissionManager --> MissionReplanner : uses
+MissionManager --> Mission : manages
+MissionManager --> MissionPlan : processes
+MissionReplanner --> PathPlanner : uses
+MissionReplanner --> TaskAllocator : uses
+Mission --> MissionPlan : based on
+
+@enduml
